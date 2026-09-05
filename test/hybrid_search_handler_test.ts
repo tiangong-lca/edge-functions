@@ -18,6 +18,22 @@ const CONTACT_CONFIG: HybridSearchRouteConfig = {
 
 const VECTOR = Array.from({ length: 1024 }, () => 0.001);
 
+// Database e9888c9385356ee6df66c2910a99e29f9fa7e08c: api.hybrid_search_flows/processes.
+const LEGACY_SEARCH_RPC_PARAMETERS = [
+  'query_text',
+  'query_embedding',
+  'filter_condition',
+  'match_threshold',
+  'match_count',
+  'lexical_weight',
+  'semantic_weight',
+  'rrf_k',
+  'data_source',
+  'page_size',
+  'page_current',
+  'query_terms',
+].sort();
+
 const VERSIONED_CONFIG: HybridSearchRouteConfig = {
   functionName: 'process_hybrid_search',
   entityKind: 'process',
@@ -40,6 +56,7 @@ const FLOW_VERSIONED_V2_CONFIG: HybridSearchRouteConfig = {
   entityKind: 'flow',
   entityLabel: 'Flow',
   entityPlural: 'flows',
+  rpcName: 'hybrid_search_flows',
   versionedRpcName: 'hybrid_search_flow_versions_v2',
   forwardProcessTypeFilter: false,
 };
@@ -291,6 +308,62 @@ Deno.test(
     );
   },
 );
+
+for (const config of [VERSIONED_V2_CONFIG, FLOW_VERSIONED_V2_CONFIG]) {
+  for (const versionScope of [undefined, 'latest']) {
+    Deno.test(
+      `V2 ${config.entityLabel} route retains legacy fallback with ${versionScope ?? 'omitted'} scope`,
+      async () => {
+        const rpcCalls: Array<{ name: string; body: Record<string, unknown> }> = [];
+        const rows = [{ id: VERSION_ID, version: '01.00.000' }];
+        const handler = createHybridSearchHandler(config, {
+          authenticate: async () => VERIFIED_JWT_AUTH,
+          rewriteQuery: async () => ({
+            semantic_query_en: 'copper',
+            fulltext_query_en: ['copper'],
+            fulltext_query_zh: [],
+          }),
+          generateEmbedding: async () => VECTOR,
+          createRpcClient: () => ({
+            client: {
+              rpc: (name: string, body: Record<string, unknown>) => {
+                rpcCalls.push({ name, body });
+                return Promise.resolve({
+                  data: rpcCalls.length === 1 ? [] : rows,
+                  error: null,
+                });
+              },
+            } as unknown as SupabaseClient,
+            userContextKind: 'jwt',
+            bearerToken: 'actor.jwt.signature',
+          }),
+          logger: { log: () => undefined, error: () => undefined },
+        });
+        const response = await handler(
+          new Request(`http://localhost/${config.functionName}`, {
+            method: 'POST',
+            body: JSON.stringify({ query: 'copper', version_scope: versionScope }),
+          }),
+        );
+
+        assertEquals(response.status, 200);
+        assertEquals(await response.json(), { data: rows });
+        assertEquals(
+          rpcCalls.map((call) => call.name),
+          [config.rpcName, config.rpcName],
+        );
+        assertEquals(
+          rpcCalls.map((call) => call.body.match_threshold),
+          [0.5, 0],
+        );
+        assertEquals(
+          rpcCalls.map((call) => Object.keys(call.body).sort()),
+          [LEGACY_SEARCH_RPC_PARAMETERS, LEGACY_SEARCH_RPC_PARAMETERS],
+        );
+      },
+    );
+  }
+}
 
 Deno.test(
   'Next V2 forwards selected-team and Process type scope and owns fallback in one RPC',

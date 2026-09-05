@@ -436,6 +436,7 @@ class FakePortalRedis implements PortalRedisAdapter {
   readonly cacheWrites: string[] = [];
   readonly cacheReadKeys: string[] = [];
   readonly cacheWriteKeys: string[] = [];
+  readonly closed = Promise.withResolvers<void>();
 
   setNxEx(): Promise<boolean> {
     this.calls.push('nonce');
@@ -494,6 +495,7 @@ class FakePortalRedis implements PortalRedisAdapter {
 
   close(): Promise<void> {
     this.calls.push('close');
+    this.closed.resolve();
     return Promise.resolve();
   }
 }
@@ -1877,6 +1879,8 @@ Deno.test(
         },
         {
           timeoutMs: 100,
+          redis: undefined,
+          redisFactory: async () => redis,
           rewriteQuery: async (_config: unknown, _query: string, signal: AbortSignal) => {
             rewriteSignal = signal;
             return REWRITE;
@@ -1895,6 +1899,14 @@ Deno.test(
     assertEquals(embeddingSignal, databaseSignal);
     assertEquals(databaseSignal?.aborted, true);
     assertEquals(redis.calls.includes('circuit_success'), false);
+    assertEquals(
+      await raceWithTimeout(
+        redis.closed.promise.then(() => true),
+        500,
+        false,
+      ),
+      true,
+    );
   },
 );
 
@@ -1913,7 +1925,7 @@ Deno.test(
             return Promise.resolve(databasePage());
           },
         },
-        { timeoutMs: 100 },
+        { timeoutMs: 100, redis: undefined, redisFactory: async () => redis },
       ),
     );
     const response = await handler(await signedRequest());
@@ -1921,6 +1933,14 @@ Deno.test(
     assertEquals(await responseCode(response), 'hybrid_timeout');
     assertEquals(databaseCalls, 1);
     assert(redis.calls.includes('circuit_success'));
+    assertEquals(
+      await raceWithTimeout(
+        redis.closed.promise.then(() => true),
+        500,
+        false,
+      ),
+      true,
+    );
   },
 );
 

@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-09-02
-lastReviewedCommit: 5f225c74d739910ccbd9157b59442281ca98ad03
-lastReviewedNote: 'Reviewed for Edge #400: explicit Portal V2 and JWT-backed matched-version protocols preserve exact identity, bounded group continuation, English-vector cache isolation and existing security/timeout boundaries.'
+lastReviewedAt: 2026-09-06
+lastReviewedCommit: 4e312f5b2681d4f069bdbf37293cb1e3412d1791
+lastReviewedNote: 'Reviewed for Edge #407: legacy Process/Flow RPC arguments and fallback are preserved; two Portal deadline fixtures join owned background cleanup without changing response deadlines, sanitizers or Portal runtime. Matched V2, foundation visibility, auth and deployment contracts remain unchanged.'
 ---
 
 # TianGong-LCA-Edge-Functions

@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-09-05'
-lastReviewedCommit: '2ad33e73001fd550d42d5a1572e3c363abe25807'
-lastReviewedNote: 'Reviewed for Edge #403: Process/Flow matched V2 request validation, team/entity filter forwarding, one-call Database fallback, and safe timing logs remain within existing runtime, test, and deployment routes.'
+lastReviewedAt: '2026-09-06'
+lastReviewedCommit: '4e312f5b2681d4f069bdbf37293cb1e3412d1791'
+lastReviewedNote: 'Reviewed for Edge #407: legacy Process/Flow RPC arguments and fallback are preserved; two Portal deadline fixtures join owned background cleanup without changing response deadlines, sanitizers or Portal runtime. Matched V2, foundation visibility, auth and deployment contracts remain unchanged.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
