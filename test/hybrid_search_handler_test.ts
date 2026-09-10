@@ -857,3 +857,85 @@ Deno.test('shared Hybrid handler fails closed on a non-1024 embedding', async ()
     code: 'EMBEDDING_DIMENSION_MISMATCH',
   });
 });
+
+Deno.test(
+  'example search rejects a service principal before model or RPC work in every mode',
+  async () => {
+    for (const version_scope of ['latest', 'matched']) {
+      const calls: string[] = [];
+      const handler = createHybridSearchHandler(VERSIONED_V2_CONFIG, {
+        authenticate: async () => ({ isAuthenticated: true }),
+        rewriteQuery: async () => {
+          calls.push('rewrite');
+          throw new Error('unexpected model work');
+        },
+        createRpcClient: () => {
+          calls.push('rpc');
+          throw new Error('unexpected database work');
+        },
+      });
+      const response = await handler(
+        new Request('https://example.invalid/search', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer forged.jwt.signature' },
+          body: JSON.stringify({ query: 'steel', data_source: 'ex', version_scope }),
+        }),
+      );
+      assertEquals(response.status, 403);
+      assertEquals(calls, []);
+    }
+  },
+);
+
+Deno.test(
+  'example search preserves verified actor and fixed scope across RPC contracts',
+  async () => {
+    for (const [config, version_scope, expectedRpc, forwardsState] of [
+      [CONTACT_CONFIG, 'latest', 'hybrid_search_contacts', true],
+      [VERSIONED_V2_CONFIG, 'latest', 'hybrid_search_processes', false],
+      [VERSIONED_V2_CONFIG, 'matched', 'hybrid_search_process_versions_v2', true],
+      [FLOW_VERSIONED_V2_CONFIG, 'matched', 'hybrid_search_flow_versions_v2', true],
+    ] as const) {
+      let calls = 0;
+      const handler = createHybridSearchHandler(config, {
+        authenticate: async () => VERIFIED_JWT_AUTH,
+        rewriteQuery: async () => ({
+          semantic_query_en: 'copper',
+          fulltext_query_en: ['copper'],
+          fulltext_query_zh: [],
+        }),
+        generateEmbedding: async () => VECTOR,
+        createRpcClient: (authorization, scope) => {
+          assertEquals(authorization, 'Bearer actor.jwt.signature');
+          assertEquals(scope, 'ex');
+          return {
+            client: {
+              rpc: (name: string, body: Record<string, unknown>) => {
+                calls++;
+                assertEquals(name, expectedRpc);
+                assertEquals(body.data_source, 'ex');
+                assertEquals(body.state_code_filter, forwardsState ? -1 : undefined);
+                return Promise.resolve({ data: [], error: null });
+              },
+            } as unknown as SupabaseClient,
+            userContextKind: 'jwt',
+            bearerToken: 'actor.jwt.signature',
+          };
+        },
+        logger: { log: () => undefined, error: () => undefined },
+      });
+      const response = await handler(
+        new Request('http://localhost/search', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer actor.jwt.signature' },
+          body: JSON.stringify({ query: 'copper', data_source: 'ex', version_scope }),
+        }),
+      );
+      assertEquals(response.status, 200);
+      assertEquals(calls > 0, true);
+      const result = await response.json();
+      assertEquals(version_scope === 'matched' ? result.data : result, []);
+      if (version_scope === 'matched') assertEquals(result.versionScope, 'matched');
+    }
+  },
+);

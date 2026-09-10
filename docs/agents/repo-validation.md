@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-09
-lastReviewedCommit: e82f2f09067fe01dd5eb028f1d74030295532bf0
-lastReviewedNote: 'Edge #411: reviewed explicit root_closure_v2 enqueue policy, additive receipt readback and import_details signing; authentication and legacy default policy remain unchanged.'
+lastReviewedAt: 2026-09-10
+lastReviewedCommit: 702c42ef3d7cc950c0840bcd817156ea00dd0f62
+lastReviewedNote: 'Edge #413: reviewed ex scope normalization and verified actor propagation for all seven hybrid routes, preserving legacy RPC signatures and existing publication boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -191,3 +191,5 @@ Install the versioned local hook once per checkout:
 The `pre-push` hook runs `scripts/docpact-gate.sh`, which delegates CLI lookup to `scripts/docpact` and performs strict config validation plus enforced lint before the push leaves the machine. It then runs non-mutating `pnpm lint` and canonical `pnpm check` as the local test gate, and aborts if the lint step changes the working tree before `pnpm check`. The wrapper checks `DOCPACT_BIN`, Cargo install locations, Homebrew install locations, and then `PATH`, so local agent shells should not fail only because bare `docpact` is unavailable. The default comparison base is `origin/dev` for routine branches and `origin/main` for promote or hotfix branches. Override it for unusual stacks with `DOCPACT_BASE_REF=<ref>` or `scripts/docpact-gate.sh --base <ref>`. The gate writes its detailed report to a temporary file so normal pushes do not create `.docpact/runs/` artifacts. The GitHub `CI` workflow is manual-dispatch only rather than an ordinary push-triggered test runner.
 
 Partial package import proof must cover policy omission/v2/invalid values, exact RPC dispatch, preserved requester authorization, committed-count projection and `import_details` signed downloads. Pair with Database #634 and Worker #283; deploy Database/Worker compatibility before Edge and enable the frontend last.
+
+Example scope changes additionally require the shared request, RPC-context and handler tests to prove fixed `-1` normalization, conflicting-state rejection, verified JWT propagation before paid work, and preservation of latest/matched RPC and response contracts.

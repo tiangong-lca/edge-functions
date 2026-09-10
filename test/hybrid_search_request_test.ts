@@ -141,7 +141,7 @@ Deno.test('parseHybridSearchClientRequest rejects unsupported data_source', () =
     HybridSearchRequestError,
   );
 
-  assertEquals(error.message, 'data_source must be one of tg, co, my, or te');
+  assertEquals(error.message, 'data_source must be one of tg, co, my, te, or ex');
 });
 
 Deno.test('parseHybridSearchClientRequest rejects non-positive pagination', () => {
@@ -213,4 +213,40 @@ Deno.test('HybridSearchRequestError keeps its concrete error type', () => {
   const error = assertThrows(() => parseHybridSearchClientRequest(null), HybridSearchRequestError);
 
   assertInstanceOf(error, HybridSearchRequestError);
+});
+
+Deno.test('example scope fixes the state for latest and matched searches', () => {
+  for (const version_scope of ['latest', 'matched']) {
+    for (const state_code of [undefined, null, '', 'all', -1, '-1']) {
+      const parsed = parseHybridSearchClientRequest({
+        query: 'steel',
+        data_source: 'ex',
+        state_code,
+        version_scope,
+      });
+      assertEquals(parsed.rpcOptions.data_source, 'ex');
+      assertEquals(parsed.visibilityOptions.state_code_filter, -1);
+      const rpc = buildHybridSearchRpcRequest(
+        'steel',
+        ['steel'],
+        '[1]',
+        parsed.rpcOptions,
+        parsed.visibilityOptions,
+      );
+      assertEquals(rpc.data_source, 'ex');
+      assertEquals(rpc.state_code_filter, -1);
+    }
+  }
+  for (const state_code of [-2, 0, 20, 100, 200, false, '-01', 'invalid']) {
+    assertThrows(
+      () => parseHybridSearchClientRequest({ query: 'steel', data_source: 'ex', state_code }),
+      HybridSearchRequestError,
+    );
+  }
+  for (const data_source of ['tg', 'co', 'my', 'te']) {
+    assertThrows(
+      () => parseHybridSearchClientRequest({ query: 'steel', data_source, state_code: -1 }),
+      HybridSearchRequestError,
+    );
+  }
 });

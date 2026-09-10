@@ -32,7 +32,7 @@ export class HybridSearchRpcContextError extends Error {
 }
 
 const JWT_PATTERN = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
-const USER_SCOPED_DATA_SOURCES = new Set(['my', 'te']);
+const USER_SCOPED_DATA_SOURCES = new Set(['my', 'te', 'ex']);
 
 function extractBearerToken(authHeader: string | null): string | undefined {
   if (!authHeader) {

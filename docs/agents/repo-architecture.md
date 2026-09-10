@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-09-09'
-lastReviewedCommit: 'fa87119ed71f9fc39dbf007bb6695e69eefa1bf1'
-lastReviewedNote: 'Edge #411: reviewed explicit root_closure_v2 enqueue policy, additive receipt readback and import_details signing; authentication and legacy default policy remain unchanged.'
+lastReviewedAt: 2026-09-10
+lastReviewedCommit: 702c42ef3d7cc950c0840bcd817156ea00dd0f62
+lastReviewedNote: 'Edge #413: reviewed ex scope normalization and verified actor propagation for all seven hybrid routes, preserving legacy RPC signatures and existing publication boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -186,6 +186,8 @@ One absolute 25-second Edge deadline starts at handler entry, retaining five sec
 Portal wire V2 adds query-bound group continuation to the existing signed endpoint without changing HMAC, admission, 25-second deadline or publication authority. It consumes only the public V2 Database page: at most 20 best-version representatives plus all exact `versionGroups` members from the two 200-candidate branches. Cache namespace `portal_hybrid_english_query_v3` binds only query/kind/provider identity and retains the existing 60-second model-only lifetime; every page rechecks Database visibility. A missing continuation cache is an explicit restart, not another model call or a silent change of retrieval identity. V1 requests still use the V1 Database/response.
 
 Process/Flow optionally negotiate `version_scope=matched`. That path requires the verified authentication principal's `authMethod=supabase_jwt` before client creation or models; a service-key success plus an unverified JWT-shaped header is not user authentication. It uses only the exact-version V2 RPCs with a fixed 200 budget, forwards state/team context, and returns an explicit `versionScope=matched` acknowledgement even for empty data. A selected-team `te` request without a team fails before model work; an optional public `tg`/`co` institution team is preserved. Process accepts only the reviewed dataset-type enum, while Flow validates its type, input-direction, and bounded classification filters before model work. The Database V2 RPC owns threshold fallback in the same matched-mode Edge call. Omitted and explicit `latest` Process/Flow requests retain the legacy RPC parameter contract and one Edge-owned empty-result retry at threshold zero; matched-only visibility/type parameters never reach those legacy RPCs. Foundation routes, source embedding models and generic provider configuration remain compatible. The new bounded term selector preserves any-language raw query plus interleaved English/Chinese aliases; the legacy term selector is unchanged. Portal V2 validates both within-group version ordering and cross-group representative order (score descending, dataset UUID ascending, version descending) before returning ranked results.
+
+The authenticated example scope is `data_source=ex`. All seven routes require a verified Supabase JWT before model or RPC work, preserve that JWT for database authorization, and normalize the state filter to `-1`. Conflicting state filters fail before model calls. Process/Flow support both latest and matched modes; legacy RPC signatures remain unchanged. The database fixes example visibility independently of request parameters. Portal and existing open-data scopes retain their current publication rules.
 
 These routes cluster around:
 

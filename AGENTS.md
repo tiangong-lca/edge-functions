@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-09-09'
-lastReviewedCommit: 'fa87119ed71f9fc39dbf007bb6695e69eefa1bf1'
-lastReviewedNote: 'Edge #411: reviewed explicit root_closure_v2 enqueue policy, additive receipt readback and import_details signing; authentication and legacy default policy remain unchanged.'
+lastReviewedAt: 2026-09-10
+lastReviewedCommit: 702c42ef3d7cc950c0840bcd817156ea00dd0f62
+lastReviewedNote: 'Edge #413: reviewed ex scope normalization and verified actor propagation for all seven hybrid routes, preserving legacy RPC signatures and existing publication boundaries.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

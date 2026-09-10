@@ -196,11 +196,13 @@ export function createHybridSearchHandler(
       }
       const rpcName = versioned ? config.versionedRpcName! : config.rpcName;
       let rpcClientContext: HybridSearchRpcClientContext | undefined;
-      if (versioned) {
+      if (versioned || parsedRequest.rpcOptions.data_source === 'ex') {
         if (authResult.principal?.authMethod !== 'supabase_jwt') {
           return jsonResponse(
             {
-              error: 'Matched version search requires a verified Supabase JWT user context',
+              error: versioned
+                ? 'Matched version search requires a verified Supabase JWT user context'
+                : 'Example search requires a verified Supabase JWT user context',
               code: 'HYBRID_SEARCH_USER_CONTEXT_REQUIRED',
             },
             403,
