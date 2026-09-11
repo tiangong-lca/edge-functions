@@ -44,7 +44,7 @@ export type HybridSearchRpcPayload = HybridSearchRpcRequest &
   Partial<HybridSearchVisibilityOptions> &
   Partial<HybridSearchEntityFilterOptions>;
 
-const VALID_DATA_SOURCES = new Set(['tg', 'co', 'my', 'te']);
+const VALID_DATA_SOURCES = new Set(['tg', 'co', 'my', 'te', 'ex']);
 const VALID_PROCESS_TYPES = new Set([
   'Unit process, single operation',
   'Unit process, black box',
@@ -107,13 +107,26 @@ function parseDataSource(value: unknown): string {
   const dataSource = value === undefined || value === null || value === '' ? 'tg' : String(value);
 
   if (!VALID_DATA_SOURCES.has(dataSource)) {
-    throw new HybridSearchRequestError('data_source must be one of tg, co, my, or te');
+    throw new HybridSearchRequestError('data_source must be one of tg, co, my, te, or ex');
   }
 
   return dataSource;
 }
 
-function parseNullableStateCode(value: unknown): number | null {
+function parseNullableStateCode(value: unknown, dataSource: string): number | null {
+  if (dataSource === 'ex') {
+    if (
+      value === undefined ||
+      value === null ||
+      value === '' ||
+      value === 'all' ||
+      value === -1 ||
+      value === '-1'
+    ) {
+      return -1;
+    }
+    throw new HybridSearchRequestError('example data requires state_code -1');
+  }
   if (value === undefined || value === null || value === '' || value === 'all') {
     return null;
   }
@@ -211,6 +224,8 @@ export function parseHybridSearchClientRequest(body: unknown): HybridSearchClien
     throw new HybridSearchRequestError('matched version search uses 200 candidates per branch');
   }
 
+  const dataSource = parseDataSource(body.data_source);
+
   return {
     queryText,
     versionScope,
@@ -221,12 +236,12 @@ export function parseHybridSearchClientRequest(body: unknown): HybridSearchClien
       lexical_weight: parseNonNegativeNumber(body.lexical_weight, 'lexical_weight', 0.5),
       semantic_weight: parseNonNegativeNumber(body.semantic_weight, 'semantic_weight', 0.5),
       rrf_k: parsePositiveInteger(body.rrf_k, 'rrf_k', 10),
-      data_source: parseDataSource(body.data_source),
+      data_source: dataSource,
       page_size: parsePositiveInteger(body.page_size, 'page_size', 10),
       page_current: parsePositiveInteger(body.page_current, 'page_current', 1),
     },
     visibilityOptions: {
-      state_code_filter: parseNullableStateCode(body.state_code),
+      state_code_filter: parseNullableStateCode(body.state_code, dataSource),
       team_id_filter: parseNullableTeamId(body.team_id),
     },
     entityFilterOptions: {

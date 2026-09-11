@@ -56,3 +56,13 @@ Deno.test('resolveHybridSearchRpcContext rejects team data without a Supabase JW
 
   assertEquals(error.message, 'data_source te requires a Supabase JWT user context');
 });
+
+Deno.test('example search requires a user JWT and never falls back to service context', () => {
+  for (const header of [null, '', 'Bearer service-key']) {
+    assertThrows(() => resolveHybridSearchRpcContext(header, 'ex'), HybridSearchRpcContextError);
+  }
+  assertEquals(resolveHybridSearchRpcContext(`Bearer ${TEST_JWT}`, 'ex'), {
+    bearerToken: TEST_JWT,
+    userContextKind: 'jwt',
+  });
+});

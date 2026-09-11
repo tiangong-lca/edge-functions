@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-06
-lastReviewedCommit: 4e312f5b2681d4f069bdbf37293cb1e3412d1791
-lastReviewedNote: 'Reviewed for Edge #407: legacy Process/Flow RPC arguments and fallback are preserved; two Portal deadline fixtures join owned background cleanup without changing response deadlines, sanitizers or Portal runtime. Matched V2, foundation visibility, auth and deployment contracts remain unchanged.'
+lastReviewedAt: 2026-09-10
+lastReviewedCommit: 702c42ef3d7cc950c0840bcd817156ea00dd0f62
+lastReviewedNote: 'Edge #413: reviewed ex scope normalization and verified actor propagation for all seven hybrid routes, preserving legacy RPC signatures and existing publication boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -55,7 +55,7 @@ pnpm lint
 pnpm check
 ```
 
-`pnpm check` first requires exact Deno `2.1.4` / bundled TypeScript `5.6.2`, Supabase CLI `2.116.0`, Node `24.19.0`, and pnpm `11.24.0`. It then checks all 152 enabled `supabase/functions/*/index.ts` and `test/*.ts` roots in one shared graph, runs 73 Node contract tests, and executes 540 default Deno behavior tests while the one credentialed live Upstash test remains ignored unless explicitly selected. Deno is the authoritative compiler; no npm TypeScript package participates.
+`pnpm check` first requires exact Deno `2.1.4` / bundled TypeScript `5.6.2`, Supabase CLI `2.116.0`, Node `24.19.0`, and pnpm `11.24.0`. It then checks all 152 enabled `supabase/functions/*/index.ts` and `test/*.ts` roots in one shared graph, runs 73 Node contract tests, and executes 541 default Deno behavior tests while the one credentialed live Upstash test remains ignored unless explicitly selected. Deno is the authoritative compiler; no npm TypeScript package participates.
 
 Review note, 2026-08-31: Edge #357 upgrades every direct runtime/import dependency to the latest stable version verified for exact Deno 2.1.4, including OpenAI 7.8 and Supabase JSR 2.112.4. Validation requires empty `pnpm outdated` and exact-Deno `deno outdated --latest`, one import-map/direct-import contract, targeted OpenAI/Redis/Supabase/Auth checks, Redis 0.41.2's dual-provider signature adaptation, the canonical full gate, and no Portal credential/config mutation. Official OpenAI documentation continues to define `client.responses.create` as the primary JavaScript API; Chat fallback remains covered.
 
@@ -189,3 +189,7 @@ Install the versioned local hook once per checkout:
 ```
 
 The `pre-push` hook runs `scripts/docpact-gate.sh`, which delegates CLI lookup to `scripts/docpact` and performs strict config validation plus enforced lint before the push leaves the machine. It then runs non-mutating `pnpm lint` and canonical `pnpm check` as the local test gate, and aborts if the lint step changes the working tree before `pnpm check`. The wrapper checks `DOCPACT_BIN`, Cargo install locations, Homebrew install locations, and then `PATH`, so local agent shells should not fail only because bare `docpact` is unavailable. The default comparison base is `origin/dev` for routine branches and `origin/main` for promote or hotfix branches. Override it for unusual stacks with `DOCPACT_BASE_REF=<ref>` or `scripts/docpact-gate.sh --base <ref>`. The gate writes its detailed report to a temporary file so normal pushes do not create `.docpact/runs/` artifacts. The GitHub `CI` workflow is manual-dispatch only rather than an ordinary push-triggered test runner.
+
+Partial package import proof must cover policy omission/v2/invalid values, exact RPC dispatch, preserved requester authorization, committed-count projection and `import_details` signed downloads. Pair with Database #634 and Worker #283; deploy Database/Worker compatibility before Edge and enable the frontend last.
+
+Example scope changes additionally require the shared request, RPC-context and handler tests to prove fixed `-1` normalization, conflicting-state rejection, verified JWT propagation before paid work, and preservation of latest/matched RPC and response contracts.

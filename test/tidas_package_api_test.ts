@@ -162,7 +162,7 @@ class FakeSupabase {
         error: null,
       });
     }
-    if (fn === 'svc_tidas_package_import_enqueue') {
+    if (fn === 'svc_tidas_package_import_enqueue' || fn === 'svc_tidas_package_import_enqueue_v2') {
       const artifact = this.tables.lca_package_artifacts.find(
         (row) => row.id === record.p_source_artifact_id && row.job_id === record.p_job_id,
       );
@@ -221,6 +221,7 @@ class FakeSupabase {
         request_hash: record.p_artifact_sha256,
         payload_json: {
           type: 'import_package',
+          ...(fn.endsWith('_v2') ? { import_policy: 'root_closure_v2' } : {}),
           job_id: record.p_job_id,
           requested_by: record.p_requested_by,
           source_artifact_id: artifact.id,
@@ -240,7 +241,7 @@ class FakeSupabase {
         error: null,
       });
     }
-    if (fn === 'svc_tidas_package_read') {
+    if (fn === 'svc_tidas_package_read_v2') {
       const cache = this.tables.lca_package_request_cache.find(
         (row) =>
           row.requested_by === record.p_requested_by &&
@@ -1434,5 +1435,48 @@ Deno.test('tidas_package_jobs rejects missing job identifiers', async () => {
       message: 'A package job id is required',
     });
     assert(response.headers.get('content-type')?.includes('application/json'));
+  });
+});
+
+Deno.test('partial import policy selects v2 and rejects unknown policies before RPC', async () => {
+  await withPackageStorageEnv(async () => {
+    const { createImportTidasPackageHandler } = await loadTidasHandlers();
+    const supabase = new FakeSupabase();
+    supabase.rpcResults.set('svc_tidas_package_import_enqueue_v2', {
+      data: {
+        ok: true,
+        mode: 'queued',
+        job_id: TEST_WORKER_JOB_ID,
+        worker_job_id: TEST_WORKER_JOB_ID,
+        source_artifact_id: TEST_WORKER_JOB_ID,
+      },
+      error: null,
+    });
+    const handler = createImportTidasPackageHandler({
+      authClient: {} as SupabaseClient,
+      supabase: supabase as unknown as SupabaseClient,
+      authenticateRequest: async () => createAuthResult(),
+    });
+    const body = {
+      action: 'enqueue',
+      import_policy: 'root_closure_v2',
+      job_id: TEST_WORKER_JOB_ID,
+      source_artifact_id: TEST_WORKER_JOB_ID,
+      artifact_sha256: 'a'.repeat(64),
+      artifact_byte_size: 100,
+      filename: 'partial.zip',
+    };
+    const request = (value: unknown) =>
+      new Request('https://example.com/functions/v1/import_tidas_package', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${TEST_JWT}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(value),
+      });
+    assertEquals((await handler(request(body))).status, 202);
+    assertEquals(supabase.rpcCalls[0].fn, 'svc_tidas_package_import_enqueue_v2');
+    const rejected = await handler(request({ ...body, import_policy: 'unknown' }));
+    assertEquals(rejected.status, 400);
+    assertEquals((await rejected.json()).code, 'INVALID_IMPORT_POLICY');
+    assertEquals(supabase.rpcCalls.length, 1);
   });
 });

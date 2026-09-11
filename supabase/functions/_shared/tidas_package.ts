@@ -29,7 +29,7 @@ export type TidasPackageJobType = 'export_package' | 'import_package';
 export type TidasPackageJobStatus =
   'queued' | 'running' | 'ready' | 'completed' | 'failed' | 'stale';
 export type TidasPackageArtifactKind =
-  'import_source' | 'export_zip' | 'export_report' | 'import_report';
+  'import_source' | 'export_zip' | 'export_report' | 'import_report' | 'import_details';
 
 export type TidasPackageRoot = {
   table: SupportedTidasTable;
@@ -196,6 +196,7 @@ type NormalizedPrepareImportUploadRequest = {
 };
 
 type NormalizedEnqueueImportRequest = {
+  import_policy?: 'root_closure_v2';
   job_id: string;
   source_artifact_id: string;
   artifact_sha256: string | null;
@@ -440,15 +441,20 @@ export async function enqueueImportTidasPackage(
     );
   }
 
-  const { data, error } = await supabase.rpc('svc_tidas_package_import_enqueue', {
-    p_requested_by: userId,
-    p_job_id: parsed.job_id,
-    p_source_artifact_id: parsed.source_artifact_id,
-    p_artifact_sha256: parsed.artifact_sha256,
-    p_artifact_byte_size: parsed.artifact_byte_size,
-    p_filename: parsed.filename,
-    p_content_type: parsed.content_type,
-  });
+  const { data, error } = await supabase.rpc(
+    parsed.import_policy === 'root_closure_v2'
+      ? 'svc_tidas_package_import_enqueue_v2'
+      : 'svc_tidas_package_import_enqueue',
+    {
+      p_requested_by: userId,
+      p_job_id: parsed.job_id,
+      p_source_artifact_id: parsed.source_artifact_id,
+      p_artifact_sha256: parsed.artifact_sha256,
+      p_artifact_byte_size: parsed.artifact_byte_size,
+      p_filename: parsed.filename,
+      p_content_type: parsed.content_type,
+    },
+  );
   const result = requireCapabilityEnvelope(data, error, 'IMPORT_ENQUEUE_FAILED');
   const workerJobId = normalizeNullableString(result.worker_job_id);
 
@@ -470,7 +476,7 @@ export async function lookupTidasPackageJob(
     throw new TidasPackageError(400, 'INVALID_JOB_ID', 'Invalid job identifier');
   }
 
-  const { data, error } = await supabase.rpc('svc_tidas_package_read', {
+  const { data, error } = await supabase.rpc('svc_tidas_package_read_v2', {
     p_requested_by: userId,
     p_lookup_id: jobId,
   });
@@ -550,6 +556,9 @@ export async function lookupTidasPackageJob(
     status: job.status,
     scope: job.scope,
     root_count: job.root_count,
+    import_progress: isJsonRecord(capabilityData.importProgress)
+      ? capabilityData.importProgress
+      : null,
     request_key: job.request_key,
     timestamps: {
       created_at: job.created_at,
@@ -831,6 +840,9 @@ function parsePrepareImportRequest(body: unknown): Required<NormalizedPrepareImp
 
 function parseEnqueueImportRequest(body: unknown): NormalizedEnqueueImportRequest {
   const record = asRecord(body);
+  if (record.import_policy !== undefined && record.import_policy !== 'root_closure_v2') {
+    throw new TidasPackageError(400, 'INVALID_IMPORT_POLICY', 'Unsupported import policy');
+  }
   const jobId = normalizeString(record.job_id);
   const sourceArtifactId = normalizeString(record.source_artifact_id);
   const artifactSha256 = normalizeNullableString(record.artifact_sha256);
@@ -859,6 +871,9 @@ function parseEnqueueImportRequest(body: unknown): NormalizedEnqueueImportReques
   return {
     job_id: jobId,
     source_artifact_id: sourceArtifactId,
+    ...(record.import_policy === 'root_closure_v2'
+      ? { import_policy: 'root_closure_v2' as const }
+      : {}),
     artifact_sha256: artifactSha256,
     artifact_byte_size: normalizedArtifactByteSize,
     filename,
