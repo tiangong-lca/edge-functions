@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-10
-lastReviewedCommit: 702c42ef3d7cc950c0840bcd817156ea00dd0f62
-lastReviewedNote: 'Edge #413: reviewed ex scope normalization and verified actor propagation for all seven hybrid routes, preserving legacy RPC signatures and existing publication boundaries.'
+lastReviewedAt: 2026-09-13
+lastReviewedCommit: 6c57a818a798864a1ace82228c497a30ff4ccaac
+lastReviewedNote: 'Reviewed for Edge #418: active canonicalRepo is tiangong-lca/edge-functions; the task branch incorporates6 already-reviewed main merge commits whose tree is identical to the previous dev baseline. Function/configuration/import bytes, toolchain, deployment/auth boundaries and all validation gates are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
