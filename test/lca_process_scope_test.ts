@@ -4,6 +4,7 @@ import {
   hasClientSuppliedSnapshotRoots,
   matchesProcessDataScope,
   normalizeSingleProcessDemand,
+  numericalStateRejectionReason,
   processScopeLookupKey,
   requestRootFromSingleProcessDemand,
   validateProcessEntriesInDataScope,
@@ -68,11 +69,21 @@ Deno.test('matchesProcessDataScope enforces root-process semantics per scope', (
   assertEquals(matchesProcessDataScope(publishedOwnedByOtherUser, 'open_data', 'user-1'), true);
   assertEquals(
     matchesProcessDataScope(publishedRangeOwnedByOtherUser, 'open_data', 'user-1'),
-    true,
+    false,
   );
   assertEquals(matchesProcessDataScope(privateOwnedByCurrentUser, 'open_data', 'user-1'), false);
 
   assertEquals(matchesProcessDataScope(privateOwnedByCurrentUser, 'current_user', 'user-1'), true);
+  // The caller's own published state-100 Process stays solvable under `current_user`; it is in the
+  // shared snapshot family and is numerically eligible. Only the owner's non-draft states are out.
+  assertEquals(
+    matchesProcessDataScope(
+      { ...publishedOwnedByOtherUser, user_id: 'user-1' },
+      'current_user',
+      'user-1',
+    ),
+    true,
+  );
   assertEquals(matchesProcessDataScope(publishedOwnedByOtherUser, 'current_user', 'user-1'), false);
   assertEquals(
     matchesProcessDataScope(publishedRangeOwnedByOtherUser, 'current_user', 'user-1'),
@@ -81,7 +92,10 @@ Deno.test('matchesProcessDataScope enforces root-process semantics per scope', (
 
   assertEquals(matchesProcessDataScope(privateOwnedByCurrentUser, 'all_data', 'user-1'), true);
   assertEquals(matchesProcessDataScope(publishedOwnedByOtherUser, 'all_data', 'user-1'), true);
-  assertEquals(matchesProcessDataScope(publishedRangeOwnedByOtherUser, 'all_data', 'user-1'), true);
+  assertEquals(
+    matchesProcessDataScope(publishedRangeOwnedByOtherUser, 'all_data', 'user-1'),
+    false,
+  );
   assertEquals(matchesProcessDataScope(privateOwnedByOtherUser, 'all_data', 'user-1'), false);
   assertEquals(matchesProcessDataScope(undefined, 'all_data', 'user-1'), false);
 
@@ -109,15 +123,64 @@ Deno.test('matchesProcessDataScope enforces root-process semantics per scope', (
     matchesProcessDataScope(ownerWithdrawnState, 'public_plus_owner_draft', 'user-1'),
     false,
   );
+  // The v2 actor-bound manifest admits every actor-owned state-0 row; `team_id`/`review_id` stay
+  // collaboration workflow metadata rather than ownership gates.
   assertEquals(
     matchesProcessDataScope(ownerDraftSharedWithTeam, 'public_plus_owner_draft', 'user-1'),
-    false,
+    true,
   );
   assertEquals(
     matchesProcessDataScope(ownerDraftLinkedToReview, 'public_plus_owner_draft', 'user-1'),
-    false,
+    true,
   );
   assertEquals(matchesProcessDataScope(undefined, 'public_plus_owner_draft', 'user-1'), false);
+});
+
+Deno.test('owner identity never admits the published Result state or the reserved segment', () => {
+  const ownerResult = {
+    state_code: 120,
+    user_id: 'user-1',
+    team_id: null,
+    review_id: null,
+  };
+  const foreignResult = { ...ownerResult, user_id: 'user-2' };
+  const ownerReserved = { ...ownerResult, state_code: 150 };
+  const ownerReviewState = { ...ownerResult, state_code: 20 };
+
+  for (const dataScope of [
+    'open_data',
+    'all_data',
+    'current_user',
+    'public_plus_owner_draft',
+  ] as const) {
+    assertEquals(matchesProcessDataScope(ownerResult, dataScope, 'user-1'), false);
+    assertEquals(matchesProcessDataScope(foreignResult, dataScope, 'user-1'), false);
+    assertEquals(matchesProcessDataScope(ownerReserved, dataScope, 'user-1'), false);
+  }
+
+  // Review state 20 is reachable only through its existing dedicated Review Admin quality
+  // diagnostic, never through a generic numerical scope or an owner branch.
+  for (const dataScope of [
+    'open_data',
+    'all_data',
+    'current_user',
+    'public_plus_owner_draft',
+  ] as const) {
+    assertEquals(matchesProcessDataScope(ownerReviewState, dataScope, 'user-1'), false);
+  }
+});
+
+Deno.test('numerical state rejection names the published Result state only', () => {
+  assertEquals(
+    numericalStateRejectionReason(120),
+    'published_result_process_is_not_a_numerical_input',
+  );
+  assertEquals(numericalStateRejectionReason(100), null);
+  assertEquals(numericalStateRejectionReason(0), null);
+  assertEquals(numericalStateRejectionReason(20), null);
+  assertEquals(numericalStateRejectionReason(150), null);
+  assertEquals(numericalStateRejectionReason(null), null);
+  assertEquals(numericalStateRejectionReason(undefined), null);
 });
 
 Deno.test('single-process demand derives one exact root and rejects malformed selectors', () => {
@@ -193,7 +256,7 @@ Deno.test('client-supplied snapshot roots are detected instead of trusted', () =
 });
 
 Deno.test(
-  'pre-enqueue process scope validation rejects foreign or collaboration-bound drafts',
+  'pre-enqueue process scope validation rejects foreign drafts and non-numerical states',
   async () => {
     const root = {
       process_id: '11111111-1111-4111-8111-111111111111',
@@ -239,10 +302,25 @@ Deno.test(
       { ok: true },
     );
 
+    // The v2 actor-bound manifest keeps its agreed semantics: every actor-owned state-0 row is
+    // admitted irrespective of team/review workflow metadata.
+    for (const admitted of [row({ team_id: 'team-1' }), row({ review_id: 'review-1' })]) {
+      assertEquals(
+        await validateProcessEntriesInDataScope(
+          [root],
+          'public_plus_owner_draft',
+          'user-1',
+          createClient(admitted) as never,
+        ),
+        { ok: true },
+      );
+    }
+
     for (const rejected of [
       row({ user_id: 'user-2' }),
-      row({ team_id: 'team-1' }),
-      row({ review_id: 'review-1' }),
+      row({ state_code: 10 }),
+      row({ state_code: -1 }),
+      row({ state_code: 20 }),
       null,
     ]) {
       assertEquals(
@@ -263,5 +341,26 @@ Deno.test(
         },
       );
     }
+
+    // A published Result owned by the requesting actor is still not a numerical input, and the
+    // rejection is locatable instead of a generic scope error.
+    assertEquals(
+      await validateProcessEntriesInDataScope(
+        [root],
+        'public_plus_owner_draft',
+        'user-1',
+        createClient(row({ state_code: 120 })) as never,
+      ),
+      {
+        ok: false,
+        status: 403,
+        body: {
+          error: 'process_not_in_data_scope',
+          reason: 'published_result_process_is_not_a_numerical_input',
+          data_scope: 'public_plus_owner_draft',
+          process_id: root.process_id,
+        },
+      },
+    );
   },
 );

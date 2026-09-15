@@ -7,6 +7,9 @@ import {
   buildLciaFactorCoverageContract,
   buildSnapshotBuildPayloadFields,
   buildSnapshotProcessFilter,
+  buildSnapshotNumericalPolicyFields,
+  NUMERICAL_SNAPSHOT_POLICY_VERSION,
+  rejectNonNumericalSnapshotProcessFilter,
   type LcaDataScope,
   type LcaMethodFactorSourceContract,
   type LcaScopeManifest,
@@ -67,11 +70,24 @@ export async function ensureLcaSnapshotBuildQueued(
   const requestKey = await sha256Hex(
     JSON.stringify({
       version: requestVersion,
+      // Numerical-policy identity participates in the request hash so a snapshot requested before
+      // this policy existed can never be matched by a request built under it. It is deliberately
+      // not added to the Worker payload: Worker owns `numerical_policy_version` in its own build
+      // config and does not accept that marker from a caller.
+      ...buildSnapshotNumericalPolicyFields(),
       scope: args.scope,
       process_filter: processFilter,
       payload: buildPayloadFields,
     }),
   );
+  const policyRejection = rejectNonNumericalSnapshotProcessFilter(processFilter);
+  if (policyRejection) {
+    console.error('refusing to enqueue a non-numerical snapshot build', {
+      reason: policyRejection,
+      scope: args.scope,
+    });
+    return { ok: false, error: policyRejection, status: 409 };
+  }
   if (!isWorkerJobsCutoverEnabled('LCA_WORKER_JOBS_ENABLED')) {
     console.error('legacy lca snapshot queue fallback is disabled before worker job enqueue', {
       request_key: requestKey,

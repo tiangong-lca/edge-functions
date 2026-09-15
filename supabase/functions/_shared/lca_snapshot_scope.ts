@@ -1,5 +1,17 @@
 import reviewedStaticCacheBundleManifest from './lca_static_cache_bundle_manifest.json' with { type: 'json' };
 
+export const PUBLIC_PROCESS_STATE = 100;
+export const OWNER_DRAFT_PROCESS_STATE = 0;
+export const REVIEW_IN_PROGRESS_PROCESS_STATE = 20;
+export const PUBLISHED_RESULT_PROCESS_STATE = 120;
+
+/**
+ * Reserved publication segment `100..199`.
+ *
+ * The reserved range grants no numerical eligibility: `buildSnapshotProcessFilter` uses
+ * [`PUBLIC_NUMERICAL_PROCESS_STATES`]. These constants survive only so already deployed
+ * range-shaped payloads still parse and can be recognized as retired.
+ */
 export const DEFAULT_PUBLISHED_PROCESS_STATE_START = 100;
 export const DEFAULT_PUBLISHED_PROCESS_STATE_END = 199;
 export const DEFAULT_PUBLISHED_PROCESS_STATES: readonly number[] = Array.from(
@@ -9,8 +21,40 @@ export const DEFAULT_PUBLISHED_PROCESS_STATES: readonly number[] = Array.from(
   (_, index) => DEFAULT_PUBLISHED_PROCESS_STATE_START + index,
 );
 
-export const PUBLIC_PROCESS_STATE = 100;
-export const OWNER_DRAFT_PROCESS_STATE = 0;
+/**
+ * Public numerical Process eligibility: exactly the published state `100`.
+ *
+ * `101..199` is a reserved publication segment that carries no computation capability. In
+ * particular the published Result state `120` is never a root, provider, demand target or
+ * snapshot axis. Support datasets (flows, flowproperties, unitgroups, sources, contacts,
+ * lifecyclemodels) keep their own state rules; this constant applies to Processes only.
+ */
+export const PUBLIC_NUMERICAL_PROCESS_STATES: readonly number[] = [PUBLIC_PROCESS_STATE];
+
+/**
+ * Worker/Database-owned identity of the current numerical eligibility policy.
+ *
+ * Bound to Worker `solver_worker::NUMERICAL_SNAPSHOT_POLICY_VERSION` and recorded in the
+ * snapshot build request hash, so a snapshot requested under the retired `100..199` membership can
+ * never be matched to a request built under the current policy. The literal is not sent as a
+ * payload field: Worker owns and records the field `numerical_policy_version` in its own snapshot
+ * build config and does not accept that marker from a caller.
+ */
+export const NUMERICAL_SNAPSHOT_POLICY_VERSION =
+  'public-numerical-state-100-excluding-result-120:v1';
+
+/**
+ * The retired reserved-range membership still reaches some snapshot builders as an explicit
+ * `100..199` process-state argument (the legacy CLI default). It is not new-compute evidence.
+ */
+export function isRetiredNumericalStateArgument(states: readonly number[]): boolean {
+  return (
+    states.length ===
+      DEFAULT_PUBLISHED_PROCESS_STATE_END - DEFAULT_PUBLISHED_PROCESS_STATE_START + 1 &&
+    states.every((state, index) => state === DEFAULT_PUBLISHED_PROCESS_STATE_START + index)
+  );
+}
+
 export const PUBLIC_PLUS_OWNER_DRAFT_SCOPE = 'public_plus_owner_draft';
 export const FILTERED_LIBRARY_SELECTION_MODE = 'filtered_library';
 export const REQUEST_ROOTS_CLOSURE_SELECTION_MODE = 'request_roots_closure';
@@ -275,6 +319,21 @@ export function parseLcaDataScope(raw: unknown): LcaDataScope {
   return 'current_user';
 }
 
+/**
+ * Numerical-policy marker of a **proposed** snapshot filter.
+ *
+ * Distinct from [`rejectNonCurrentSnapshotEvidence`], which validates a persisted ready snapshot.
+ * A proposed filter carrying this marker proves nothing about any stored row: it participates in
+ * the request hash and in snapshot lookup, and it is deliberately **not** added to
+ * `buildSnapshotBuildPayloadFields`, because Worker's payload contract does not accept it from a
+ * caller. Worker authors the persisted `process_filter` at upsert time and records the marker in
+ * its own `SnapshotBuildConfig`, so a marker present on a proposed filter can never authorize a
+ * pre-existing artifact.
+ */
+export function buildSnapshotNumericalPolicyFields(): { numerical_policy_version: string } {
+  return { numerical_policy_version: NUMERICAL_SNAPSHOT_POLICY_VERSION };
+}
+
 export function buildPublicPlusOwnerDraftScopeManifest(userId: string): LcaScopeManifest {
   const actorUserId = normalizeRequiredUserId(userId);
   return {
@@ -340,10 +399,12 @@ export async function buildSnapshotProcessFilter(
   }
 
   // Existing scopes continue to reuse the current user-enhanced snapshot family.
+  // The published candidate universe is exactly state `100`: `101..199` is a reserved
+  // publication segment and the published Result state `120` is never a numerical input.
   // Root-process eligibility remains distinct and is validated per request.
   return {
     all_states: false,
-    process_states: [...DEFAULT_PUBLISHED_PROCESS_STATES],
+    process_states: [...PUBLIC_NUMERICAL_PROCESS_STATES],
     include_user_id: userId,
     ...selectionFields,
   };
@@ -358,12 +419,215 @@ export function shouldAutoBuildSnapshot(dataScope: LcaDataScope): boolean {
   );
 }
 
+export type SnapshotProcessFilterRejection =
+  | 'snapshot_all_states_not_numerical'
+  | 'snapshot_process_filter_missing'
+  | 'snapshot_process_filter_malformed'
+  | 'snapshot_process_states_missing'
+  | 'snapshot_published_result_process_state_not_numerical'
+  | 'snapshot_review_diagnostic_process_state_not_numerical'
+  | 'snapshot_retired_published_state_range_not_numerical'
+  | 'snapshot_process_state_not_numerical';
+
+export type SnapshotEvidenceRejection =
+  | 'snapshot_numerical_policy_version_missing'
+  | 'snapshot_numerical_policy_version_not_current'
+  | SnapshotProcessFilterRejection;
+
+/**
+ * Numerical-policy marker of a **stored ready** snapshot, authored by the Worker at upsert time.
+ *
+ * Cross-repo contract (Worker #289 produces it): `upsert_snapshot_artifact_row` writes
+ * `numerical_policy_version` into the `ready` `private.lca_network_snapshots.process_filter` object
+ * with the same literal it records in the artifact's `SnapshotBuildConfig`. `Edge` reads only that
+ * field from the existing `processFilter` projection — no new Database field, RPC, or metadata
+ * shape is required, because `api.svc_lca_snapshot_candidates` already returns `processFilter`
+ * verbatim.
+ *
+ * A marker is never inferred from a `100`-shaped state list. An older owner-all-states filter also
+ * used `process_states = [100]`, so `process_states` alone is not policy evidence.
+ */
+export function parseStoredNumericalPolicyMarker(raw: unknown): string | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return null;
+  }
+  const value = (raw as Record<string, unknown>).numerical_policy_version;
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+/**
+ * Gate for accepting a **stored** snapshot as current numerical evidence for a new calculation.
+ *
+ * This is deliberately separate from [`rejectNonNumericalSnapshotProcessFilter`]:
+ * - the filter validator answers "is this proposed filter numerically shaped?", and a proposed
+ *   filter may legitimately carry the marker without proving anything about a stored row;
+ * - this validator answers "does this already-persisted ready snapshot carry current policy
+ *   evidence?", and therefore requires the marker and requires it to be the current literal.
+ *
+ * A missing or retired marker fails closed. Historical artifact reads and administrative routes do
+ * not call this function, so old bytes stay readable.
+ */
+export function rejectNonCurrentSnapshotEvidence(raw: unknown): SnapshotEvidenceRejection | null {
+  const marker = parseStoredNumericalPolicyMarker(raw);
+  if (marker === null) {
+    return 'snapshot_numerical_policy_version_missing';
+  }
+  if (marker !== NUMERICAL_SNAPSHOT_POLICY_VERSION) {
+    return 'snapshot_numerical_policy_version_not_current';
+  }
+  return rejectNonNumericalSnapshotProcessFilter(raw);
+}
+
+export type SnapshotEvidenceDecision =
+  | { ok: true }
+  | { ok: false; status: 404; error: 'snapshot_not_ready' }
+  | { ok: false; status: 409; error: SnapshotEvidenceRejection };
+
+/**
+ * Whether a candidate row from `api.svc_lca_snapshot_candidates` may be used for a new calculation.
+ *
+ * Callers must reach this decision **before** any cached-result return or enqueue side effect, on
+ * both the automatic-lookup and explicit-snapshot paths, so a non-current snapshot can never be
+ * served from cache. The row shape is the existing `api.svc_lca_snapshot_candidates` projection:
+ * `{ processFilter, artifact: { artifactUrl } }`. A row without a ready artifact URL is reported as
+ * `snapshot_not_ready` rather than as a policy failure.
+ */
+export function evaluateSnapshotEvidenceForNewCalculation(
+  candidate: { processFilter?: unknown; artifact?: unknown } | null | undefined,
+): SnapshotEvidenceDecision {
+  if (!candidate) {
+    return { ok: false, status: 404, error: 'snapshot_not_ready' };
+  }
+  const artifact = candidate.artifact;
+  if (!artifact || typeof artifact !== 'object' || Array.isArray(artifact)) {
+    return { ok: false, status: 404, error: 'snapshot_not_ready' };
+  }
+  const artifactUrl = (artifact as { artifactUrl?: unknown }).artifactUrl;
+  if (typeof artifactUrl !== 'string' || artifactUrl.trim().length === 0) {
+    // The candidate RPC only joins `status = 'ready'` artifacts, so this is a defensive check: a
+    // draft enqueue row or an artifact-less row must not be treated as evidence either way.
+    return { ok: false, status: 404, error: 'snapshot_not_ready' };
+  }
+  const rejection = rejectNonCurrentSnapshotEvidence(candidate.processFilter);
+  if (rejection) {
+    return { ok: false, status: 409, error: rejection };
+  }
+  return { ok: true };
+}
+
+/**
+ * Numerical-shape admission for a **proposed** snapshot `processFilter`.
+ *
+ * Proposed-filter validation only. It never requires the stored-evidence marker, which is
+ * Worker-authored into the stored `ready` row and is checked by
+ * [`rejectNonCurrentSnapshotEvidence`]; keeping the two apart is what lets a proposed filter carry
+ * lookup identity while no marker can ever authorize a stored row.
+ *
+ * Validates the **raw** value, not a normalized one: `parseSnapshotProcessFilter` maps an absent,
+ * non-array, or empty state list to `[]`, which would admit missing or malformed evidence. A
+ * positive admission therefore requires an object, an explicit boolean `all_states: false`, and a
+ * non-empty integer-array `process_states`. The comma-separated string form belongs to the Worker
+ * payload contract and is not accepted here.
+ *
+ * Owner state `0` is the owner branch of every non-versioned scope and is *not* required to be
+ * listed: those scopes send only `include_user_id`, and Worker materializes owner state `0` from
+ * its own predicate. When owner codes are listed explicitly they must be exactly `0` and must be
+ * accompanied by an owner id. The owner/scopes contract itself lives in
+ * `_shared/lca_process_scope.ts`.
+ */
+export function rejectNonNumericalSnapshotProcessFilter(
+  raw: unknown,
+): SnapshotProcessFilterRejection | null {
+  if (raw === null || raw === undefined) {
+    return 'snapshot_process_filter_missing';
+  }
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    return 'snapshot_process_filter_malformed';
+  }
+
+  const record = raw as Record<string, unknown>;
+  if (!Object.hasOwn(record, 'all_states') || typeof record.all_states !== 'boolean') {
+    return 'snapshot_process_filter_malformed';
+  }
+  if (record.all_states) {
+    return 'snapshot_all_states_not_numerical';
+  }
+
+  const processStates = parseRawStateList(record.process_states);
+  if (processStates === null) {
+    return 'snapshot_process_states_missing';
+  }
+  // `include_user_state_codes` is optional: the non-versioned scopes send only `include_user_id`
+  // and the Worker materializes that as owner state `0`.
+  const ownerStateCodes = Object.hasOwn(record, 'include_user_state_codes')
+    ? parseRawStateList(record.include_user_state_codes)
+    : [];
+  if (ownerStateCodes === null) {
+    return 'snapshot_process_filter_malformed';
+  }
+  const includeUserId =
+    typeof record.include_user_id === 'string' ? record.include_user_id.trim() : '';
+
+  const numericalStates = [...processStates, ...ownerStateCodes];
+  // The retired reserved-range membership is checked first: `100..199` contains `120`, so the
+  // range has to name itself instead of being reported as a single Result-state request.
+  if (isRetiredNumericalStateArgument(processStates)) {
+    return 'snapshot_retired_published_state_range_not_numerical';
+  }
+  if (numericalStates.includes(PUBLISHED_RESULT_PROCESS_STATE)) {
+    return 'snapshot_published_result_process_state_not_numerical';
+  }
+  // The Review Admin quality diagnostic owns its own dedicated job family and runner. A generic
+  // snapshot filter carrying the in-review state `20` must fail closed here rather than let a
+  // caller widen the numerical universe through this module.
+  if (numericalStates.includes(REVIEW_IN_PROGRESS_PROCESS_STATE)) {
+    return 'snapshot_review_diagnostic_process_state_not_numerical';
+  }
+  if (
+    processStates.some((state) => !PUBLIC_NUMERICAL_PROCESS_STATES.includes(state)) ||
+    ownerStateCodes.some((state) => state !== OWNER_DRAFT_PROCESS_STATE)
+  ) {
+    return 'snapshot_process_state_not_numerical';
+  }
+  if (ownerStateCodes.length > 0 && !includeUserId) {
+    return 'snapshot_process_state_not_numerical';
+  }
+  return null;
+}
+
+/**
+ * Strict integer-list reader for a raw stored filter field.
+ *
+ * Returns `null` for anything that is not a non-empty array of integers. `normalizeIntegerList`
+ * would instead coerce a missing, empty, or malformed value to `[]`, which is exactly the
+ * fail-open behavior this guard must not inherit. The comma-separated string form is refused too,
+ * because it belongs to the Worker payload contract and no writer of the persisted column
+ * produces it.
+ */
+function parseRawStateList(raw: unknown): number[] | null {
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return null;
+  }
+  const values: number[] = [];
+  for (const item of raw) {
+    if (typeof item !== 'number' || !Number.isInteger(item)) {
+      return null;
+    }
+    values.push(item);
+  }
+  return values;
+}
+
 export function buildSnapshotContainsFilter(
   filter: SnapshotProcessFilter,
 ): Record<string, unknown> {
   const parsed = parseSnapshotProcessFilter(filter);
   const containsFilter: Record<string, unknown> = {
     all_states: parsed.allStates,
+    // Any stored snapshot that can be reused for new compute must have been authored by the Worker
+    // under the current numerical policy. Sending the marker in the containment filter makes the
+    // candidate lookup skip pre-policy rows instead of matching them on the state list alone.
+    ...buildSnapshotNumericalPolicyFields(),
   };
 
   if (!parsed.allStates && parsed.processStates.length > 0) {
@@ -715,23 +979,29 @@ export function buildSnapshotVisibilityOrExpression(
     branches.push(`state_code.in.(${filter.processStates.join(',')})`);
   }
   if (filter.includeUserId) {
-    if (filter.includeUserStateCodes.length > 0) {
-      const ownerClauses = [
-        `user_id.eq.${filter.includeUserId}`,
-        `state_code.in.(${filter.includeUserStateCodes.join(',')})`,
-      ];
-      if (options.supportsCollaborationColumns !== false) {
-        if (filter.includeUserUnassignedOnly) {
-          ownerClauses.push('team_id.is.null');
-        }
-        if (filter.includeUserReviewFreeOnly) {
-          ownerClauses.push('review_id.is.null');
-        }
+    // The owner branch always carries an explicit owner state code. An owner clause without one
+    // would describe "every non-public state this actor can see", which is not the numerical
+    // owner-draft rule the Worker executes. The non-versioned snapshot payload sends exactly
+    // `process_states=100` plus `include_user_id`, and the Worker selects
+    // `state_code = 100 OR (user_id = actor AND state_code = 0)`; this expression mirrors that
+    // predicate so the freshness probe cannot be freshened by an unrelated owner state.
+    const ownerStateCodes =
+      filter.includeUserStateCodes.length > 0
+        ? filter.includeUserStateCodes
+        : [OWNER_DRAFT_PROCESS_STATE];
+    const ownerClauses = [
+      `user_id.eq.${filter.includeUserId}`,
+      `state_code.in.(${ownerStateCodes.join(',')})`,
+    ];
+    if (options.supportsCollaborationColumns !== false) {
+      if (filter.includeUserUnassignedOnly) {
+        ownerClauses.push('team_id.is.null');
       }
-      branches.push(`and(${ownerClauses.join(',')})`);
-    } else {
-      branches.push(`user_id.eq.${filter.includeUserId}`);
+      if (filter.includeUserReviewFreeOnly) {
+        ownerClauses.push('review_id.is.null');
+      }
     }
+    branches.push(`and(${ownerClauses.join(',')})`);
   }
 
   return branches.length > 0 ? branches.join(',') : null;
