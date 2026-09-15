@@ -15,6 +15,7 @@ import {
   buildSnapshotContainsFilter,
   buildSnapshotProcessFilter,
   buildSnapshotVisibilityOrExpression,
+  evaluateSnapshotEvidenceForNewCalculation,
   matchesSnapshotProcessFilter,
   parseLcaDataScope,
   parseSnapshotProcessFilter,
@@ -25,7 +26,11 @@ import {
   type LcaDataScope,
   type ParsedSnapshotProcessFilter,
 } from '../_shared/lca_snapshot_scope.ts';
-import { verifySnapshotMatchesDataScope } from '../_shared/lca_snapshot_scope_db.ts';
+import {
+  resolveLatestSnapshotForNewCalculation,
+  verifySnapshotEvidenceForNewCalculation,
+  verifySnapshotMatchesDataScope,
+} from '../_shared/lca_snapshot_scope_db.ts';
 import { supabaseAuthClient, supabaseClient } from '../_shared/supabase_client.ts';
 import { isWorkerJobsCutoverEnabled } from '../_shared/worker_jobs_cutover.ts';
 
@@ -85,6 +90,7 @@ type SnapshotIndexDocument = {
 type SnapshotArtifactMeta = {
   snapshot_id: string;
   artifact_url: string;
+  process_filter?: unknown;
 };
 
 type ReadySnapshotMeta = {
@@ -404,9 +410,16 @@ async function resolveReadySnapshot(
     if (!UUID_RE.test(explicit)) {
       return { ok: false, error: 'invalid_snapshot_id', status: 400 };
     }
-    const ready = await fetchSnapshotArtifactMeta(explicit);
-    if (!ready.ok) {
-      return { ok: false, error: ready.error, status: ready.status };
+    // New-compute evidence requires the Worker-authored current policy marker in the stored ready
+    // `process_filter`, checked before any downstream cached-work reuse.
+    const evidence = await verifySnapshotEvidenceForNewCalculation(supabaseClient, {
+      snapshotId: explicit,
+    });
+    if (!evidence.ok) {
+      return { ok: false, error: evidence.error, status: evidence.status };
+    }
+    if (!evidence.matches) {
+      return { ok: false, error: 'snapshot_not_ready', status: 404 };
     }
     if (dataScope === PUBLIC_PLUS_OWNER_DRAFT_SCOPE && userId) {
       const scopeVerification = await verifySnapshotMatchesDataScope(supabaseClient, {
@@ -425,7 +438,7 @@ async function resolveReadySnapshot(
         return { ok: false, error: 'snapshot_not_in_data_scope', status: 403 };
       }
     }
-    return { ok: true, data: { snapshot_id: ready.data.snapshot_id } };
+    return { ok: true, data: { snapshot_id: explicit } };
   }
 
   if (userId) {
@@ -439,22 +452,16 @@ async function resolveReadySnapshot(
     return { ok: false, error: 'no_ready_snapshot', status: 404 };
   }
 
-  const candidates = await queryLcaSnapshotCandidates(supabaseClient, {
-    scope,
-    limit: 1,
-  });
-  if (!candidates.ok) {
-    console.error('read latest ready snapshot failed', { code: candidates.code });
-    return { ok: false, error: 'snapshot_lookup_failed', status: 500 };
-  }
-  const latest = candidates.data[0];
-  if (!latest) {
-    return { ok: false, error: 'no_ready_snapshot', status: 404 };
+  // The no-user fallback is the same reuse decision as the actor-scoped one: a stored ready
+  // snapshot backs a new calculation only with the current Worker-authored policy marker.
+  const latest = await resolveLatestSnapshotForNewCalculation(supabaseClient, { scope });
+  if (!latest.ok) {
+    return { ok: false, error: latest.error, status: latest.status };
   }
   return {
     ok: true,
     data: {
-      snapshot_id: latest.snapshotId,
+      snapshot_id: latest.candidate.snapshotId,
     },
   };
 }
@@ -485,6 +492,11 @@ async function fetchReadySnapshotForDataScope(
   for (const row of result.data) {
     const snapshotId = row.snapshotId.trim();
     if (!snapshotId) {
+      continue;
+    }
+    // `process_states: [100]` alone is not policy evidence, so the exact marker is re-checked here
+    // rather than inferred from the state list the containment filter matched.
+    if (!evaluateSnapshotEvidenceForNewCalculation(row).ok) {
       continue;
     }
     const processFilter = row.processFilter;
@@ -614,6 +626,7 @@ async function fetchSnapshotArtifactMeta(
     data: {
       snapshot_id: row.snapshotId,
       artifact_url: row.artifact.artifactUrl,
+      process_filter: row.processFilter,
     },
   };
 }

@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-13
-lastReviewedCommit: 6c57a818a798864a1ace82228c497a30ff4ccaac
-lastReviewedNote: 'Reviewed for Edge #418: active canonicalRepo is tiangong-lca/edge-functions; the task branch incorporates6 already-reviewed main merge commits whose tree is identical to the previous dev baseline. Function/configuration/import bytes, toolchain, deployment/auth boundaries and all validation gates are unchanged.'
+lastReviewedAt: 2026-09-15
+lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
+lastReviewedNote: 'Reviewed for Edge #421: published numerical Process eligibility is exactly state 100; the reserved 100..199 range grants no numerical eligibility and result state 120 is never a numerical input, so a stored 100..199-shaped filter is recognized only so it cannot be reused. Scope-producer, process-scope, and snapshot build-queue behavior changed; branch rules, deploy/auth boundaries, toolchain and routing intents are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -96,7 +96,7 @@ Keep these entry-level facts in `AGENTS.md`. Use `README.md` and `docs/agents/re
 - latest reviewed import graph: AWS SDK `3.1121.0`, OpenAI `7.8.0`, Supabase JSR `2.112.4`, Upstash Redis `1.38.3`, Deno Redis `0.41.2`, Zod `4.5.4`, and Prettier `3.9.6`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; `pnpm outdated` and exact-Deno `deno outdated --latest` must remain empty
 - local serve command: `pnpm start`
 - baseline local validation: non-mutating `pnpm lint` and canonical `pnpm check`
-- `pnpm check` validates exact runtime versions, checks all 152 enabled function/test roots through one bounded shared Deno graph, runs 73 Node contract tests, and executes 541 default Deno behavior tests plus one opt-in live Upstash test that remains ignored without explicit credentials
+- `pnpm check` validates exact runtime versions, checks all 153 enabled function/test roots through one bounded shared Deno graph, runs 73 Node contract tests, and executes the default Deno behavior tests plus one opt-in live Upstash test that remains ignored without explicit credentials
 - schema-boundary regression: `test/schema_boundary_contract_test.ts`
 - formatting fix command: `pnpm format`
 - remote deploy entrypoints:

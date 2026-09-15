@@ -9,8 +9,12 @@ import {
   LCA_STATIC_CACHE_METHOD_COUNT,
   LCIA_FACTOR_COVERAGE_CONTRACT_SCHEMA_VERSION,
   LCIA_UNCHARACTERIZED_ARTIFACT_FORMAT,
+  NUMERICAL_SNAPSHOT_POLICY_VERSION,
+  PUBLIC_NUMERICAL_PROCESS_STATES,
   PUBLIC_PLUS_OWNER_DRAFT_PREDICATE_VERSION,
+  PUBLISHED_RESULT_PROCESS_STATE,
   REQUEST_ROOTS_CLOSURE_SELECTION_MODE,
+  buildSnapshotNumericalPolicyFields,
   buildLcaCalculationEvidenceBinding,
   buildPublicPlusOwnerDraftScopeBinding,
   buildSnapshotBuildPayloadFields,
@@ -22,6 +26,10 @@ import {
   normalizeSnapshotRequestRoots,
   parseLcaDataScope,
   parseSnapshotProcessFilter,
+  parseStoredNumericalPolicyMarker,
+  rejectNonCurrentSnapshotEvidence,
+  rejectNonNumericalSnapshotProcessFilter,
+  evaluateSnapshotEvidenceForNewCalculation,
   shouldAutoBuildSnapshot,
   validateCalculationEvidenceForDataScope,
   validateLcaCalculationEvidence,
@@ -41,24 +49,26 @@ Deno.test(
 );
 
 Deno.test('buildSnapshotProcessFilter preserves existing shared snapshot family', async () => {
-  const expectedStates = [...DEFAULT_PUBLISHED_PROCESS_STATES];
+  // The shared family keeps its identity/activation semantics but its published Process universe
+  // is now exactly state 100, not the reserved 100..199 segment.
+  const expectedStates = PUBLIC_NUMERICAL_PROCESS_STATES;
   assertEquals(await buildSnapshotProcessFilter('current_user', 'user-1'), {
     all_states: false,
-    process_states: expectedStates,
+    process_states: [...expectedStates],
     include_user_id: 'user-1',
     selection_mode: 'filtered_library',
     request_roots: [],
   });
   assertEquals(await buildSnapshotProcessFilter('open_data', 'user-1'), {
     all_states: false,
-    process_states: expectedStates,
+    process_states: [...expectedStates],
     include_user_id: 'user-1',
     selection_mode: 'filtered_library',
     request_roots: [],
   });
   assertEquals(await buildSnapshotProcessFilter('all_data', 'user-1'), {
     all_states: false,
-    process_states: expectedStates,
+    process_states: [...expectedStates],
     include_user_id: 'user-1',
     selection_mode: 'filtered_library',
     request_roots: [],
@@ -134,6 +144,258 @@ Deno.test('DEFAULT_PUBLISHED_PROCESS_STATES covers 100 through 199', () => {
   assertEquals(DEFAULT_PUBLISHED_PROCESS_STATES[0], 100);
   assertEquals(DEFAULT_PUBLISHED_PROCESS_STATES.at(-1), 199);
 });
+
+Deno.test(
+  'published numerical Process eligibility is exactly 100, never the reserved range',
+  () => {
+    assertEquals(PUBLIC_NUMERICAL_PROCESS_STATES, [100]);
+    assertEquals(PUBLIC_NUMERICAL_PROCESS_STATES.includes(PUBLISHED_RESULT_PROCESS_STATE), false);
+    assertEquals(PUBLIC_NUMERICAL_PROCESS_STATES.includes(101), false);
+    assertEquals(PUBLIC_NUMERICAL_PROCESS_STATES.includes(199), false);
+  },
+);
+
+Deno.test('every scope list or range producer carries exact 100 and never 120', async () => {
+  for (const dataScope of ['current_user', 'open_data', 'all_data'] as const) {
+    const filter = await buildSnapshotProcessFilter(dataScope, 'user-1');
+    assertEquals(filter.process_states, [100]);
+    assertEquals(filter.process_states?.includes(PUBLISHED_RESULT_PROCESS_STATE), false);
+    assertEquals(filter.all_states, false);
+    assertEquals(buildSnapshotBuildPayloadFields(filter).process_states, '100');
+    assertEquals(buildSnapshotContainsFilter(filter).process_states, [100]);
+    assertEquals(rejectNonNumericalSnapshotProcessFilter(filter), null);
+  }
+
+  const versioned = await buildSnapshotProcessFilter('public_plus_owner_draft', 'user-1');
+  assertEquals(versioned.process_states, [100]);
+  assertEquals(rejectNonNumericalSnapshotProcessFilter(versioned), null);
+  // The proposed filter stays payload-shaped and carries no marker; the containment view used for
+  // snapshot lookup adds it. The distinction is deliberate: a proposed marker proves nothing about
+  // a stored row.
+  assertEquals('numerical_policy_version' in versioned, false);
+  assertEquals(buildSnapshotContainsFilter(versioned), {
+    ...versioned,
+    numerical_policy_version: NUMERICAL_SNAPSHOT_POLICY_VERSION,
+  });
+});
+
+Deno.test('Edge binds the Worker-owned numerical policy marker verbatim', () => {
+  // The literal is owned by Worker `solver_worker::NUMERICAL_SNAPSHOT_POLICY_VERSION`. Edge uses
+  // it only as request/cache identity; it is never sent as a caller-supplied payload field, and
+  // Edge does not restate Database or Worker eligibility-predicate versions it does not consume.
+  assertEquals(
+    NUMERICAL_SNAPSHOT_POLICY_VERSION,
+    'public-numerical-state-100-excluding-result-120:v1',
+  );
+  assertEquals(buildSnapshotNumericalPolicyFields(), {
+    numerical_policy_version: 'public-numerical-state-100-excluding-result-120:v1',
+  });
+});
+
+Deno.test('snapshot lookup asks the database for the current policy marker', async () => {
+  const filter = await buildSnapshotProcessFilter('current_user', 'user-1');
+  const contains = buildSnapshotContainsFilter(filter);
+  // The containment filter must include the marker so a pre-policy row is not even a candidate.
+  assertEquals(contains.numerical_policy_version, NUMERICAL_SNAPSHOT_POLICY_VERSION);
+  assertEquals(contains.process_states, [100]);
+  assertEquals(contains.all_states, false);
+});
+
+Deno.test('stored snapshot evidence requires a current marker, never a 100-shaped filter', () => {
+  const currentMarker = NUMERICAL_SNAPSHOT_POLICY_VERSION;
+  const statesOnly = {
+    all_states: false,
+    process_states: [100],
+    include_user_id: 'user-1',
+    selection_mode: 'filtered_library',
+    request_roots: [],
+  };
+
+  // A `100`-shaped filter with no marker is an older owner-all-states row: readable, not usable.
+  assertEquals(parseStoredNumericalPolicyMarker(statesOnly), null);
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence(statesOnly),
+    'snapshot_numerical_policy_version_missing',
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({ ...statesOnly, numerical_policy_version: '' }),
+    'snapshot_numerical_policy_version_missing',
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({ ...statesOnly, numerical_policy_version: 100 }),
+    'snapshot_numerical_policy_version_missing',
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence(undefined),
+    'snapshot_numerical_policy_version_missing',
+  );
+  assertEquals(rejectNonCurrentSnapshotEvidence(null), 'snapshot_numerical_policy_version_missing');
+
+  // A retired marker is readable history, never new-compute evidence.
+  for (const retired of [
+    'published-state-code-100-199:v1',
+    'public-numerical-state-100-199:v1',
+    'public-numerical-state-100-excluding-result-120:v0',
+  ]) {
+    assertEquals(
+      rejectNonCurrentSnapshotEvidence({ ...statesOnly, numerical_policy_version: retired }),
+      'snapshot_numerical_policy_version_not_current',
+    );
+  }
+
+  // The current marker is accepted, and filter-shape failures still surface through it.
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({ ...statesOnly, numerical_policy_version: currentMarker }),
+    null,
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({
+      ...statesOnly,
+      process_states: [100, 120],
+      numerical_policy_version: currentMarker,
+    }),
+    'snapshot_published_result_process_state_not_numerical',
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({
+      ...statesOnly,
+      process_states: DEFAULT_PUBLISHED_PROCESS_STATES,
+      numerical_policy_version: currentMarker,
+    }),
+    'snapshot_retired_published_state_range_not_numerical',
+  );
+  assertEquals(
+    rejectNonCurrentSnapshotEvidence({ all_states: true, numerical_policy_version: currentMarker }),
+    'snapshot_all_states_not_numerical',
+  );
+});
+
+Deno.test('candidate evidence decision fails closed before cache or enqueue', () => {
+  const candidate = (processFilter: unknown, artifactUrl = 's3://snapshot/index.json') => ({
+    processFilter,
+    artifact: { artifactUrl },
+  });
+  const current = {
+    all_states: false,
+    process_states: [100],
+    include_user_id: 'user-1',
+    numerical_policy_version: NUMERICAL_SNAPSHOT_POLICY_VERSION,
+  };
+
+  assertEquals(evaluateSnapshotEvidenceForNewCalculation(candidate(current)), { ok: true });
+  // No marker, retired marker, and no ready artifact all fail closed.
+  assertEquals(
+    evaluateSnapshotEvidenceForNewCalculation(
+      candidate({ ...current, numerical_policy_version: undefined }),
+    ),
+    {
+      ok: false,
+      status: 409,
+      error: 'snapshot_numerical_policy_version_missing',
+    },
+  );
+  assertEquals(
+    evaluateSnapshotEvidenceForNewCalculation(
+      candidate({ ...current, numerical_policy_version: 'published-state-code-100-199:v1' }),
+    ),
+    {
+      ok: false,
+      status: 409,
+      error: 'snapshot_numerical_policy_version_not_current',
+    },
+  );
+  assertEquals(evaluateSnapshotEvidenceForNewCalculation(candidate(current, '')), {
+    ok: false,
+    status: 404,
+    error: 'snapshot_not_ready',
+  });
+  assertEquals(evaluateSnapshotEvidenceForNewCalculation(undefined), {
+    ok: false,
+    status: 404,
+    error: 'snapshot_not_ready',
+  });
+  // A draft enqueue-time row (`coalesce(p_process_filter,'{}')`) can never authorize a ready build.
+  assertEquals(evaluateSnapshotEvidenceForNewCalculation(candidate({})), {
+    ok: false,
+    status: 409,
+    error: 'snapshot_numerical_policy_version_missing',
+  });
+});
+
+Deno.test(
+  'snapshot filters fail closed on all-states, 120, retired range, and stray states',
+  () => {
+    // Exact shape the Worker writes for the non-versioned scopes (`snapshot_builder`
+    // `upsert_snapshot_artifact_row`): plain numeric list plus the owner id.
+    const workerNonVersioned = {
+      all_states: false,
+      process_states: [100],
+      include_user_id: 'user-1',
+      selection_mode: 'filtered_library',
+      request_roots: [],
+      scope_hash: 'a'.repeat(64),
+      resolved_scope: { public_process_count: 1, private_process_count: 0, process_count: 1 },
+      artifact_lifecycle: { expires_at_utc: null },
+    };
+    assertEquals(rejectNonNumericalSnapshotProcessFilter(workerNonVersioned), null);
+    // The versioned scope additionally carries `include_user_state_codes`.
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({
+        ...workerNonVersioned,
+        include_user_state_codes: [0],
+      }),
+      null,
+    );
+    const base = workerNonVersioned;
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({ ...base, all_states: true }),
+      'snapshot_all_states_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({ ...base, process_states: [100, 120] }),
+      'snapshot_published_result_process_state_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({ ...base, process_states: [120] }),
+      'snapshot_published_result_process_state_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({
+        ...base,
+        process_states: DEFAULT_PUBLISHED_PROCESS_STATES,
+      }),
+      'snapshot_retired_published_state_range_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({ ...base, process_states: [100, 150] }),
+      'snapshot_process_state_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({
+        ...base,
+        include_user_state_codes: [20],
+      }),
+      'snapshot_review_diagnostic_process_state_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({
+        all_states: false,
+        process_states: [100],
+        selection_mode: 'filtered_library',
+        request_roots: [],
+        include_user_state_codes: [0],
+      }),
+      'snapshot_process_state_not_numerical',
+    );
+    assertEquals(
+      rejectNonNumericalSnapshotProcessFilter({
+        ...base,
+        include_user_state_codes: [0],
+      }),
+      null,
+    );
+  },
+);
 
 Deno.test(
   'matchesSnapshotProcessFilter rejects scope, actor, state, hash, or manifest drift',
@@ -218,9 +480,14 @@ Deno.test(
 
 Deno.test('query/build helpers carry exact worker and LCIA proof contracts', async () => {
   const filter = await buildSnapshotProcessFilter('public_plus_owner_draft', 'user-1');
-  assertEquals(buildSnapshotContainsFilter(filter), filter);
+  assertEquals(buildSnapshotContainsFilter(filter), {
+    ...filter,
+    numerical_policy_version: NUMERICAL_SNAPSHOT_POLICY_VERSION,
+  });
 
   const payload = buildSnapshotBuildPayloadFields(filter);
+  // The marker is Edge lookup/hash identity only; Worker does not accept it as a payload field.
+  assertEquals('numerical_policy_version' in payload, false);
   assertEquals(payload.all_states, false);
   assertEquals(payload.process_states, '100');
   assertEquals(payload.include_user_id, 'user-1');
@@ -296,7 +563,7 @@ Deno.test('freshness visibility expression includes every actor-owned state-zero
   );
   assertEquals(
     buildSnapshotVisibilityOrExpression(legacy),
-    `state_code.in.(${DEFAULT_PUBLISHED_PROCESS_STATES.join(',')}),user_id.eq.user-1`,
+    'state_code.in.(100),and(user_id.eq.user-1,state_code.in.(0))',
   );
 });
 
@@ -476,3 +743,145 @@ Deno.test(
     });
   },
 );
+Deno.test('snapshot filters are rejected before lossy normalization', () => {
+  const valid = {
+    all_states: false,
+    process_states: [100],
+    include_user_id: 'user-1',
+    selection_mode: 'filtered_library',
+    request_roots: [],
+  };
+  assertEquals(rejectNonNumericalSnapshotProcessFilter(valid), null);
+
+  // `parseSnapshotProcessFilter` maps all of these to "no state filter", which would otherwise be
+  // admitted as numerical. Missing or malformed policy evidence must fail closed instead.
+  for (const raw of [
+    undefined,
+    null,
+    {},
+    [],
+    'all_states:false',
+    42,
+    { ...valid, all_states: undefined },
+    { ...valid, all_states: 'false' },
+    { ...valid, all_states: 0 },
+    { process_states: [100] },
+    { ...valid, process_states: undefined },
+    { ...valid, process_states: null },
+    { ...valid, process_states: [] },
+    { ...valid, process_states: '' },
+    { ...valid, process_states: '  ' },
+    { ...valid, process_states: 100 },
+    { ...valid, process_states: ['100'] },
+    { ...valid, process_states: [100.5] },
+    { ...valid, process_states: [Number.NaN] },
+    { ...valid, process_states: '100,120x' },
+    { ...valid, process_states: '100,,101' },
+    { ...valid, process_states: '100' },
+    { ...valid, include_user_state_codes: [] },
+    { ...valid, include_user_state_codes: '0,' },
+    { ...valid, include_user_state_codes: '0' },
+    { ...valid, include_user_state_codes: ['0'] },
+    { ...valid, include_user_state_codes: [0.5] },
+  ]) {
+    assertNotEquals(
+      rejectNonNumericalSnapshotProcessFilter(raw),
+      null,
+      `raw filter must not be admitted: ${JSON.stringify(raw)}`,
+    );
+  }
+
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({ ...valid, process_states: undefined }),
+    'snapshot_process_states_missing',
+  );
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter(undefined),
+    'snapshot_process_filter_missing',
+  );
+  assertEquals(rejectNonNumericalSnapshotProcessFilter(null), 'snapshot_process_filter_missing');
+  assertEquals(rejectNonNumericalSnapshotProcessFilter({}), 'snapshot_process_filter_malformed');
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({ ...valid, all_states: 'false' }),
+    'snapshot_process_filter_malformed',
+  );
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({ ...valid, include_user_state_codes: [] }),
+    'snapshot_process_filter_malformed',
+  );
+});
+
+Deno.test('snapshot filters admit only explicit well-typed numerical evidence', () => {
+  // An older Edge producer wrote exactly this shape: `process_states: [100]` with `include_user_id`
+  // and **no** `include_user_state_codes` (Worker materializes the owner branch as state `0` from
+  // its own predicate). The filter itself is numerically consistent, and Edge cannot re-derive its
+  // own past semantics, so it is admitted here. It is *not* accepted as current numerical evidence:
+  // only the artifact's Worker-recorded `numerical_policy_version` proves that, and Worker applies
+  // that check whenever it decodes a snapshot for new compute.
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({
+      all_states: false,
+      process_states: [100],
+      include_user_id: 'user-1',
+      selection_mode: 'filtered_library',
+      request_roots: [],
+      scope_hash: 'f'.repeat(64),
+    }),
+    null,
+  );
+
+  // Positive shapes actually written by the two producers of `private.lca_network_snapshots`.
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({
+      all_states: false,
+      process_states: [100],
+      selection_mode: 'filtered_library',
+      request_roots: [],
+      scope_hash: 'b'.repeat(64),
+      resolved_scope: { public_process_count: 2, private_process_count: 0, process_count: 2 },
+    }),
+    null,
+  );
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({
+      all_states: false,
+      process_states: [100],
+      include_user_id: 'user-1',
+      selection_mode: 'filtered_library',
+      request_roots: [],
+      scope_hash: 'c'.repeat(64),
+      resolved_scope: { public_process_count: 2, private_process_count: 1, process_count: 3 },
+      artifact_lifecycle: { expires_at_utc: null },
+    }),
+    null,
+  );
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({
+      all_states: false,
+      process_states: [100],
+      include_user_id: 'user-1',
+      include_user_state_codes: [0],
+      include_user_unassigned_only: false,
+      include_user_review_free_only: false,
+      data_scope: 'public_plus_owner_draft',
+      scope_manifest: { schema_version: 'lca.data_scope.manifest.v2' },
+      scope_manifest_sha256: 'd'.repeat(64),
+      selection_mode: 'filtered_library',
+      request_roots: [],
+      scope_hash: 'e'.repeat(64),
+      resolved_scope: { public_process_count: 2, private_process_count: 1, process_count: 3 },
+    }),
+    null,
+  );
+  // The string form is a Worker-payload shape, not a persisted-column shape; accepting it here
+  // would be an unverified widening, so it stays out.
+  assertEquals(
+    rejectNonNumericalSnapshotProcessFilter({
+      all_states: false,
+      process_states: '100',
+      include_user_id: 'user-1',
+      include_user_state_codes: '0',
+    }),
+    'snapshot_process_states_missing',
+  );
+});

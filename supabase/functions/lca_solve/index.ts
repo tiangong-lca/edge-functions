@@ -21,6 +21,7 @@ import {
   buildSnapshotContainsFilter,
   buildSnapshotProcessFilter,
   buildSnapshotVisibilityOrExpression,
+  evaluateSnapshotEvidenceForNewCalculation,
   matchesSnapshotProcessFilter,
   parseLcaDataScope,
   parseSnapshotProcessFilter,
@@ -32,7 +33,11 @@ import {
   type LcaSnapshotRequestRoot,
   type ParsedSnapshotProcessFilter,
 } from '../_shared/lca_snapshot_scope.ts';
-import { verifySnapshotMatchesDataScope } from '../_shared/lca_snapshot_scope_db.ts';
+import {
+  resolveLatestSnapshotForNewCalculation,
+  verifySnapshotEvidenceForNewCalculation,
+  verifySnapshotMatchesDataScope,
+} from '../_shared/lca_snapshot_scope_db.ts';
 import { supabaseAuthClient, supabaseClient } from '../_shared/supabase_client.ts';
 import {
   isWorkerJobsCutoverEnabled,
@@ -74,6 +79,7 @@ type ReadySnapshotMeta = {
   snapshot_id: string;
   process_count: number;
   artifact_url: string;
+  process_filter?: unknown;
 };
 
 type SnapshotIndexProcessEntry = {
@@ -515,6 +521,18 @@ async function resolveReadySnapshot(
     if (!ready) {
       return { ok: false, error: 'snapshot_not_ready', status: 404 };
     }
+    // A stored ready snapshot is new-compute evidence only when the Worker authored the current
+    // numerical-policy marker into its `process_filter`. This runs before any cached-result return
+    // or enqueue, and a draft enqueue-time row can never satisfy it.
+    const evidence = await verifySnapshotEvidenceForNewCalculation(supabaseClient, {
+      snapshotId: explicit,
+    });
+    if (!evidence.ok) {
+      return { ok: false, error: evidence.error, status: evidence.status };
+    }
+    if (!evidence.matches) {
+      return { ok: false, error: 'snapshot_not_ready', status: 404 };
+    }
     if (dataScope === PUBLIC_PLUS_OWNER_DRAFT_SCOPE && userId) {
       const scopeVerification = await verifySnapshotMatchesDataScope(supabaseClient, {
         snapshotId: explicit,
@@ -546,24 +564,16 @@ async function resolveReadySnapshot(
     return { ok: false, error: 'no_ready_snapshot', status: 404 };
   }
 
-  const candidates = await queryLcaSnapshotCandidates(supabaseClient, {
-    scope,
-    limit: 1,
-  });
-  if (!candidates.ok) {
-    console.error('read latest ready snapshot failed', { code: candidates.code });
-    return { ok: false, error: 'snapshot_lookup_failed', status: 500 };
-  }
-  const latest = candidates.data[0];
-  if (!latest) {
-    return { ok: false, error: 'no_ready_snapshot', status: 404 };
+  const latest = await resolveLatestSnapshotForNewCalculation(supabaseClient, { scope });
+  if (!latest.ok) {
+    return { ok: false, error: latest.error, status: latest.status };
   }
   return {
     ok: true,
     data: {
-      snapshot_id: latest.snapshotId,
-      process_count: Number(latest.artifact.processCount ?? 0),
-      artifact_url: latest.artifact.artifactUrl,
+      snapshot_id: latest.candidate.snapshotId,
+      process_count: Number(latest.candidate.artifact.processCount ?? 0),
+      artifact_url: latest.candidate.artifact.artifactUrl,
     },
   };
 }
@@ -595,6 +605,13 @@ async function fetchScopedReadySnapshot(
   for (const row of result.data) {
     const snapshotId = row.snapshotId.trim();
     if (!snapshotId) {
+      continue;
+    }
+    // An older deployment's stored row carries no policy marker, and `process_states: [100]` alone
+    // is not policy evidence (an older owner-all-states filter also used it). The containment
+    // filter above already asks the database for the marker; this is the exact re-check, so a row
+    // the database could not filter out is skipped instead of being reused for new compute.
+    if (!evaluateSnapshotEvidenceForNewCalculation(row).ok) {
       continue;
     }
     const processFilter = row.processFilter;
@@ -641,6 +658,7 @@ async function fetchReadySnapshotMeta(snapshotId: string): Promise<ReadySnapshot
     snapshot_id: row.snapshotId,
     process_count: Number(row.artifact.processCount ?? 0),
     artifact_url: row.artifact.artifactUrl,
+    process_filter: row.processFilter,
   };
 }
 

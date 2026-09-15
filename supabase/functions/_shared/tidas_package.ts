@@ -14,6 +14,17 @@ export const SUPPORTED_TIDAS_TABLES = [
 
 export type SupportedTidasTable = (typeof SUPPORTED_TIDAS_TABLES)[number];
 
+/**
+ * Global open-data package scope: the reserved publication segment `100..199`.
+ *
+ * This is a TIDAS **package export** rule and is deliberately *not* the Process numerical
+ * eligibility rule: `_shared/lca_snapshot_scope.ts` owns that, and its published Process universe
+ * is exactly state `100`. Package export stays a support-dataset rule, so flows, flowproperties,
+ * unitgroups, sources, contacts and lifecyclemodels keep their existing range while the database
+ * selected-root admission (Database #646) and the Worker export materialization apply the exact
+ * Process exclusion for the published Result state `120`. Changing this literal alone would not
+ * isolate Result export, because the roots a caller names are admitted before the Worker filters.
+ */
 export const OPEN_DATA_STATE_CODE_START = 100;
 export const OPEN_DATA_STATE_CODE_END = 199;
 export const OPEN_DATA_STATE_CODES = Array.from(

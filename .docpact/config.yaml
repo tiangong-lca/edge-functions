@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: 2026-09-13
-lastReviewedCommit: 6c57a818a798864a1ace82228c497a30ff4ccaac
-lastReviewedNote: 'Reviewed for Edge #418: active canonicalRepo is tiangong-lca/edge-functions; the task branch incorporates6 already-reviewed main merge commits whose tree is identical to the previous dev baseline. Function/configuration/import bytes, toolchain, deployment/auth boundaries and all validation gates are unchanged.'
+lastReviewedAt: 2026-09-15
+lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
+lastReviewedNote: 'Reviewed for Edge #421: routing intents, ownership, coverage, governed-doc inventory and rules were re-read and are unchanged. The task changes LCA numerical Process eligibility and TIDAS package-export documentation only, so no machine-readable fact in this file needed an edit.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
