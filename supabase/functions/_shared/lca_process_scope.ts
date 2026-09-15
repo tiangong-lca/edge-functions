@@ -1,10 +1,11 @@
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.112.4';
 
 import {
-  DEFAULT_PUBLISHED_PROCESS_STATES,
   OWNER_DRAFT_PROCESS_STATE,
   PUBLIC_PLUS_OWNER_DRAFT_SCOPE,
+  PUBLIC_NUMERICAL_PROCESS_STATES,
   PUBLIC_PROCESS_STATE,
+  PUBLISHED_RESULT_PROCESS_STATE,
   isTidasVersion,
   isUuid,
   type LcaDataScope,
@@ -25,6 +26,38 @@ export type ProcessScopeEntry = {
 
 export type ProcessScopeValidationResult =
   { ok: true } | { ok: false; status: number; body: Record<string, unknown> };
+
+/**
+ * Rejection reasons a numerically inadmissible Process reports.
+ *
+ * Aligned with Worker `solver_worker::process_state_numerical_rejection_reason`: the published
+ * Result state names itself so a caller pointing a numerical request at a Result gets a
+ * locatable eligibility error instead of a generic out-of-scope Process.
+ */
+export const PUBLISHED_RESULT_PROCESS_REJECTION =
+  'published_result_process_is_not_a_numerical_input';
+
+/** Reason for a scope that decides by published state alone, so the state is the whole denial. */
+const PROCESS_NOT_NUMERICALLY_ELIGIBLE_REJECTION = 'process_state_is_not_numerically_eligible';
+
+/**
+ * True when the state is never a numerical Process input in any scope, independent of ownership.
+ *
+ * Only these states carry a state-derived rejection reason. A foreign owner draft and any other
+ * ownership-shaped denial keep the existing generic out-of-scope reporting, because there the
+ * owner identity — not the state — decided the outcome.
+ */
+export function numericalStateRejectionReason(stateCode: number | null | undefined): string | null {
+  if (stateCode === PUBLISHED_RESULT_PROCESS_STATE) {
+    return PUBLISHED_RESULT_PROCESS_REJECTION;
+  }
+  return null;
+}
+
+/** True when the scope has no owner-draft branch, so a non-published state is decided by state. */
+function scopeAdmitsOnlyNumericalPublishedStates(dataScope: LcaDataScope): boolean {
+  return dataScope === 'open_data';
+}
 
 export type NormalizedSingleProcessDemand =
   | {
@@ -142,26 +175,42 @@ export function matchesProcessDataScope(
     return false;
   }
 
-  const isPublished =
-    meta.state_code !== null && DEFAULT_PUBLISHED_PROCESS_STATES.includes(meta.state_code);
+  // Published numerical Process eligibility is exactly state `100`. The reserved publication
+  // segment `101..199` and the published Result state `120` are not numerical inputs, and owner
+  // identity never converts one into an input: each scope still requires the exact published
+  // state plus, where applicable, ownership.
+  const isNumericallyPublished =
+    meta.state_code !== null && PUBLIC_NUMERICAL_PROCESS_STATES.includes(meta.state_code);
   const isOwnedByCurrentUser = meta.user_id === userId;
 
   switch (dataScope) {
     case PUBLIC_PLUS_OWNER_DRAFT_SCOPE:
+      // The v2 actor-bound scope manifest admits exactly public state `100` plus every
+      // state-`0` row owned by the authenticated actor, irrespective of `team_id`/`review_id`
+      // workflow metadata (that metadata stays collaboration context, not an ownership gate).
+      // Owner identity still never admits `120` or any other owner state.
       return (
         meta.state_code === PUBLIC_PROCESS_STATE ||
-        (meta.state_code === OWNER_DRAFT_PROCESS_STATE &&
-          isOwnedByCurrentUser &&
-          meta.team_id === null &&
-          meta.review_id === null)
+        (meta.state_code === OWNER_DRAFT_PROCESS_STATE && isOwnedByCurrentUser)
       );
     case 'open_data':
-      return isPublished;
+      return isNumericallyPublished;
     case 'all_data':
-      return isPublished || isOwnedByCurrentUser;
+      return (
+        isNumericallyPublished ||
+        (isOwnedByCurrentUser && meta.state_code === OWNER_DRAFT_PROCESS_STATE)
+      );
     case 'current_user':
     default:
-      return isOwnedByCurrentUser;
+      // This scope keeps its own "only the caller's own Process" rule, so a foreign published row
+      // stays out even though it is in the shared snapshot family. Within that rule the admitted
+      // states are the numerically eligible published `100` and the caller's own state-`0` draft.
+      // Ownership alone is a visibility fact, not numerical eligibility: it must not admit `120`,
+      // the reserved segment, the review state `20`, or any other non-draft owner state.
+      return (
+        isOwnedByCurrentUser &&
+        (isNumericallyPublished || meta.state_code === OWNER_DRAFT_PROCESS_STATE)
+      );
   }
 }
 
@@ -249,33 +298,54 @@ export async function validateProcessEntriesInDataScope(
     };
   }
 
-  const outOfScopeProcessIds = [
-    ...new Set(
-      entries
-        .filter(
-          (entry) =>
-            !matchesProcessDataScope(
-              scopeMeta.data.get(processScopeLookupKey(entry.process_id, entry.process_version)),
-              dataScope,
-              userId,
-            ),
-        )
-        .map((entry) => entry.process_id),
-    ),
-  ];
+  const outOfScopeProcessIds: string[] = [];
+  const numericalRejection = { reason: null as string | null, processId: null as string | null };
+  for (const entry of entries) {
+    const meta = scopeMeta.data.get(processScopeLookupKey(entry.process_id, entry.process_version));
+    if (matchesProcessDataScope(meta, dataScope, userId)) {
+      continue;
+    }
+    outOfScopeProcessIds.push(entry.process_id);
 
-  if (outOfScopeProcessIds.length === 0) {
+    // Only a state that is never a numerical input reports a state-derived reason; every other
+    // denial keeps the existing generic scope error.
+    const reason =
+      numericalStateRejectionReason(meta?.state_code) ??
+      (scopeAdmitsOnlyNumericalPublishedStates(dataScope) && meta
+        ? PROCESS_NOT_NUMERICALLY_ELIGIBLE_REJECTION
+        : null);
+    if (reason && numericalRejection.reason === null) {
+      numericalRejection.reason = reason;
+      numericalRejection.processId = entry.process_id;
+    }
+  }
+
+  const distinctOutOfScopeProcessIds = [...new Set(outOfScopeProcessIds)];
+  if (distinctOutOfScopeProcessIds.length === 0) {
     return { ok: true };
   }
 
-  if (outOfScopeProcessIds.length === 1) {
+  if (numericalRejection.reason !== null) {
+    return {
+      ok: false,
+      status: 403,
+      body: {
+        error: 'process_not_in_data_scope',
+        reason: numericalRejection.reason,
+        data_scope: dataScope,
+        process_id: numericalRejection.processId,
+      },
+    };
+  }
+
+  if (distinctOutOfScopeProcessIds.length === 1) {
     return {
       ok: false,
       status: 403,
       body: {
         error: 'process_not_in_data_scope',
         data_scope: dataScope,
-        process_id: outOfScopeProcessIds[0],
+        process_id: distinctOutOfScopeProcessIds[0],
       },
     };
   }
@@ -286,7 +356,7 @@ export async function validateProcessEntriesInDataScope(
     body: {
       error: 'processes_not_in_data_scope',
       data_scope: dataScope,
-      process_ids: outOfScopeProcessIds,
+      process_ids: distinctOutOfScopeProcessIds,
     },
   };
 }

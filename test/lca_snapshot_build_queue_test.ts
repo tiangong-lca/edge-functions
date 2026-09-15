@@ -2,8 +2,11 @@ import { assert, assertEquals, assertMatch } from 'jsr:@std/assert';
 
 import { ensureLcaSnapshotBuildQueued } from '../supabase/functions/_shared/lca_snapshot_build_queue.ts';
 import {
+  buildSnapshotBuildPayloadFields,
+  buildSnapshotProcessFilter,
   LCA_STATIC_CACHE_BUNDLE_MANIFEST_PATH,
   LCA_STATIC_CACHE_BUNDLE_MANIFEST_SHA256,
+  NUMERICAL_SNAPSHOT_POLICY_VERSION,
 } from '../supabase/functions/_shared/lca_snapshot_scope.ts';
 
 type MockState = {
@@ -95,6 +98,57 @@ Deno.test(
       (payload.lcia_factor_coverage_contract as { missing_factor_semantics: string })
         .missing_factor_semantics,
       'incomplete_coverage_not_zero',
+    );
+  },
+);
+
+Deno.test(
+  'snapshot queue binds the numerical policy marker into request identity only',
+  async () => {
+    const state: MockState = { rpcCalls: [] };
+    const result = await ensureLcaSnapshotBuildQueued(createSupabaseMock(state) as never, {
+      scope: 'full_library',
+      dataScope: 'public_plus_owner_draft',
+      userId: 'user-1',
+    });
+    assert(result.ok);
+
+    const processFilter = await buildSnapshotProcessFilter('public_plus_owner_draft', 'user-1');
+    const payload = {
+      scope: 'full_library',
+      ...buildSnapshotBuildPayloadFields(processFilter),
+      reference_normalization_mode: 'lenient',
+      allocation_fraction_mode: 'lenient',
+      self_loop_cutoff: 0.999999,
+      singular_eps: 1e-12,
+      no_lcia: false,
+    };
+    const identity = JSON.stringify({
+      version: 'lca_snapshot_build_v2',
+      numerical_policy_version: NUMERICAL_SNAPSHOT_POLICY_VERSION,
+      scope: 'full_library',
+      process_filter: processFilter,
+      payload,
+    });
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(identity));
+    const expectedRequestKey = Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+
+    const rpcArgs = state.rpcCalls[0].args;
+    assertEquals(rpcArgs.p_request_key, expectedRequestKey);
+    // The marker is Edge lookup and request identity. Worker owns and records
+    // `numerical_policy_version` in its own build config and authors it into the stored ready
+    // `process_filter`, so Edge must not pass it as a caller-controlled payload field.
+    assertEquals(
+      'numerical_policy_version' in (rpcArgs.p_payload as Record<string, unknown>),
+      false,
+    );
+    // The proposed process filter stays payload-shaped; the marker lives in the lookup containment
+    // view and in the request hash, not in the object handed to the enqueue RPC.
+    assertEquals(
+      'numerical_policy_version' in (rpcArgs.p_process_filter as Record<string, unknown>),
+      false,
     );
   },
 );

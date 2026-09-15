@@ -283,7 +283,11 @@ Deno.test(
   },
 );
 
-Deno.test('OPEN_DATA_STATE_CODES covers the published 100..199 range', () => {
+Deno.test('package open-data scope keeps its support-dataset 100..199 range', () => {
+  // This is the TIDAS package export rule, not the Process numerical eligibility rule. Package
+  // export stays a support-dataset rule; the exact published-Result Process exclusion is owned by
+  // Database selected-root admission and Worker export materialization, and this list must not be
+  // narrowed to 100 as if it were a numerical scope.
   assertEquals(OPEN_DATA_STATE_CODES[0], 100);
   assertEquals(OPEN_DATA_STATE_CODES.at(-1), 199);
   assertEquals(OPEN_DATA_STATE_CODES.includes(150), true);
