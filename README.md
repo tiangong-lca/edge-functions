@@ -24,7 +24,7 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-09-21
-lastReviewedCommit: 4e312f5b2681d4f069bdbf37293cb1e3412d1791
+lastReviewedCommit: 568ad2c
 lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the optional save-draft expected-before field changes no setup, serve, deploy or request-example guidance in this landing document.'
 ---
 

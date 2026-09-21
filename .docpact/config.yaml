@@ -1,7 +1,7 @@
 version: 1
 layout: repo
-lastReviewedAt: 2026-09-21
-lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
+lastReviewedAt: '2026-09-21'
+lastReviewedCommit: '568ad2c'
 lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the guarded draft-save transport changes no routing intent, ownership entry, coverage rule or governed-doc inventory; only the save-draft command surface gained an optional expected-before field.'
 
 # Keep deterministic governance facts here.

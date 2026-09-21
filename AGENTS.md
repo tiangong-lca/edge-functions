@@ -39,7 +39,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-09-21
-lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
+lastReviewedCommit: 568ad2c
 lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the dataset save-draft command carries an optional expected before image to the database-owned guarded RPC, fails closed without fallback or retry, and changes no branch, deploy, auth or toolchain boundary.'
 related:
   - .docpact/config.yaml

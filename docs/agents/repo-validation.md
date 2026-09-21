@@ -35,7 +35,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-09-21
-lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
+lastReviewedCommit: 568ad2c
 lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: extends the command-runtime row with the guarded save-draft dispatch contract; gate commands, toolchain and deploy boundaries are unchanged.'
 related:
   - ../../AGENTS.md
