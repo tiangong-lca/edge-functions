@@ -15,6 +15,7 @@ export type SaveDraftRequest = {
   id: string;
   version: string;
   jsonOrdered: unknown;
+  expectedJsonOrdered?: Record<string, unknown>;
   modelId?: string;
   modelVersion?: string | null;
   ruleVerification?: boolean | null;

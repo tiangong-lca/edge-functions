@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-15
+lastReviewedAt: 2026-09-21
 lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
-lastReviewedNote: 'Reviewed for Edge #421: adds the public numerical Process eligibility and stored-snapshot evidence contract sections, and records that the reserved 100..199 range grants no numerical eligibility while TIDAS package export keeps its support-dataset range. Path map, hotspot families and toolchain are unchanged.'
+lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: records the optional save-draft expected-before transport to the guarded database facade beside the existing Process modelVersion contract; path map, hotspot families and toolchain are unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -145,7 +145,7 @@ The shared layers that matter most are:
 
 The retired review-submit Gate, coordinator, and job endpoints are not part of the deployed Edge surface. `app_worker_jobs` remains the authenticated task-center API for user-visible jobs; the operator-visible Review Admin diagnostic is read through its dedicated route rather than through generic task-center access.
 
-Process create, create-version, and save-draft commands accept `modelVersion` only alongside `modelId`, validate the `NN.NN.NNN` form, and forward it unchanged as `p_model_version`. Omission remains the database-owned legacy fallback to the Process version; Edge never infers a LifecycleModel version or substitutes the latest Model.
+Process create, create-version, and save-draft commands accept `modelVersion` only alongside `modelId`, validate the `NN.NN.NNN` form, and forward it unchanged as `p_model_version`. Omission remains the database-owned legacy fallback to the Process version; Edge never infers a LifecycleModel version or substitutes the latest Model. Save-draft additionally accepts one optional `expectedJsonOrdered` object; when present Edge calls only the database-owned `cmd_dataset_save_draft_guarded` facade with the complete expected before image and the unchanged model, rule-verification and audit context, and when omitted it sends the exact legacy `cmd_dataset_save_draft` arguments. A malformed or null before image fails in the strict request schema before dispatch, and a guarded conflict or unavailable guarded RPC is never retried and never falls back to the unguarded save.
 
 `app_data_product_commands` is the JWT-only command boundary for Data Product scope-closure checks and result-build requests. It forwards only user scope intent to actor-bound database RPCs; the database derives snapshot, policy, certificate, and artifact-lifecycle bindings. The shared data-product repository preserves the database-owned versioned check/issues/feed projections while explicitly allowlisting the closure-check public DTO, decoding its fixed-order artifact summaries, and recursively rejecting private locator or credential fields. For downloads, the strict public request requires exactly `closure_report_xlsx` or `closure_issue_manifest`, forwards that selector to the database's two-argument actor RPC, and signs only a matching ready, unexpired descriptor. Partition selectors are not part of this public endpoint. Signed URLs are capped at 900 seconds, reserve a clock-skew/signing safety budget before artifact expiry, and use the database-provided semantic filename. Owner-visible expiry maps to a stable `410`, while unavailable, unauthorized, deleted, unready, and integrity-invalid artifacts remain one opaque `404`. Unexpected RPC/PostgREST failures and every Storage signing throw, rejection, malformed result, or SDK error collapse to fixed locator-free `502` responses. The service client may see the private bucket/path solely for the signing step and never returns either field or source error details to the browser. Task feed visibility is database-owned ACL, not a consequence of task-center category or presenter metadata.
 

@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-09-06
+lastReviewedAt: 2026-09-21
 lastReviewedCommit: 4e312f5b2681d4f069bdbf37293cb1e3412d1791
-lastReviewedNote: 'Reviewed for Edge #407: legacy Process/Flow RPC arguments and fallback are preserved; two Portal deadline fixtures join owned background cleanup without changing response deadlines, sanitizers or Portal runtime. Matched V2, foundation visibility, auth and deployment contracts remain unchanged.'
+lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the optional save-draft expected-before field changes no setup, serve, deploy or request-example guidance in this landing document.'
 ---
 
 # TianGong-LCA-Edge-Functions

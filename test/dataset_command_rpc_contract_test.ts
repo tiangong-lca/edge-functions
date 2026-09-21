@@ -419,3 +419,73 @@ Deno.test(
     });
   },
 );
+
+Deno.test('saveDraftRequestSchema accepts an explicit expected before image', () => {
+  const parsed = saveDraftRequestSchema.safeParse({
+    ...draftRequest,
+    expectedJsonOrdered: { payload: { name: 'draft' } },
+  });
+
+  assertEquals(parsed.success, true);
+});
+
+Deno.test('saveDraftRequestSchema rejects malformed expected before images', () => {
+  for (const expectedJsonOrdered of [null, ['payload'], 'payload', 7]) {
+    const parsed = saveDraftRequestSchema.safeParse({
+      ...draftRequest,
+      expectedJsonOrdered,
+    });
+
+    assertEquals(parsed.success, false);
+  }
+});
+
+Deno.test(
+  'createDatasetCommandRepository routes expected-before saves to the guarded RPC',
+  async () => {
+    const supabase = new FakeRpcSupabase({
+      data: { ok: true, data: { id: draftRequest.id } },
+      error: null,
+    });
+    const repository = createDatasetCommandRepository(supabase as never);
+
+    await repository.saveDraft(
+      { ...draftRequest, expectedJsonOrdered: { payload: { name: 'draft' } } },
+      auditPayload,
+    );
+    await repository.saveDraft(draftRequest, auditPayload);
+
+    assertEquals(
+      supabase.calls.map((call) => ({ fn: call.fn, args: call.args })),
+      [
+        {
+          fn: 'cmd_dataset_save_draft_guarded',
+          args: {
+            p_table: 'flows',
+            p_id: draftRequest.id,
+            p_version: '01.00.000',
+            p_json_ordered: { foo: 'bar' },
+            p_expected_json_ordered: { payload: { name: 'draft' } },
+            p_model_id: null,
+            p_model_version: null,
+            p_rule_verification: null,
+            p_audit: auditPayload,
+          },
+        },
+        {
+          fn: 'cmd_dataset_save_draft',
+          args: {
+            p_table: 'flows',
+            p_id: draftRequest.id,
+            p_version: '01.00.000',
+            p_json_ordered: { foo: 'bar' },
+            p_model_id: null,
+            p_model_version: null,
+            p_rule_verification: null,
+            p_audit: auditPayload,
+          },
+        },
+      ],
+    );
+  },
+);
