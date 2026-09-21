@@ -35,6 +35,7 @@ const datasetBaseRequestSchema = datasetIdTableSchema
 export const saveDraftRequestSchema = datasetBaseRequestSchema
   .extend({
     jsonOrdered: z.unknown(),
+    expectedJsonOrdered: z.record(z.string(), z.unknown()).optional(),
     modelId: z.string().uuid().optional(),
     modelVersion: modelVersionSchema.nullable().optional(),
     ruleVerification: z.boolean().nullable().optional(),

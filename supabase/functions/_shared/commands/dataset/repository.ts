@@ -7,6 +7,7 @@ import {
   callDatasetCreateVersionRpc,
   callDatasetDeleteRpc,
   callDatasetPublishRpc,
+  callDatasetSaveDraftGuardedRpc,
   callDatasetSaveDraftRpc,
   callDatasetSubmitReviewRpc,
   type DatasetRpcResult,
@@ -54,7 +55,10 @@ export function createDatasetCommandRepository(supabase: RpcClient): DatasetComm
     create: (request, audit) => callDatasetCreateRpc(client, request, audit),
     createVersion: (request, audit) => callDatasetCreateVersionRpc(client, request, audit),
     delete: (request, audit) => callDatasetDeleteRpc(client, request, audit),
-    saveDraft: (request, audit) => callDatasetSaveDraftRpc(client, request, audit),
+    saveDraft: (request, audit) =>
+      request.expectedJsonOrdered === undefined
+        ? callDatasetSaveDraftRpc(client, request, audit)
+        : callDatasetSaveDraftGuardedRpc(client, request, audit),
     assignTeam: (request, audit) => callDatasetAssignTeamRpc(client, request, audit),
     publish: (request, audit) => callDatasetPublishRpc(client, request, audit),
     submitReview: (request, audit) => callDatasetSubmitReviewRpc(client, request, audit),

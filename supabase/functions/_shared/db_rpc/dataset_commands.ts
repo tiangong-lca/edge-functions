@@ -92,6 +92,23 @@ export function buildDatasetSaveDraftRpcArgs(
   };
 }
 
+export function buildDatasetSaveDraftGuardedRpcArgs(
+  request: SaveDraftRequest,
+  audit: CommandAuditPayload,
+): Record<string, unknown> {
+  return {
+    p_table: request.table,
+    p_id: request.id,
+    p_version: request.version,
+    p_json_ordered: request.jsonOrdered,
+    p_expected_json_ordered: request.expectedJsonOrdered ?? null,
+    p_model_id: request.modelId ?? null,
+    p_model_version: request.modelVersion ?? null,
+    p_audit: audit,
+    p_rule_verification: request.ruleVerification ?? null,
+  };
+}
+
 export function buildDatasetCreateRpcArgs(
   request: CreateRequest,
   audit: CommandAuditPayload,
@@ -181,6 +198,18 @@ export function callDatasetSaveDraftRpc(
     supabase,
     'cmd_dataset_save_draft',
     buildDatasetSaveDraftRpcArgs(request, audit),
+  );
+}
+
+export function callDatasetSaveDraftGuardedRpc(
+  supabase: RpcClient,
+  request: SaveDraftRequest,
+  audit: CommandAuditPayload,
+) {
+  return callDatasetRpc(
+    supabase,
+    'cmd_dataset_save_draft_guarded',
+    buildDatasetSaveDraftGuardedRpcArgs(request, audit),
   );
 }
 
