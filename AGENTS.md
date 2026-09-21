@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-15
-lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
-lastReviewedNote: 'Reviewed for Edge #421: published numerical Process eligibility is exactly state 100; the reserved 100..199 range grants no numerical eligibility and result state 120 is never a numerical input, so a stored 100..199-shaped filter is recognized only so it cannot be reused. Scope-producer, process-scope, and snapshot build-queue behavior changed; branch rules, deploy/auth boundaries, toolchain and routing intents are unchanged.'
+lastReviewedAt: 2026-09-21
+lastReviewedCommit: 568ad2c
+lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the dataset save-draft command carries an optional expected before image to the database-owned guarded RPC, fails closed without fallback or retry, and changes no branch, deploy, auth or toolchain boundary.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

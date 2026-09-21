@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: 2026-09-15
-lastReviewedCommit: 83e6fa5761aecd466a0218d3b97496e0a8973642
-lastReviewedNote: 'Reviewed for Edge #421: routing intents, ownership, coverage, governed-doc inventory and rules were re-read and are unchanged. The task changes LCA numerical Process eligibility and TIDAS package-export documentation only, so no machine-readable fact in this file needed an edit.'
+lastReviewedAt: '2026-09-21'
+lastReviewedCommit: '568ad2c'
+lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the guarded draft-save transport changes no routing intent, ownership entry, coverage rule or governed-doc inventory; only the save-draft command surface gained an optional expected-before field.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
