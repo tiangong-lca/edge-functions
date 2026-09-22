@@ -44,7 +44,7 @@ export type HybridSearchRpcPayload = HybridSearchRpcRequest &
   Partial<HybridSearchVisibilityOptions> &
   Partial<HybridSearchEntityFilterOptions>;
 
-const VALID_DATA_SOURCES = new Set(['tg', 'co', 'my', 'te', 'ex']);
+const VALID_DATA_SOURCES = new Set(['tg', 'co', 'my', 'te', 'ex', 'sl']);
 const VALID_PROCESS_TYPES = new Set([
   'Unit process, single operation',
   'Unit process, black box',
@@ -107,7 +107,7 @@ function parseDataSource(value: unknown): string {
   const dataSource = value === undefined || value === null || value === '' ? 'tg' : String(value);
 
   if (!VALID_DATA_SOURCES.has(dataSource)) {
-    throw new HybridSearchRequestError('data_source must be one of tg, co, my, te, or ex');
+    throw new HybridSearchRequestError('data_source must be one of tg, co, my, te, ex, or sl');
   }
 
   return dataSource;

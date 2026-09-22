@@ -34,8 +34,8 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-21
-lastReviewedCommit: 568ad2c
+lastReviewedAt: 2026-09-22
+lastReviewedCommit: c6adfe8af7d866ac9bdccbcd53896e425fdea197
 lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: records the optional save-draft expected-before transport to the guarded database facade beside the existing Process modelVersion contract; path map, hotspot families and toolchain are unchanged.'
 related:
   - ../../AGENTS.md
