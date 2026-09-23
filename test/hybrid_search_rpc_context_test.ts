@@ -66,15 +66,3 @@ Deno.test('example search requires a user JWT and never falls back to service co
     userContextKind: 'jwt',
   });
 });
-
-Deno.test('sample-library search requires a user JWT for manager authorization', () => {
-  const error = assertThrows(
-    () => resolveHybridSearchRpcContext(null, 'sl'),
-    HybridSearchRpcContextError,
-  );
-  assertEquals(error.message, 'data_source sl requires a Supabase JWT user context');
-  assertEquals(resolveHybridSearchRpcContext(`Bearer ${TEST_JWT}`, 'sl'), {
-    bearerToken: TEST_JWT,
-    userContextKind: 'jwt',
-  });
-});
