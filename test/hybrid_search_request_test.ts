@@ -19,9 +19,70 @@ Deno.test('matched-version requests use an explicit 200-candidate opt-in', () =>
 
 import {
   buildHybridSearchRpcRequest,
+  buildOpenDataHybridSearchRpcRequest,
   HybridSearchRequestError,
   parseHybridSearchClientRequest,
 } from '../supabase/functions/_shared/hybrid_search_request.ts';
+
+Deno.test('Open Data hybrid filters are validated and mapped to the catalog RPC', () => {
+  const parsed = parseHybridSearchClientRequest({
+    query: 'steel',
+    data_source: 'tg',
+    source_filter: 'literature',
+    publication_filter: 'published',
+  });
+
+  assertEquals(parsed.openDataFilterRequested, true);
+  assertEquals(parsed.openDataOptions, {
+    source_filter: 'literature',
+    publication_filter: 'published',
+  });
+  assertEquals(
+    buildOpenDataHybridSearchRpcRequest(
+      'process',
+      parsed.queryText,
+      ['steel'],
+      '[0.1,0.2]',
+      parsed.rpcOptions,
+      parsed.openDataOptions,
+      { type_of_data_set_filter: 'LCI result' },
+    ),
+    {
+      p_dataset_kind: 'process',
+      query_text: 'steel',
+      query_terms: ['steel'],
+      query_embedding: '[0.1,0.2]',
+      filter_condition: { typeOfDataSet: 'LCI result' },
+      match_threshold: 0.5,
+      match_count: 20,
+      lexical_weight: 0.5,
+      semantic_weight: 0.5,
+      rrf_k: 10,
+      page_size: 10,
+      page_current: 1,
+      source_filter: 'literature',
+      publication_filter: 'published',
+    },
+  );
+
+  assertThrows(
+    () =>
+      parseHybridSearchClientRequest({
+        query: 'steel',
+        source_filter: 'unknown',
+      }),
+    HybridSearchRequestError,
+  );
+  assertThrows(
+    () =>
+      parseHybridSearchClientRequest({
+        query: 'steel',
+        data_source: 'my',
+        source_filter: 'literature',
+      }),
+    HybridSearchRequestError,
+  );
+});
 
 Deno.test('parseHybridSearchClientRequest normalizes full hybrid search options', () => {
   const parsed = parseHybridSearchClientRequest({
@@ -239,13 +300,23 @@ Deno.test('example scope fixes the state for latest and matched searches', () =>
   }
   for (const state_code of [-2, 0, 20, 100, 200, false, '-01', 'invalid']) {
     assertThrows(
-      () => parseHybridSearchClientRequest({ query: 'steel', data_source: 'ex', state_code }),
+      () =>
+        parseHybridSearchClientRequest({
+          query: 'steel',
+          data_source: 'ex',
+          state_code,
+        }),
       HybridSearchRequestError,
     );
   }
   for (const data_source of ['tg', 'co', 'my', 'te']) {
     assertThrows(
-      () => parseHybridSearchClientRequest({ query: 'steel', data_source, state_code: -1 }),
+      () =>
+        parseHybridSearchClientRequest({
+          query: 'steel',
+          data_source,
+          state_code: -1,
+        }),
       HybridSearchRequestError,
     );
   }

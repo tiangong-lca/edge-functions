@@ -11,6 +11,13 @@ export interface HybridSearchClientRequest {
   rpcOptions: HybridSearchRpcOptions;
   visibilityOptions: HybridSearchVisibilityOptions;
   entityFilterOptions: HybridSearchEntityFilterOptions;
+  openDataOptions: HybridSearchOpenDataOptions;
+  openDataFilterRequested: boolean;
+}
+
+export interface HybridSearchOpenDataOptions {
+  source_filter: 'all' | 'literature' | 'enterprise';
+  publication_filter: 'all' | 'published' | 'unpublished';
 }
 
 export interface HybridSearchRpcOptions {
@@ -44,7 +51,15 @@ export type HybridSearchRpcPayload = HybridSearchRpcRequest &
   Partial<HybridSearchVisibilityOptions> &
   Partial<HybridSearchEntityFilterOptions>;
 
+export type OpenDataHybridSearchRpcPayload = Omit<HybridSearchRpcRequest, 'data_source'> & {
+  p_dataset_kind: string;
+  source_filter: HybridSearchOpenDataOptions['source_filter'];
+  publication_filter: HybridSearchOpenDataOptions['publication_filter'];
+};
+
 const VALID_DATA_SOURCES = new Set(['tg', 'co', 'my', 'te', 'ex']);
+const VALID_OPEN_DATA_SOURCE_FILTERS = new Set(['all', 'literature', 'enterprise']);
+const VALID_OPEN_DATA_PUBLICATION_FILTERS = new Set(['all', 'published', 'unpublished']);
 const VALID_PROCESS_TYPES = new Set([
   'Unit process, single operation',
   'Unit process, black box',
@@ -163,6 +178,28 @@ function parseNullableProcessType(value: unknown): string | null {
   return processType;
 }
 
+function parseOpenDataSourceFilter(value: unknown): HybridSearchOpenDataOptions['source_filter'] {
+  const normalized = value === undefined || value === null || value === '' ? 'all' : String(value);
+  if (!VALID_OPEN_DATA_SOURCE_FILTERS.has(normalized)) {
+    throw new HybridSearchRequestError(
+      'source_filter must be one of all, literature, or enterprise',
+    );
+  }
+  return normalized as HybridSearchOpenDataOptions['source_filter'];
+}
+
+function parseOpenDataPublicationFilter(
+  value: unknown,
+): HybridSearchOpenDataOptions['publication_filter'] {
+  const normalized = value === undefined || value === null || value === '' ? 'all' : String(value);
+  if (!VALID_OPEN_DATA_PUBLICATION_FILTERS.has(normalized)) {
+    throw new HybridSearchRequestError(
+      'publication_filter must be one of all, published, or unpublished',
+    );
+  }
+  return normalized as HybridSearchOpenDataOptions['publication_filter'];
+}
+
 function normalizeFilterCondition(value: unknown): Record<string, unknown> {
   if (value === undefined || value === null || value === '') {
     return {};
@@ -225,6 +262,15 @@ export function parseHybridSearchClientRequest(body: unknown): HybridSearchClien
   }
 
   const dataSource = parseDataSource(body.data_source);
+  const openDataFilterRequested =
+    Object.hasOwn(body, 'source_filter') || Object.hasOwn(body, 'publication_filter');
+  const openDataOptions: HybridSearchOpenDataOptions = {
+    source_filter: parseOpenDataSourceFilter(body.source_filter),
+    publication_filter: parseOpenDataPublicationFilter(body.publication_filter),
+  };
+  if (openDataFilterRequested && dataSource !== 'tg') {
+    throw new HybridSearchRequestError('Open Data filters require data_source tg');
+  }
 
   return {
     queryText,
@@ -247,6 +293,41 @@ export function parseHybridSearchClientRequest(body: unknown): HybridSearchClien
     entityFilterOptions: {
       type_of_data_set_filter: parseNullableProcessType(body.type_of_data_set),
     },
+    openDataOptions,
+    openDataFilterRequested,
+  };
+}
+
+export function buildOpenDataHybridSearchRpcRequest(
+  datasetKind: string,
+  queryText: string,
+  queryTerms: string[],
+  queryEmbedding: string,
+  options: HybridSearchRpcOptions,
+  openDataOptions: HybridSearchOpenDataOptions,
+  entityFilterOptions?: HybridSearchEntityFilterOptions,
+): OpenDataHybridSearchRpcPayload {
+  const filterCondition = entityFilterOptions?.type_of_data_set_filter
+    ? {
+        ...options.filter_condition,
+        typeOfDataSet: entityFilterOptions.type_of_data_set_filter,
+      }
+    : options.filter_condition;
+  return {
+    p_dataset_kind: datasetKind,
+    query_text: queryText,
+    query_terms: queryTerms,
+    query_embedding: queryEmbedding,
+    filter_condition: filterCondition,
+    match_threshold: options.match_threshold,
+    match_count: options.match_count,
+    lexical_weight: options.lexical_weight,
+    semantic_weight: options.semantic_weight,
+    rrf_k: options.rrf_k,
+    page_size: options.page_size,
+    page_current: options.page_current,
+    source_filter: openDataOptions.source_filter,
+    publication_filter: openDataOptions.publication_filter,
   };
 }
 

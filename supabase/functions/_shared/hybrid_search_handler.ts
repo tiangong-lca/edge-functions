@@ -10,6 +10,7 @@ import {
 } from './hybrid_query_utils.ts';
 import {
   buildHybridSearchRpcRequest,
+  buildOpenDataHybridSearchRpcRequest,
   parseHybridSearchClientRequest,
 } from './hybrid_search_request.ts';
 import {
@@ -25,6 +26,7 @@ export interface HybridSearchRouteConfig {
   entityLabel: string;
   entityPlural: string;
   rpcName: string;
+  openDataRpcName?: string;
   versionedRpcName?: string;
   forwardVisibilityContext?: boolean;
   forwardProcessTypeFilter?: boolean;
@@ -168,6 +170,16 @@ export function createHybridSearchHandler(
         return jsonResponse({ error: 'Invalid matched version search bounds' }, 400);
       }
       if (
+        parsedRequest.openDataFilterRequested &&
+        parsedRequest.openDataOptions.publication_filter !== 'all' &&
+        config.entityKind !== 'process'
+      ) {
+        return jsonResponse(
+          { error: 'publication_filter is supported only for Process data' },
+          400,
+        );
+      }
+      if (
         versioned &&
         config.requireSelectedTeamContext &&
         parsedRequest.rpcOptions.data_source === 'te' &&
@@ -185,7 +197,12 @@ export function createHybridSearchHandler(
         config.entityKind === 'flow' &&
         parsedRequest.entityFilterOptions.type_of_data_set_filter !== null
       ) {
-        return jsonResponse({ error: 'Process dataset type is not supported by Flow search' }, 400);
+        return jsonResponse(
+          {
+            error: 'Process dataset type is not supported by Flow search',
+          },
+          400,
+        );
       }
       if (
         versioned &&
@@ -194,7 +211,20 @@ export function createHybridSearchHandler(
       ) {
         return jsonResponse({ error: 'Invalid matched Flow filter contract' }, 400);
       }
-      const rpcName = versioned ? config.versionedRpcName! : config.rpcName;
+      const useOpenDataRpc = parsedRequest.openDataFilterRequested;
+      if (useOpenDataRpc && !config.openDataRpcName) {
+        return jsonResponse(
+          {
+            error: 'Open Data filters are not supported by this route',
+          },
+          400,
+        );
+      }
+      const rpcName = useOpenDataRpc
+        ? config.openDataRpcName!
+        : versioned
+          ? config.versionedRpcName!
+          : config.rpcName;
       let rpcClientContext: HybridSearchRpcClientContext | undefined;
       if (versioned || parsedRequest.rpcOptions.data_source === 'ex') {
         if (authResult.principal?.authMethod !== 'supabase_jwt') {
@@ -264,21 +294,31 @@ export function createHybridSearchHandler(
       });
       const forwardVisibilityContext =
         config.forwardVisibilityContext && (versioned || !config.versionedRpcName);
-      const requestBody = buildHybridSearchRpcRequest(
-        parsedRequest.queryText,
-        queryTerms,
-        `[${embedding.join(',')}]`,
-        parsedRequest.rpcOptions,
-        forwardVisibilityContext ? parsedRequest.visibilityOptions : undefined,
-        versioned && config.forwardProcessTypeFilter
-          ? parsedRequest.entityFilterOptions
-          : undefined,
-      );
+      const requestBody = useOpenDataRpc
+        ? buildOpenDataHybridSearchRpcRequest(
+            config.entityKind,
+            parsedRequest.queryText,
+            queryTerms,
+            `[${embedding.join(',')}]`,
+            parsedRequest.rpcOptions,
+            parsedRequest.openDataOptions,
+            config.entityKind === 'process' ? parsedRequest.entityFilterOptions : undefined,
+          )
+        : buildHybridSearchRpcRequest(
+            parsedRequest.queryText,
+            queryTerms,
+            `[${embedding.join(',')}]`,
+            parsedRequest.rpcOptions,
+            forwardVisibilityContext ? parsedRequest.visibilityOptions : undefined,
+            versioned && config.forwardProcessTypeFilter
+              ? parsedRequest.entityFilterOptions
+              : undefined,
+          );
 
       try {
         rpcClientContext ??= dependencies.createRpcClient(
           request.headers.get('Authorization'),
-          requestBody.data_source,
+          parsedRequest.rpcOptions.data_source,
         );
       } catch (error) {
         if (error instanceof HybridSearchRpcContextError) {
@@ -294,7 +334,7 @@ export function createHybridSearchHandler(
         semantic_query_length: normalizedQuery.semantic_query_en.length,
         fulltext_term_count: queryTerms.length,
         match_threshold: requestBody.match_threshold,
-        data_source: requestBody.data_source,
+        data_source: parsedRequest.rpcOptions.data_source,
         user_context_kind: rpcClientContext.userContextKind,
       };
       const rpcStartedAt = dependencies.now();

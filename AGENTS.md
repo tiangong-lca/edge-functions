@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-21
+lastReviewedAt: 2026-09-23
 lastReviewedCommit: 568ad2c
-lastReviewedNote: 'Reviewed for Edge #425 with workspace #1432: the dataset save-draft command carries an optional expected before image to the database-owned guarded RPC, fails closed without fallback or retry, and changes no branch, deploy, auth or toolchain boundary.'
+lastReviewedNote: 'Reviewed for Edge #432: the Open Data publication command remains actor-bound, delegates persistent truth to the database-owned RPC, and changes no branch, deploy, auth or toolchain boundary.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

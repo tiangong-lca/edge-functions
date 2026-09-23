@@ -9,5 +9,6 @@ Deno.serve(
     entityLabel: 'Lifecycle model',
     entityPlural: 'lifecycle models',
     rpcName: 'hybrid_search_lifecyclemodels',
+    openDataRpcName: 'hybrid_search_open_data_catalog',
   }),
 );

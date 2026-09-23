@@ -9,6 +9,7 @@ Deno.serve(
     entityLabel: 'Flow property',
     entityPlural: 'flow properties',
     rpcName: 'hybrid_search_flowproperties',
+    openDataRpcName: 'hybrid_search_open_data_catalog',
     forwardVisibilityContext: true,
   }),
 );
