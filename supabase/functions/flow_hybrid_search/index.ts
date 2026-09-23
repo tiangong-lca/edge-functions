@@ -9,6 +9,7 @@ Deno.serve(
     entityLabel: 'Flow',
     entityPlural: 'flows',
     rpcName: 'hybrid_search_flows',
+    openDataRpcName: 'hybrid_search_open_data_catalog',
     versionedRpcName: 'hybrid_search_flow_versions_v2',
     forwardVisibilityContext: true,
     requireSelectedTeamContext: true,

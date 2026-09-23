@@ -13,8 +13,53 @@ const CONTACT_CONFIG: HybridSearchRouteConfig = {
   entityLabel: 'Contact',
   entityPlural: 'contacts',
   rpcName: 'hybrid_search_contacts',
+  openDataRpcName: 'hybrid_search_open_data_catalog',
   forwardVisibilityContext: true,
 };
+
+Deno.test('Open Data filters select the shared catalog hybrid RPC', async () => {
+  const rpcCalls: Array<{ name: string; body: Record<string, unknown> }> = [];
+  const handler = createHybridSearchHandler(CONTACT_CONFIG, {
+    authenticate: async () => VERIFIED_JWT_AUTH,
+    rewriteQuery: async () => ({
+      semantic_query_en: 'steel',
+      fulltext_query_en: ['steel'],
+      fulltext_query_zh: [],
+    }),
+    generateEmbedding: async () => VECTOR,
+    createRpcClient: () => ({
+      client: {
+        rpc: (name: string, body: Record<string, unknown>) => {
+          rpcCalls.push({ name, body });
+          return Promise.resolve({ data: [], error: null });
+        },
+      } as unknown as SupabaseClient,
+      userContextKind: 'jwt',
+      bearerToken: 'actor.jwt.signature',
+    }),
+    logger: { log: () => undefined, error: () => undefined },
+  });
+
+  const response = await handler(
+    new Request('http://localhost/contact_hybrid_search', {
+      method: 'POST',
+      body: JSON.stringify({
+        query: 'steel',
+        data_source: 'tg',
+        source_filter: 'enterprise',
+        publication_filter: 'all',
+      }),
+    }),
+  );
+
+  assertEquals(response.status, 200);
+  assertEquals(rpcCalls.length, 2);
+  assertEquals(rpcCalls[0].name, 'hybrid_search_open_data_catalog');
+  assertEquals(rpcCalls[0].body.p_dataset_kind, 'contact');
+  assertEquals(rpcCalls[0].body.source_filter, 'enterprise');
+  assertEquals(rpcCalls[0].body.publication_filter, 'all');
+  assertEquals(Object.hasOwn(rpcCalls[0].body, 'data_source'), false);
+});
 
 const VECTOR = Array.from({ length: 1024 }, () => 0.001);
 

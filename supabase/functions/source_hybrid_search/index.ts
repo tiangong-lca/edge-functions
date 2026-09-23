@@ -9,6 +9,7 @@ Deno.serve(
     entityLabel: 'Source',
     entityPlural: 'sources',
     rpcName: 'hybrid_search_sources',
+    openDataRpcName: 'hybrid_search_open_data_catalog',
     forwardVisibilityContext: true,
   }),
 );

@@ -9,6 +9,7 @@ Deno.serve(
     entityLabel: 'Contact',
     entityPlural: 'contacts',
     rpcName: 'hybrid_search_contacts',
+    openDataRpcName: 'hybrid_search_open_data_catalog',
     forwardVisibilityContext: true,
   }),
 );
