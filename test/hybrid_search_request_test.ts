@@ -80,6 +80,23 @@ Deno.test('parseHybridSearchClientRequest accepts explicit filter_condition stri
   assertEquals(parsed.entityFilterOptions, { type_of_data_set_filter: null });
 });
 
+Deno.test('parseHybridSearchClientRequest preserves independent sample-library filters', () => {
+  const parsed = parseHybridSearchClientRequest({
+    query: 'steel',
+    data_source: 'sl',
+    filter_condition: {
+      __sampleLibraryOrigin: 'literature',
+      __sampleLibraryPublicationStatus: 'published',
+    },
+  });
+
+  assertEquals(parsed.rpcOptions.data_source, 'sl');
+  assertEquals(parsed.rpcOptions.filter_condition, {
+    __sampleLibraryOrigin: 'literature',
+    __sampleLibraryPublicationStatus: 'published',
+  });
+});
+
 Deno.test('parseHybridSearchClientRequest rejects invalid visibility context', () => {
   let error = assertThrows(
     () => parseHybridSearchClientRequest({ query: 'steel', state_code: -1 }),
@@ -141,7 +158,7 @@ Deno.test('parseHybridSearchClientRequest rejects unsupported data_source', () =
     HybridSearchRequestError,
   );
 
-  assertEquals(error.message, 'data_source must be one of tg, co, my, te, or ex');
+  assertEquals(error.message, 'data_source must be one of tg, co, my, te, ex, or sl');
 });
 
 Deno.test('parseHybridSearchClientRequest rejects non-positive pagination', () => {
