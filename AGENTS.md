@@ -38,9 +38,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-23
-lastReviewedCommit: 568ad2c
-lastReviewedNote: 'Reviewed for Edge #432: the Open Data publication command remains actor-bound, delegates persistent truth to the database-owned RPC, and changes no branch, deploy, auth or toolchain boundary.'
+lastReviewedAt: 2026-09-24
+lastReviewedCommit: 12dbbd2162e7274a5eb328469e856222785144e5
+lastReviewedNote: 'Reviewed for Edge #434: the actor-bound reviewer Contact command changes no branch, deploy, auth, or toolchain boundary.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

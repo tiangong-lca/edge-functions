@@ -16,14 +16,14 @@ test('checks the exact inventory through one bounded shared graph', () => {
   );
   const targets = discoverTargets();
 
-  assert.equal(targets.length, 155);
+  assert.equal(targets.length, 157);
   assert.deepEqual(targets, [...new Set(targets)].sort());
   assert.equal(
     targets.some((target) => target.includes('/antchain_')),
     false,
   );
-  // Includes the Open Data publication command contract added by Edge #432.
-  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 80);
+  // Includes the reviewer Contact activation contract added by Edge #434.
+  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 81);
 
   const batches = buildCheckBatches(targets);
   assert.equal(MAX_ROOTS_PER_BATCH, 200);

@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-09-23
-lastReviewedCommit: 568ad2c
-lastReviewedNote: 'Reviewed for Edge #432: adds the Open Data Process publication command and shared catalog Hybrid route while retaining the existing runtime and toolchain boundaries.'
+lastReviewedAt: 2026-09-24
+lastReviewedCommit: 12dbbd2162e7274a5eb328469e856222785144e5
+lastReviewedNote: 'Reviewed for Edge #434: adds the reviewer Contact validation and activation command while retaining existing runtime and toolchain boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -313,6 +313,8 @@ Calculation Bundle reads follow the same projection rule. The database returns o
 ## Database Boundary
 
 This repo consumes database truth but does not own it.
+
+`app_review_contact_activate` is the authenticated Review Member command for initial profile creation and later version creation. Edge forces the Contact ownership reference to the submitted Contact identity, runs the TIDAS SDK rule validator, and forwards one idempotent command to the database-owned atomic activation RPC. Database truth controls membership, current-binding fencing, open publication, and optional rebinding; this route does not alter generic Contact-list behavior.
 
 Typical signs the task also belongs in `database-engine`:
 
