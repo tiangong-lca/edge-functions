@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-09-23'
-lastReviewedCommit: '568ad2c'
-lastReviewedNote: 'Reviewed for Edge #432: the Open Data command and shared Hybrid path remain inside existing runtime ownership, coverage and routing rules; no governance inventory changed.'
+lastReviewedAt: '2026-09-24'
+lastReviewedCommit: '12dbbd2162e7274a5eb328469e856222785144e5'
+lastReviewedNote: 'Reviewed for Edge #434: reviewer Contact activation remains inside existing command-runtime ownership, coverage, and routing rules.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
