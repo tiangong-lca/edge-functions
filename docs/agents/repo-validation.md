@@ -34,9 +34,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-10
-lastReviewedCommit: 96586ac7025eed8dc7d0b5c514716985ee43ff3c
-lastReviewedNote: 'Edge #473: reviewed active signed Hybrid V3 and LCIA V2 scoped readers, scope-bound cache identity and fresh LCIA qualification on every response; rollout and deployment remain separate.'
+lastReviewedAt: 2026-10-12
+lastReviewedCommit: 317320692b9aaab59678cad14294897c63bbbdcc
+lastReviewedNote: 'Reviewed the AntChain signing entrypoint compatibility repair; exact Deno checking, the canonical repository check, and a real v1.70.3 boot probe provide the focused evidence.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-10-10'
-lastReviewedCommit: '96586ac7025eed8dc7d0b5c514716985ee43ff3c'
-lastReviewedNote: 'Edge #473: reviewed active signed Hybrid V3 and LCIA V2 scoped readers, scope-bound cache identity and fresh LCIA qualification on every response; rollout and deployment remain separate.'
+lastReviewedAt: '2026-10-12'
+lastReviewedCommit: '317320692b9aaab59678cad14294897c63bbbdcc'
+lastReviewedNote: 'Reviewed the AntChain signing entrypoint compatibility repair: removing the obsolete std crypto import preserves Web Crypto behavior and the existing runtime, ownership, and validation routing.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.

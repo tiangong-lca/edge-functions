@@ -1,6 +1,5 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import '@supabase/functions-js/edge-runtime.d.ts';
-import { crypto } from 'https://deno.land/std@0.220.0/crypto/mod.ts';
 
 // console.log('ANT_CHAIN_KEY', Deno.env.get('ANT_CHAIN_KEY'));
 export const ANT_CHAIN_KEY = JSON.parse(atob(Deno.env.get('ANT_CHAIN_KEY') ?? ''));
