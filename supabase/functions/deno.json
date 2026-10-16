@@ -1,12 +1,12 @@
 {
   "imports": {
-    "@aws-sdk/client-sagemaker-runtime": "npm:@aws-sdk/client-sagemaker-runtime@3.1121.0",
-    "@openai/openai": "npm:openai@7.8.0",
-    "@supabase/functions-js/edge-runtime.d.ts": "jsr:@supabase/functions-js@2.112.4/edge-runtime.d.ts",
-    "@supabase/supabase-js@2": "jsr:@supabase/supabase-js@2.112.4",
+    "@aws-sdk/client-sagemaker-runtime": "npm:@aws-sdk/client-sagemaker-runtime@3.1148.0",
+    "@openai/openai": "npm:openai@7.31.0",
+    "@supabase/functions-js/edge-runtime.d.ts": "jsr:@supabase/functions-js@2.117.3/edge-runtime.d.ts",
+    "@supabase/supabase-js@2": "jsr:@supabase/supabase-js@2.117.3",
     "@upstash/redis": "https://esm.sh/@upstash/redis@1.38.3",
     "postgres": "https://deno.land/x/postgresjs@v3.4.8/mod.js",
-    "redis": "jsr:@db/redis@0.41.2",
+    "redis": "jsr:@db/redis@0.42.0",
     "zod": "npm:/zod@4.5.4"
   }
 }
