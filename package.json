@@ -30,7 +30,7 @@
     "lint": "pnpm exec prettier --check \"**/*.{cjs,js,jsx,tsx,ts,less,md,json,yml,yaml}\""
   },
   "devDependencies": {
-    "prettier": "3.9.6",
-    "supabase": "2.116.0"
+    "prettier": "3.9.9",
+    "supabase": "2.120.0"
   }
 }
