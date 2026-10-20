@@ -35,9 +35,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-19
-lastReviewedCommit: 0a242b956e9fd6eaa24cf5217578560c840bf1b6
-lastReviewedNote: 'Edge #498: reviewed exact current-serve Kong generation proof and narrow automatic canonical CI coverage for the actual synthetic-stack inputs, with independent positive/removal/negative controls. Jobs, events, privileges, credentials, refs, product/dependency pins and functional assertions remain unchanged; new hosted qualification is required.'
+lastReviewedAt: 2026-10-21
+lastReviewedCommit: 65aec47600a1489635bf6826973ccc4935d6b0ce
+lastReviewedNote: 'Edge #500: reviewed JWT-only command ownership, strict stable draft wire, Database-owned concurrency and receipts, and local versus hosted proof boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -294,3 +294,7 @@ Both selected native CLI serve producers start the replacement runtime before re
 The offline pair uses the actual CLI-produced bootstrap and Functions Kong route, exact pulled image digests, an internal network and random loopback port. Actual repository HMAC/Portal helpers prove prefix/raw/chunked body preservation, key and Authorization/Cookie rejection, narrow legacy anon compatibility, gateway JWT validation and actual worker request/response cancellation. Cancellation proof parses exact structured events from both Docker stdout and stderr and requires both events to match the current signed request nonce. Separate sanitized receipts retain that public nonce, actual response/read/abort state and matching stream/command hashes without keys or signatures. Preserve one fetch, one first-chunk read, one abort and the existing 50 polls with 100 ms pauses; missing, foreign-nonce or unstructured event strings cannot pass. Each variant must pass and produce measured runner/image/config/source bindings plus an empty exact owned-resource cleanup receipt. A separate always-run recovery step handles interrupted qualification; no global prune is permitted. Local driver/fixture tests prove harness mechanics only. Missing hosted execution or cleanup is a remaining acceptance criterion, never an ignored success.
 
 Run locally executable gates with `pnpm lint` and `pnpm check`; `pnpm qualify:stack baseline` and `pnpm qualify:stack candidate` intentionally refuse local/non-hosted execution. Main owns push and hosted execution. The baseline fixtures remain retained as baseline evidence, while current contract tests select the new source-bound fixtures. The five-package runtime and Zod extension remain owned by #495; their qualified 51af990 source is now normally composed with the #496 developer/stack scope. Combined local qualification at 8bbe26d passed the ordinary gate (166 roots, 117 Node tests and 657 default Deno tests), and both latest developer/runtime inventories were empty. These observations do not waive the unchanged global gates or establish hosted gateway/lifecycle execution, which remains pending.
+
+### Stable owner draft transport (Edge #500)
+
+Run canonical `pnpm lint` and `pnpm check`, plus the real handler regression `test/stable_draft_command_test.ts`. Prove exact full source/census/body forwarding with the verified actor client; strict extra-key/type/duplicate-version rejection; actor mismatch and JWT-only authentication before body/RPC; complete structured conflict preservation, including every existing review point; SDK-shaped UUIDv7/historical fixed dataset IDs with unchanged actor binding; and one RPC on capability failure or a lost response. Read-only recovery must call only `get_dataset_stable_draft_request` with the original body. The frozen real Supabase client with injected fetch must also prove exactly one transport POST to each exact RPC URL after a disconnect or 503, independently of the authentication fixtures. Synthetic handler tests establish transport behavior; Database concurrency tests, hosted capability deployment, original data-flow readback and scientific acceptance remain separate evidence.

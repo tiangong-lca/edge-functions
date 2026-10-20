@@ -35,9 +35,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-19
-lastReviewedCommit: 0a242b956e9fd6eaa24cf5217578560c840bf1b6
-lastReviewedNote: 'Edge #498: reviewed exact current-serve Kong generation proof and narrow automatic canonical CI coverage for the actual synthetic-stack inputs, with independent positive/removal/negative controls. Jobs, events, privileges, credentials, refs, product/dependency pins and functional assertions remain unchanged; new hosted qualification is required.'
+lastReviewedAt: 2026-10-21
+lastReviewedCommit: 65aec47600a1489635bf6826973ccc4935d6b0ce
+lastReviewedNote: 'Edge #500: reviewed JWT-only command ownership, strict stable draft wire, Database-owned concurrency and receipts, and local versus hosted proof boundaries.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -391,3 +391,7 @@ LCIA request V2 requires the same signed `allowedBrandCodes`; it calls only `api
 LCIA replay coverage (Worker #320 / Edge #480): new build requests use coverage contract v3 (`snapshot_replay`) and a v3 request identity. Consumers accept matrix v2 only with `lcia-coverage-replay-snapshot:v1`, retaining all source, identity, count and scope checks; matrix v1 still requires legacy JSONL v2. A replay locator identifies private snapshot metadata, never a browser download. Snapshot enqueue accepts only `queued`/`in_progress` as pollable; Database failure/blockage and unexpected modes terminate polling. Deploy compatible consumers and Worker before admitting v3 requests.
 
 Independent calculation exports (Edge #483 / Worker #320) use `request_calculation_export` and `get_calculation_export` on `app_lca_release_commands`. Both recheck the actor-authorized completed package and call the service-only Database export facade with server-authenticated actor identity. Omitted format selects Parquet. Read mode never enqueues. Completed results must match package/job/format/Bundle/manifest bindings and bounded role/name/media/size/count tuples; sign at most 20 members plus the manifest per request. CSV members are independently gzipped, audit members reuse exact canonical paths, and response metadata removes raw locators. Failed/cancelled/blocked export states remain terminal and never change numerical readiness.
+
+## Stable owner draft boundary (Edge #500)
+
+`app_dataset_prepare_stable_draft` and `app_dataset_stable_draft_request` share `_shared/commands/dataset/stable_draft.ts` for strict request parsing and the existing JWT-only command runtime. `_shared/db_rpc/stable_draft.ts` forwards the original complete request through the actor client to exactly one prepare or read-only recovery RPC. Database owns allocation, admission concurrency, request receipts and native bundle protection. Edge adds no selector, service client, receipt storage, content writer, retry or fallback. CLI read-only selection continues to use the existing complete relation census.

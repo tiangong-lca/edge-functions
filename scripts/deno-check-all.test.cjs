@@ -16,17 +16,20 @@ test('checks the exact inventory through one bounded shared graph', () => {
   );
   const targets = discoverTargets();
 
-  assert.equal(targets.length, 166);
+  assert.equal(targets.length, 169);
   assert.ok(targets.includes('test/runtime_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/supabase_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/zod_consumer_compatibility_test.ts'));
+  assert.ok(targets.includes('test/stable_draft_command_test.ts'));
+  assert.ok(targets.includes('supabase/functions/app_dataset_prepare_stable_draft/index.ts'));
+  assert.ok(targets.includes('supabase/functions/app_dataset_stable_draft_request/index.ts'));
   assert.deepEqual(targets, [...new Set(targets)].sort());
   assert.equal(
     targets.some((target) => target.includes('/antchain_')),
     false,
   );
-  // Includes Portal request proof (#473), two SDK wire roots and Zod consumers (#495).
-  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 89);
+  // Includes Portal/SDK/Zod proofs and the stable draft handler regression (#500).
+  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 90);
 
   const batches = buildCheckBatches(targets);
   assert.equal(MAX_ROOTS_PER_BATCH, 200);

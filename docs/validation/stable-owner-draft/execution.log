@@ -1,0 +1,57 @@
+# Stable owner draft: sanitized execution summary
+# Curated observations, not a verbatim or complete command transcript.
+# Repository: tiangong-lca/edge-functions; routine PR base: dev.
+# No dataset/account identities, content digests, credentials or local machine paths retained.
+
+[retained full check: before the real-client transport regression]
+$ pnpm check:env && pnpm check:types && pnpm test
+[check-env] deno: 2.1.4
+[check-env] denoTypescript: 5.6.2
+[check-env] node: 24.19.0
+[check-env] pnpm: 11.24.0
+[check-env] supabaseCli: 2.121.0
+[check-env] OK exact Deno and auxiliary Node toolchains
+Running deno check for 169 roots in 1 shared graph batch(es)...
+Node: 152 tests; 152 passed; 0 failed.
+Deno focused stable_draft_command_test.ts: 9 groups passed.
+Deno total: 666 passed; 0 failed; 1 credential-dependent test ignored.
+
+[subsequent focused execution: test/stable_draft_command_test.ts]
+running 10 tests from ./test/stable_draft_command_test.ts
+stable draft handlers forward the exact complete wire once through the actor client ... ok (2ms)
+stable draft handlers preserve explicit selection and foreign public source on all supported tables ... ok (0ms)
+stable draft handlers accept SDK-shaped dataset UUIDs while retaining actor binding ... ok (0ms)
+stable draft handlers preserve every original review point in review-in-progress conflicts ... ok (0ms)
+stable draft handlers reject malformed and unsupported bodies before RPC ... ok (1ms)
+stable draft handlers retain complete database conflicts and native-owner errors ... ok (0ms)
+stable draft missing capability and lost response never retry or use another RPC ... ok (0ms)
+stable draft handlers reject actor mismatch and malformed RPC success ... ok (0ms)
+stable draft handlers require JWT authentication before body or RPC and preserve preflight ... ok (0ms)
+real Supabase transport makes one POST per stable draft RPC after disconnect or 503 ... ok (3ms)
+ok | 10 passed | 0 failed (11ms)
+
+[focused assertion scope]
+Public handler factories: prepare and read-only request recovery.
+JWT-only actor resolution before request body and RPC.
+Exact full source/census request forwarded once through the actor client.
+SDK-compatible lowercase fixed UUID shape; actor binding retained.
+Complete review-conflict details preserved, including all review points.
+Missing capability/lost response: one exact RPC; no retry or fallback.
+Real pinned Supabase client with injected fetch:
+  prepare + disconnected response => one POST to cmd_dataset_prepare_stable_draft
+  prepare + HTTP 503 => one POST to cmd_dataset_prepare_stable_draft
+  readback + disconnected response => one POST to get_dataset_stable_draft_request
+  readback + HTTP 503 => one POST to get_dataset_stable_draft_request
+  Each case asserts original body, api schema, and actor Authorization.
+
+[companion CLI: accepted native read-only selection summary]
+Generic source-based case, zero existing drafts: read-only selection; writes=0.
+Generic source-based case, one existing draft: read-only selection; writes=0.
+No preparation or recovery RPC execution is claimed by these selection checks.
+
+[remaining qualification]
+Final commit: canonical lint/check to be recorded by integration.
+Database #855 implementation/concurrency proof: separately owned.
+Hosted RPC source and deployment state: unverified by this evidence.
+Production deployment: none.
+Original data-flow write/readback and scientific acceptance: not established.
