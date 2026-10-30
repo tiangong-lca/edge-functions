@@ -39,8 +39,8 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 3b699afeae7db63ad7b07f2385fceaed94813027
+lastReviewedAt: 2026-10-30
+lastReviewedCommit: eca933c1938d08f002ba58482dfb2f9cfac8d009
 lastReviewedNote: 'Edge #509: reviewed exact snapshot method revision and frozen unit preservation, optional label enrichment, legacy reads and unchanged calculation and deployment boundaries.'
 related:
   - .docpact/config.yaml

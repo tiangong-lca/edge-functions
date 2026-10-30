@@ -9,7 +9,12 @@ import {
   resolveActorContext,
 } from '../_shared/command_runtime/actor_context.ts';
 import { commandError, json } from '../_shared/command_runtime/http.ts';
-import { readJsonBody } from '../_shared/command_runtime/request.ts';
+import {
+  publishedQueryRequestSchema,
+  queryPublishedResult,
+  readResultQueryBytes,
+  type ResultQueryOptions,
+} from '../_shared/result_query.ts';
 import {
   createLcaReleaseCommandRepository,
   createPublicLcaReleaseRepository,
@@ -31,6 +36,7 @@ export const lcaReleaseResultsRequestSchema = z.preprocess(
     return value;
   },
   z.discriminatedUnion('mode', [
+    publishedQueryRequestSchema,
     z.object({ mode: z.literal('current') }).strict(),
     z
       .object({
@@ -52,6 +58,7 @@ type ResultsRepository = Pick<
 
 export type LcaReleaseResultsHandlerOptions = {
   serviceSupabase?: SupabaseClient;
+  resultQuery?: ResultQueryOptions;
   publicRepository?: ResultsRepository;
   repositoryForActor?: (supabase: SupabaseClient) => ResultsRepository;
   resolveActor?: (req: Request) => Promise<ActorContextResult>;
@@ -63,7 +70,19 @@ function parseQuery(req: Request): Record<string, string> {
 }
 
 async function readRequestPayload(req: Request) {
-  return req.method === 'GET' ? { ok: true as const, value: parseQuery(req) } : readJsonBody(req);
+  if (req.method === 'GET') return { ok: true as const, value: parseQuery(req) };
+  try {
+    const bytes = await readResultQueryBytes(req.body, 64 * 1024);
+    return {
+      ok: true as const,
+      value: JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)),
+    };
+  } catch {
+    return {
+      ok: false as const,
+      response: commandError('INVALID_PAYLOAD', 'Invalid or oversized request body', 400),
+    };
+  }
 }
 
 async function resolveRepository(
@@ -121,6 +140,20 @@ export function createLcaReleaseResultsHandler(options: LcaReleaseResultsHandler
         400,
         parsed.error.flatten(),
       );
+    }
+
+    if (parsed.data.mode === 'query') {
+      const actor = await (options.resolveActor ?? resolveActorContext)(req);
+      if (!actor.ok) return actor.response;
+      const response = await queryPublishedResult(
+        parsed.data,
+        actor.value.supabase,
+        options.serviceSupabase ?? createSupabaseServiceClient(),
+        req.signal,
+        options.resultQuery,
+      );
+      response.headers.set('Cache-Control', 'no-store');
+      return response;
     }
 
     const resolved = await resolveRepository(req, options);
