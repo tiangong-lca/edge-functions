@@ -570,3 +570,10 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {"action":"get_calculation_export","packageId":"00000000-0000-4000-8000-000000000001","format":"csv","offset":0}
+
+
+### @name LCA_Release_HDF5_LCI：Local (authenticated exact-version result)
+curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
+    --data '{"mode":"query","processId":"{{$dotenv PROCESS_ID}}","processVersion":"01.00.000","query":{"kind":"lci","limit":100}}'
