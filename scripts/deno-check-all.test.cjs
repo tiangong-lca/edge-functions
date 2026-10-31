@@ -16,7 +16,7 @@ test('checks the exact inventory through one bounded shared graph', () => {
   );
   const targets = discoverTargets();
 
-  assert.equal(targets.length, 166);
+  assert.equal(targets.length, 167);
   assert.ok(targets.includes('test/runtime_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/supabase_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/zod_consumer_compatibility_test.ts'));
@@ -25,8 +25,8 @@ test('checks the exact inventory through one bounded shared graph', () => {
     targets.some((target) => target.includes('/antchain_')),
     false,
   );
-  // Includes Portal request proof (#473), two SDK wire roots and Zod consumers (#495).
-  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 89);
+  // Includes published-result query authorization and transport proof (#513).
+  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 90);
 
   const batches = buildCheckBatches(targets);
   assert.equal(MAX_ROOTS_PER_BATCH, 200);

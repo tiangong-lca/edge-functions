@@ -403,3 +403,7 @@ Edge does not interpret descriptor fields or maintain an LCIA algorithm version.
 ## Frozen LCIA result metadata
 
 Snapshot method IDs, revisions, units and numeric values remain authoritative for private and published result reads. The optional `impact_version` field carries the snapshot revision in `process_all_impacts` rows. Package-preview labels may be enriched only from the exact method ID/revision pair; independent ID/version query filters are post-filtered to those pairs. Missing revisions skip live method lookup and retain frozen names and units. Metadata enrichment never substitutes a latest revision or changes calculation readiness.
+
+## HDF5 query gateway
+
+`lca_release_results` keeps its existing metadata/download modes and adds an explicit authenticated `query` mode through `_shared/result_query.ts`. The actor client reads the exact original Process using `public` RLS before the service client resolves `api.svc_result_query_resolve`. Database owns current formal-release membership; Worker owns file integrity, indexing and local cache. The gateway signs the exact descriptor-bound request and validates both returned result identity and numeric DTO before projecting frozen metadata. It does not use Portal Redis, fetch mutable labels, accept client storage paths or cache permission decisions. See README for the wire/configuration contract.
