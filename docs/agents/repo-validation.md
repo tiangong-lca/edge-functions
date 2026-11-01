@@ -35,9 +35,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 3b699afeae7db63ad7b07f2385fceaed94813027
-lastReviewedNote: 'Edge #509: reviewed exact snapshot method revision and frozen unit preservation, optional label enrichment, legacy reads and unchanged calculation and deployment boundaries.'
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
+lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -297,4 +297,8 @@ Run locally executable gates with `pnpm lint` and `pnpm check`; `pnpm qualify:st
 
 ## Published HDF5 results
 
+For Release-owned final Results, run `test/result_query_v2_test.ts` in addition to the tests below. Real Supabase clients with synthetic RPC replies verify actor-only `api` profiles, exact source/Result selection, publication/runtime-bound cursors, Derived isolation, UTF-8 bounds, cold preparation, timeout cleanup, reader builds and in-flight withdrawal/runtime rotation. DTOs preserve signed LCI, zero LCIA, frozen method versions and full units. Real pinned S3 SDK signing covers both fixed ZIP formats without external I/O, exact target matching, complete-selection denials, post-signing withdrawal and the 60-second capability boundary. These tests do not establish hosted auth, Database RLS, object integrity or browser behavior; cross-repository and hosted qualification must supply those independent proofs before rollout. Dependency additions require the ordinary dependency-triggered CI; local Deno tests do not establish a hosted stack pass.
+
 Run `test/result_query_test.ts` with `test/lca_release_results_test.ts` plus the canonical baseline. Real Supabase client transports with synthetic responses prove explicit actor `public` profile/version filtering, service RPC payload, repeated authorization after warm reads/revocation, cold202, immutable identity, HMAC UTF-8 framing, numeric signs/small values/frozen units, request and response bounds, cancellation and capacity release. The HMAC golden vector is independently computed with Python SHA-256. Existing anonymous metadata/download modes remain covered. Paired Database/Worker and browser qualification remain required before rollout; these tests do not establish live publication or production performance.
+
+The opt-in Release `final-result-readiness-database.test.mjs`, with `RELEASE_QUERY_EDGE_ROOT` selecting this checkout, invokes `test/fixtures/final-result-gateway.ts`. The runner uses real Edge handlers and Supabase client HTTP against an actual actor-scoped SQL facade, plus the real Worker binary and Release/Toolkit Candidate. It proves complete LCI pagination, frozen LCIA, absent LCIA, reader pins and database permission denials. Release owns/reset-label-checks the synthetic PostgreSQL fixture and cleans temporary input, Worker and HTTP processes. Authentication remains an explicitly synthetic fixed token; this does not replace hosted JWT or browser qualification.

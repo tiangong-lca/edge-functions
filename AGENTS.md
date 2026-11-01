@@ -39,9 +39,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-30
-lastReviewedCommit: eca933c1938d08f002ba58482dfb2f9cfac8d009
-lastReviewedNote: 'Edge #509: reviewed exact snapshot method revision and frozen unit preservation, optional label enrichment, legacy reads and unchanged calculation and deployment boundaries.'
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
+lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -94,7 +94,7 @@ Keep these entry-level facts in `AGENTS.md`. Use `README.md` and `docs/agents/re
 
 - authoritative runtime/compiler: Deno `2.1.4` with its actual bundled TypeScript `5.6.2`, matching the selected Supabase CLI `2.121.0` / Edge Runtime `1.77.4` qualification target; this repository does not install or claim TypeScript 7
 - auxiliary package manager/runtime: pnpm `11.24.0` on Node `24.19.0`, retained for the exact Supabase CLI, Prettier, and Node validation wrappers only
-- latest reviewed import graph: AWS SDK `3.1152.0`, OpenAI `7.38.0`, Supabase JSR `2.118.0`, Upstash Redis `1.38.3`, Deno Redis `0.42.0`, Zod `4.6.7`, and Prettier `3.9.10`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; `pnpm outdated` and exact-Deno `deno outdated --latest` must remain empty
+- latest reviewed import graph: SageMaker AWS SDK `3.1152.0`, Result ZIP S3 client/presigner `3.1161.0`, OpenAI `7.38.0`, Supabase JSR `2.118.0`, Upstash Redis `1.38.3`, Deno Redis `0.42.0`, Zod `4.6.7`, and Prettier `3.9.10`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; full dependency refreshes require `pnpm outdated` and exact-Deno `deno outdated --latest` to be empty; scoped additions pin the latest compatible stable version without upgrading unrelated packages
 - local serve command: `pnpm start`
 - required stack qualification: `pnpm qualify:stack` runs only on an owned Docker-enabled hosted Linux runner; source fixtures and local checks do not establish a hosted stack pass; every fixture network stays internal, and exact owned endpoint relays provide loopback-only host access with verified listener/resource cleanup
 - baseline local validation: non-mutating `pnpm lint` and canonical `pnpm check`
