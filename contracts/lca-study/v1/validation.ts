@@ -499,11 +499,15 @@ export function validateFixtureGraph(
       exported.studyId !== item.studyId ||
       exported.reportRevisionId !== item.reportRevisionId ||
       exported.projectionRef.contentHash !== item.projectionHash ||
-      exported.grantEpoch !== item.grantEpoch ||
-      exported.status !== 'ready' ||
-      exported.disclosureDecision !== 'allowed'
+      exported.grantEpoch !== item.grantEpoch
     )
       reject(p + '/exportId', 'share.exact_export', 'FORBIDDEN');
+    if (
+      item.status === 'active' &&
+      exported &&
+      (exported.status !== 'ready' || exported.disclosureDecision !== 'allowed')
+    )
+      reject(p + '/exportId', 'share.active_export', 'FORBIDDEN');
     if (item.status === 'active' && Date.parse(item.expiresAt) <= Date.parse(observedAt))
       reject(p + '/expiresAt', 'share.not_expired', 'FORBIDDEN');
     if (item.status === 'expired' && Date.parse(item.expiresAt) > Date.parse(observedAt))

@@ -11,6 +11,7 @@ import {
   validateFixturePrecondition,
   validateRequest,
   type FixtureGraph,
+  type StudyApiRequest,
 } from '../contracts/lca-study/v1/index.ts';
 
 const ROOT = new URL('./fixtures/lca-study-api/v1/', import.meta.url);
@@ -212,6 +213,47 @@ Deno.test(
       validateFixturePrecondition(freeze.value, validGraph)[0]?.ruleId,
       'precondition.content_hash',
     );
+  },
+);
+
+Deno.test(
+  'CAS target types retain each operation literal and reject a foreign target at runtime',
+  () => {
+    type FreezeTarget = Extract<
+      StudyApiRequest,
+      { operation: 'revision.freeze' }
+    >['target']['type'];
+    const studyRevision: FreezeTarget = 'studyRevision';
+    // @ts-expect-error A different resource must not become assignable through type widening.
+    const reportRevision: FreezeTarget = 'reportRevision';
+    assertEquals(studyRevision, 'studyRevision');
+    const freeze = validRequests.find(
+      (value) => (value as { operation: string }).operation === 'revision.freeze',
+    ) as Record<string, unknown>;
+    assertEquals(
+      validateRequest({
+        ...freeze,
+        target: { type: reportRevision, id: 'report-rev-1', expectedRevision: 2 },
+      }).ok,
+      false,
+    );
+  },
+);
+
+Deno.test(
+  'Expired exports retain expired and revoked share audit references without allowing active access',
+  () => {
+    for (const status of ['expired', 'revoked'] as const) {
+      const graph = structuredClone(validGraph);
+      graph.exports[0].status = 'expired';
+      graph.shares[0].status = status;
+      graph.shares[0].expiresAt = '2026-11-01T00:00:00Z';
+      assert(validateFixtureGraph(graph, OBSERVED_AT).ok, status);
+      graph.shares[0].projectionHash = 'e'.repeat(64);
+      const changedBinding = validateFixtureGraph(graph, OBSERVED_AT);
+      assert(!changedBinding.ok);
+      assert(changedBinding.issues.some((issue) => issue.ruleId === 'share.exact_export'));
+    }
   },
 );
 

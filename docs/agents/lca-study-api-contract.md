@@ -19,7 +19,7 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedCommit: f334fa9494d3f0b9a290445b51c18953137a8d79
 lastReviewedNote: 'Edge #521 P0: versioned wire definitions and offline relationship fixtures only; no Study endpoint, migration, deployment, signer, runtime authorization or numerical capability is enabled.'
 related:
   - ../../AGENTS.md
@@ -105,7 +105,7 @@ Run job states preserve `queued/running/waiting/completed/blocked/stale/failed/c
 
 An unreviewed report may freeze. Finalization under a no-review profile remains explicitly unreviewed and cannot claim independent approval. A profile requiring internal or independent review binds the exact qualifying approval IDs and `finalizedAt`; future finalization rechecks reviewer authority and current decisions. A later withdrawal or permission loss preserves historical finalization/export snapshots but affects current approval/validity/access. The graph checker verifies only the supplied decision chronology and identity relationships, not current membership or who actually authorized an action.
 
-Every Study grant change increments Database's grant epoch under the v1 conservative policy. Historical exports/shares remain audit records, but new access requires current epoch equality and live rights; old projections/receipts need regranting. Epoch equality alone does not establish source permission: Export also binds `policyId`, `disclosureContextHash` and actor, and every new download/share must recheck the current Edge-owned source-rights/license context. Historical receipt recovery is not authority to return a previously complete projection. Shares never follow latest or grant the whole Study. Expiry/revocation denials are externally `FORBIDDEN` without disclosing private grant facts.
+Every Study grant change increments Database's grant epoch under the v1 conservative policy. Historical exports/shares remain audit records, but new access requires current epoch equality and live rights; old projections/receipts need regranting. Static reference consistency applies to every Share, including expired/revoked history; the ready/allowed Export access gate applies only to active Shares. An expired Export can therefore retain correctly bound expired/revoked Share audit records without authorizing new access. Epoch equality alone does not establish source permission: Export also binds `policyId`, `disclosureContextHash` and actor, and every new download/share must recheck the current Edge-owned source-rights/license context. Historical receipt recovery is not authority to return a previously complete projection. Shares never follow latest or grant the whole Study. Expiry/revocation denials are externally `FORBIDDEN` without disclosing private grant facts.
 
 Export disclosure applies to complete serialized content, embedded drill-down data and attachments. The receipt envelope plans `Ed25519`, independently identified `keyId` and an export binding hash covering exact report, facts, projection, renderer/resources, actor/policy/epoch and historical review/validity snapshots. Signer, canonical receipt bytes, keys, trust-anchor distribution, cryptographic verification and serialized disclosure inspection require a later qualified export implementation. Synthetic fixture signatures and digest syntax are not trusted signatures or license evidence. Offline copies cannot be recalled through later share revocation.
 

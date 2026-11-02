@@ -434,6 +434,32 @@
       ],
       "expectedCode": "REFERENCE_MISMATCH",
       "expectedRule": "graph.unique_identity"
+    },
+    {
+      "name": "active-share-expired-export",
+      "patches": [
+        {
+          "path": "/exports/0/status",
+          "value": "expired"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.active_export"
+    },
+    {
+      "name": "active-share-denied-export",
+      "patches": [
+        {
+          "path": "/exports/0/status",
+          "value": "expired"
+        },
+        {
+          "path": "/exports/0/disclosureDecision",
+          "value": "denied"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.active_export"
     }
   ]
 }

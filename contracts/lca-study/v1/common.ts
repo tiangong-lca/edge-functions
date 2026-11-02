@@ -124,7 +124,7 @@ export const issueSchema = z
   })
   .strict();
 
-export function target(type: string) {
+export function target<const TType extends string>(type: TType) {
   return z
     .object({ type: z.literal(type), id: idSchema, expectedRevision: generationSchema })
     .strict();
