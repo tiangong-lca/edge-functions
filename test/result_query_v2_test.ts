@@ -109,6 +109,7 @@ function setup(
     serviceUrl?: string;
     downloadConfig?: FinalDownloadConfig;
     downloadFetch?: typeof fetch;
+    downloadServiceCredentials?: () => { url: string; key: string };
   } = {},
 ) {
   const counts = { actor: 0, database: 0, reader: 0 };
@@ -148,6 +149,7 @@ function setup(
     finalDownload: {
       config: options.downloadConfig ?? config,
       fetch: options.downloadFetch,
+      serviceCredentials: options.downloadServiceCredentials ?? (() => serviceCredentials),
       timeoutMs: options.timeoutMs,
     },
     resultQuery: {
@@ -651,13 +653,11 @@ Deno.test(
   },
 );
 
-function scopedZipJwt(patch: Record<string, unknown> = {}) {
-  const enc = (value: unknown) =>
-    btoa(JSON.stringify(value)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-  const now = Math.floor(Date.now() / 1000);
-  return `${enc({ alg: 'HS256', typ: 'JWT' })}.${enc({ iss: 'supabase', ref: 'abcdefghijklmnopqrst', role: 'lca_result_zip_reader_g20261102', iat: now, exp: now + 3600, jti: '00000000-0000-4000-8000-000000000527', ...patch })}.synthetic`;
-}
-const restrictedConfig: FinalDownloadConfig = {
+const serviceCredentials = {
+  url: 'https://abcdefghijklmnopqrst.supabase.co',
+  key: 'sb_secret_synthetic_fixture_only',
+};
+const nativeConfig: FinalDownloadConfig = {
   ...config,
   signer: 'supabase-storage',
   endpoint: 'https://abcdefghijklmnopqrst.storage.supabase.co/storage/v1/s3',
@@ -665,25 +665,23 @@ const restrictedConfig: FinalDownloadConfig = {
   prefix: 'lca_results',
   accessKeyId: '',
   secretAccessKey: '',
-  signingKey: scopedZipJwt(),
-  publicApiKey: 'sb_publishable_synthetic_fixture_only',
 };
 const zipPath = (format: string) =>
   `/object/sign/lca_results/lca_results/release-candidates/${'c'.repeat(64)}/result.${format}.zip`;
 const zipDescriptor = async (format = 'tidas') => ({
   publicationId,
   candidateHash: 'c'.repeat(64),
-  targetHash: (await finalDownloadTarget(restrictedConfig)).targetHash,
+  targetHash: (await finalDownloadTarget(nativeConfig)).targetHash,
   file: { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 },
 });
 Deno.test(
-  'restricted Storage ZIP signing sends only the dedicated key and returns one object capability',
+  'Storage ZIP signing uses existing server credentials and returns one object capability',
   async () => {
     for (const format of ['tidas', 'ilcd']) {
       const d = await zipDescriptor(format);
       let signs = 0;
       const { handler, counts } = setup({
-        downloadConfig: restrictedConfig,
+        downloadConfig: nativeConfig,
         database: () => ({ ok: true, data: d }),
         downloadFetch: async (input, init) => {
           signs++;
@@ -692,8 +690,8 @@ Deno.test(
             `https://abcdefghijklmnopqrst.supabase.co/storage/v1${zipPath(format)}`,
           );
           const h = new Headers(fetchInit(init)?.headers);
-          assertEquals(h.get('apikey'), restrictedConfig.publicApiKey);
-          assertEquals(h.get('Authorization'), `Bearer ${restrictedConfig.signingKey}`);
+          assertEquals(h.get('apikey'), serviceCredentials.key);
+          assertEquals(h.get('Authorization'), null);
           assertEquals(fetchInit(init)?.redirect, 'error');
           assertEquals(fetchInit(init)?.signal instanceof AbortSignal, true);
           assertEquals(JSON.parse(String(fetchInit(init)?.body)), { expiresIn: 60 });
@@ -708,14 +706,14 @@ Deno.test(
       assertEquals(url.pathname, '/storage/v1' + zipPath(format));
       assertEquals(url.searchParams.get('download'), `result.${format}.zip`);
       assertEquals([...url.searchParams.keys()].sort(), ['download', 'token']);
-      assertEquals(JSON.stringify(body).includes(restrictedConfig.signingKey!), false);
+      assertEquals(JSON.stringify(body).includes(serviceCredentials.key), false);
       assertEquals(counts.database, 2);
       assertEquals(signs, 1);
     }
   },
 );
 Deno.test(
-  'restricted signer refuses foreign/substituted/malformed provider capabilities',
+  'Storage signer refuses foreign/substituted/malformed provider capabilities',
   async () => {
     const d = await zipDescriptor();
     for (const signedURL of [
@@ -724,26 +722,26 @@ Deno.test(
       `${zipPath('tidas')}?token=a.b.c&token=d.e.f`,
       `${zipPath('tidas')}?token=a.b.c&extra=1`,
       `${zipPath('tidas')}?token=a.b.c#fragment`,
-      `${zipPath('tidas')}?token=${restrictedConfig.signingKey}`,
+      `${zipPath('tidas')}?token=${serviceCredentials.key}`,
       `${zipPath('tidas')}?token=${'x'.repeat(9000)}`,
     ]) {
       const { handler } = setup({
-        downloadConfig: restrictedConfig,
+        downloadConfig: nativeConfig,
         database: () => ({ ok: true, data: d }),
         downloadFetch: async () => reply({ signedURL }),
       });
       const r = await handler(downloadRequest());
       assertEquals(r.status, 503);
-      assertEquals((await r.text()).includes(restrictedConfig.signingKey!), false);
+      assertEquals((await r.text()).includes(serviceCredentials.key), false);
     }
   },
 );
-Deno.test('restricted signer denies before I/O and rechecks withdrawal after signing', async () => {
+Deno.test('Storage signer denies before I/O and rechecks withdrawal after signing', async () => {
   const d = await zipDescriptor();
   for (const deniedAt of [1, 2]) {
     let signs = 0;
     const { handler } = setup({
-      downloadConfig: restrictedConfig,
+      downloadConfig: nativeConfig,
       database: (_n, _a, count) =>
         count === deniedAt
           ? { ok: false, code: 'result_package_not_available', status: 404 }
@@ -760,22 +758,22 @@ Deno.test('restricted signer denies before I/O and rechecks withdrawal after sig
   }
 });
 Deno.test(
-  'restricted signer fails closed on network/auth failure and cancelled requests',
+  'Storage signer fails closed on network/auth failure and cancelled requests',
   async () => {
     const d = await zipDescriptor();
     for (const status of [302, 400, 401, 403, 500]) {
       const { handler } = setup({
-        downloadConfig: restrictedConfig,
+        downloadConfig: nativeConfig,
         database: () => ({ ok: true, data: d }),
-        downloadFetch: async () => reply({ message: restrictedConfig.signingKey }, status),
+        downloadFetch: async () => reply({ message: serviceCredentials.key }, status),
       });
       const r = await handler(downloadRequest());
       assertEquals(r.status, 503);
-      assertEquals((await r.text()).includes(restrictedConfig.signingKey!), false);
+      assertEquals((await r.text()).includes(serviceCredentials.key), false);
     }
     let aborted = false;
     const { handler } = setup({
-      downloadConfig: restrictedConfig,
+      downloadConfig: nativeConfig,
       timeoutMs: 5,
       database: () => ({ ok: true, data: d }),
       downloadFetch: (_input, init) =>
@@ -803,16 +801,14 @@ Deno.test(
     const awaitedDescriptor = await zipDescriptor();
     for (const bad of [
       {
-        ...restrictedConfig,
+        ...nativeConfig,
         signer: 's3' as const,
-        signingKey: undefined,
         accessKeyId: 'project',
         secretAccessKey: 'anon',
         sessionToken: 'auth.jwt.token',
       },
-      { ...restrictedConfig, accessKeyId: 'mixed-key' },
-      { ...restrictedConfig, sessionToken: 'auth.jwt.token' },
-      { ...restrictedConfig, signingKey: 'legacy.jwt.token' },
+      { ...nativeConfig, accessKeyId: 'mixed-key' },
+      { ...nativeConfig, sessionToken: 'auth.jwt.token' },
     ]) {
       const { handler } = setup({
         downloadConfig: bad,
@@ -831,43 +827,44 @@ Deno.test(
   },
 );
 
-Deno.test(
-  'restricted ZIP credentials reject broad roles, wrong projects, expiry and opaque server keys before I/O',
-  async () => {
-    const descriptor = await zipDescriptor();
-    const now = Math.floor(Date.now() / 1000);
-    const invalid = [
-      ...[
-        { role: 'service_role' },
-        { role: 'authenticated' },
-        { role: 'lca_result_zip_reader' },
-        { ref: 'wrongproject' },
-        { iss: 'other' },
-        { exp: now + 59 },
-        { exp: now + 91 * 86400 },
-        { iat: now + 120 },
-        { exp: 'later' },
-        { jti: 'missing-identity' },
-      ].map((claims) => ({ signingKey: scopedZipJwt(claims) })),
-      { signingKey: 'sb_secret_unqualified_opaque_key' },
-      { publicApiKey: 'sb_secret_forbidden_gateway_key' },
-      { publicApiKey: scopedZipJwt({ role: 'service_role' }) },
-      { publicApiKey: undefined },
-    ];
-    for (const patch of invalid) {
-      let signs = 0;
-      const { handler } = setup({
-        downloadConfig: { ...restrictedConfig, ...patch },
-        database: () => ({ ok: true, data: descriptor }),
-        downloadFetch: () => {
-          signs++;
-          throw new Error('Must reject before I/O');
-        },
-      });
-      const response = await handler(downloadRequest());
-      assertEquals(response.status, 503);
-      assertEquals(signs, 0);
-      await response.body?.cancel();
-    }
-  },
-);
+Deno.test('Storage signer rejects missing or foreign service credentials before I/O', async () => {
+  const descriptor = await zipDescriptor();
+  for (const credentials of [
+    { ...serviceCredentials, key: '' },
+    { ...serviceCredentials, url: 'https://foreign.supabase.co' },
+    { ...serviceCredentials, url: serviceCredentials.url + '/path' },
+  ]) {
+    let signs = 0;
+    const { handler } = setup({
+      downloadConfig: nativeConfig,
+      downloadServiceCredentials: () => credentials,
+      database: () => ({ ok: true, data: descriptor }),
+      downloadFetch: () => {
+        signs++;
+        throw new Error('Must reject before I/O');
+      },
+    });
+    const response = await handler(downloadRequest());
+    assertEquals(response.status, 503);
+    assertEquals(signs, 0);
+    await response.body?.cancel();
+  }
+});
+Deno.test('Storage signer also accepts existing legacy service-role credentials', async () => {
+  const descriptor = await zipDescriptor();
+  const key = 'synthetic.service_role.signature';
+  const { handler } = setup({
+    downloadConfig: nativeConfig,
+    downloadServiceCredentials: () => ({ ...serviceCredentials, key }),
+    database: () => ({ ok: true, data: descriptor }),
+    downloadFetch: async (_input, init) => {
+      const headers = new Headers(fetchInit(init)?.headers);
+      assertEquals(headers.get('apikey'), key);
+      assertEquals(headers.get('Authorization'), `Bearer ${key}`);
+      return reply({ signedURL: `${zipPath('tidas')}?token=a.b.c` });
+    },
+  });
+  const response = await handler(downloadRequest());
+  assertEquals(response.status, 200);
+  assertEquals((await response.text()).includes(key), false);
+});
