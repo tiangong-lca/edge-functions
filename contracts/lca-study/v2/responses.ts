@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { artifactRefSchema, calculationContractRefSchema, idSchema, text } from '../v1/common.ts';
-import { resourceItemSchema, resourcePageSchema, acquisitionSchema } from './records.ts';
+import {
+  resourceItemSchema,
+  resourcePageSchema,
+  acquisitionSchema,
+  taskSchema,
+} from './records.ts';
 import { studySchema } from '../v1/records.ts';
 import { studyPageSchema } from '../v1/pages.ts';
 import { API_SCHEMA, CONTRACT_VERSION, errorCodeSchema } from './common.ts';
@@ -54,6 +59,7 @@ export const responseDataSchema = z.union([
   resourcePageSchema,
   studyPageSchema,
   capabilitiesSchema,
+  z.object({ type: z.literal('task'), value: taskSchema }).strict(),
   z.object({ type: z.literal('modelSourceAcquisition'), value: acquisitionSchema }).strict(),
   z
     .object({

@@ -18,7 +18,7 @@ import {
   modelPreparationSourceSchema,
   methodRefsSchema,
 } from '../v1/records.ts';
-import { overrideSchema } from './records.ts';
+import { overrideSchema, cutoffsSchema, taskResourceSchema } from './records.ts';
 
 const envelope = { schemaVersion: z.literal(API_SCHEMA), requestId: idSchema };
 const write = { ...envelope, idempotencyKey: idSchema };
@@ -34,6 +34,23 @@ const variants = [
   z.object({ ...write, operation: z.literal('study.create'), scope, title: text(512) }).strict(),
   z.object({ ...envelope, operation: z.literal('study.read'), studyId: idSchema }).strict(),
   z.object({ ...envelope, operation: z.literal('study.list'), ...pagination }).strict(),
+  z
+    .object({
+      ...envelope,
+      operation: z.literal('task.read'),
+      studyId: idSchema,
+      resource: taskResourceSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...write,
+      operation: z.literal('task.cancel'),
+      studyId: idSchema,
+      resource: taskResourceSchema,
+      reason: text(512),
+    })
+    .strict(),
   z
     .object({
       ...write,
@@ -71,6 +88,7 @@ const variants = [
       studyId: idSchema,
       source: modelPreparationSourceSchema,
       methodRefs: methodRefsSchema.optional(),
+      cutoffs: cutoffsSchema.optional(),
       profileId: idSchema,
       calculationContractRef: calculationContractRefSchema,
     })
@@ -81,6 +99,12 @@ const variants = [
           code: 'custom',
           path: ['methodRefs'],
           message: 'base preparation selects exact methods; Scenario preparation derives them',
+        });
+      if (request.source.type === 'scenarioRevision' && request.cutoffs !== undefined)
+        context.addIssue({
+          code: 'custom',
+          path: ['cutoffs'],
+          message: 'Scenario preparation inherits frozen base cutoffs',
         });
     }),
   z.object({ ...envelope, operation: z.literal('model.read'), preparationId: idSchema }).strict(),

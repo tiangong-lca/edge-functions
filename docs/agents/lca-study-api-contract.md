@@ -19,8 +19,8 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 16ede69c654c6c07085a59d09d2286dc98ea1428
-lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
+lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
+lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md

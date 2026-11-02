@@ -18,17 +18,16 @@ import {
   type ActorContextResult,
 } from '../command_runtime/actor_context.ts';
 import {
-  artifactCapabilitySchema,
+  readAuthorizedArtifact,
+  unpack,
   createStudyRepository,
   createStudyActorClient,
-  MAX_ARTIFACT_BYTES,
   readBounded,
   type StudyRepository,
 } from './repository.ts';
 import {
   assertIntent,
   configSchema,
-  failureSchema,
   intentSchema,
   profileAllowed,
   readConfig,
@@ -46,41 +45,20 @@ export type HandlerOptions = {
   timeoutMs?: number;
 };
 const MAX_BODY_BYTES = 256 * 1024;
-const statusFor = (code: string) =>
-  code === 'AUTH_REQUIRED'
-    ? 401
-    : code === 'FORBIDDEN' || code === 'DISCLOSURE_DENIED'
-      ? 403
-      : code === 'NOT_FOUND'
-        ? 404
-        : ['REVISION_CONFLICT', 'IDEMPOTENCY_CONFLICT', 'FROZEN_REVISION'].includes(code)
-          ? 409
-          : code === 'CAPABILITY_UNAVAILABLE'
-            ? 503
-            : code === 'UPSTREAM_UNAVAILABLE'
-              ? 502
-              : code === 'DEADLINE_EXCEEDED'
-                ? 504
-                : 400;
-function unpack(raw: unknown): unknown {
-  const failure = failureSchema.safeParse(raw);
-  if (failure.success)
-    throw new StudyFailure(failure.data.code, statusFor(failure.data.code), 'rpc.domain');
-  if (
-    !raw ||
-    typeof raw !== 'object' ||
-    Array.isArray(raw) ||
-    Object.keys(raw).sort().join(',') !== 'data,ok' ||
-    (raw as { ok: unknown }).ok !== true
-  )
-    throw new StudyFailure('UPSTREAM_UNAVAILABLE', 502, 'rpc.response');
-  return (raw as { data: unknown }).data;
-}
 function response(requestId: string, data: unknown): StudyApiResponse {
   return responseSchema.parse({ schemaVersion: API_SCHEMA, requestId, ok: true, data });
 }
 function bind(request: StudyApiRequest, value: StudyApiResponse): void {
   if (!value.ok) return;
+  if (request.operation === 'task.read' || request.operation === 'task.cancel') {
+    if (
+      value.data.type !== 'task' ||
+      value.data.value.studyId !== request.studyId ||
+      JSON.stringify(value.data.value.resource) !== JSON.stringify(request.resource)
+    )
+      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.task_selection');
+    return;
+  }
   if (request.operation === 'model.source.resolve' || request.operation === 'model.source.read') {
     const d = value.data;
     if (d.type !== 'modelSourceAcquisition')
@@ -262,9 +240,11 @@ export function createStudyHandler(options: HandlerOptions = {}) {
       const parsed = requestSchema.safeParse(input);
       if (!parsed.success) throw new StudyFailure('INVALID_REQUEST', 400, 'request.structure');
       const request = parsed.data;
+      if (request.operation === 'artifact.read' && request.artifactRef.type === 'modelSource')
+        throw new StudyFailure('DISCLOSURE_DENIED', 403, 'artifact.private_source');
       if (
         request.operation === 'artifact.read' &&
-        !['modelSource', 'modelInput', 'runResult'].includes(request.artifactRef.type)
+        !['modelInput', 'runResult'].includes(request.artifactRef.type)
       )
         throw new StudyFailure('CAPABILITY_UNAVAILABLE', 503, 'capability.artifact_kind');
       if (
@@ -297,6 +277,8 @@ export function createStudyHandler(options: HandlerOptions = {}) {
           'scenario.create',
           'scenario.save',
           'member.set',
+          'task.read',
+          'task.cancel',
         ].includes(request.operation)
       ) {
         const checked = validateV1Request({ ...request, schemaVersion: V1_SCHEMA });
@@ -333,35 +315,18 @@ export function createStudyHandler(options: HandlerOptions = {}) {
         if (options.validateRevision === null)
           throw new StudyFailure('CAPABILITY_UNAVAILABLE', 503, 'freeze.validator_unavailable');
         const decision = await (
-          options.validateRevision ?? createPreparedInputValidator(repository)
+          options.validateRevision ?? createPreparedInputValidator(repository, assertActive)
         )(intent, controller.signal);
         assertActive();
         data = unpack(await repository.consume(intent.intentId, decision, controller.signal));
       } else if (request.operation === 'artifact.read') {
-        const cap = artifactCapabilitySchema.parse(data);
-        if (cap.artifactRef.byteSize > MAX_ARTIFACT_BYTES)
-          throw new StudyFailure('PAYLOAD_TOO_LARGE', 413, 'artifact.byte_limit');
-        if (
-          cap.studyId !== request.studyId ||
-          JSON.stringify(cap.artifactRef) !== JSON.stringify(request.artifactRef)
-        )
-          throw new StudyFailure('REFERENCE_MISMATCH', 502, 'artifact.binding');
-        assertActive();
-        const bytes = await repository.download(cap, controller.signal);
-        assertActive();
-        if (bytes.byteLength > MAX_ARTIFACT_BYTES)
-          throw new StudyFailure('PAYLOAD_TOO_LARGE', 413, 'artifact.byte_limit');
-        const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('');
-        if (bytes.length !== cap.artifactRef.byteSize || hash !== cap.artifactRef.contentHash)
-          throw new StudyFailure('REFERENCE_MISMATCH', 502, 'artifact.integrity');
-        assertActive();
-        const recheck = artifactCapabilitySchema.parse(
-          unpack(await repository.dispatch(request, controller.signal)),
+        const bytes = await readAuthorizedArtifact(
+          repository,
+          request,
+          controller.signal,
+          assertActive,
+          { data },
         );
-        if (JSON.stringify(recheck) !== JSON.stringify(cap))
-          throw new StudyFailure('FORBIDDEN', 403, 'artifact.authorization_changed');
         const chunks: string[] = [];
         for (let i = 0; i < bytes.length; i += 16384)
           chunks.push(String.fromCharCode(...bytes.subarray(i, i + 16384)));
