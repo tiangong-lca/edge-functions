@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: 709fa81398b9dbaa73d075b25c06da4c090d3142
-lastReviewedNote: 'Edge #521: reviewed pure Study API v1 schemas, offline fixtures and routing; existing Function, auth, database, numerical and deployment behavior is unchanged.'
+lastReviewedCommit: 'dc3868b99a14c212e4659ef25cc32fb0f7404354'
+lastReviewedNote: 'Edge #521: reviewed Study contracts and offline evidence; merge retains separately reviewed #523 S3 fixes. P0 adds no Function, authorization, database, numerical or deployment behavior.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
