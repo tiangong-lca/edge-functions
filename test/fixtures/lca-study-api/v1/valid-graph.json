@@ -1,0 +1,518 @@
+{
+  "schemaVersion": "lca.study-api-fixture-graph.v1",
+  "studies": [
+    {
+      "studyId": "study-1",
+      "revision": 1,
+      "scope": {
+        "kind": "user",
+        "id": "user-author"
+      },
+      "title": "Synthetic two-scenario study",
+      "status": "active",
+      "currentRevisionId": "study-rev-1"
+    }
+  ],
+  "studyRevisions": [
+    {
+      "revisionId": "study-rev-1",
+      "studyId": "study-1",
+      "revision": 2,
+      "parentRevisionId": null,
+      "status": "frozen",
+      "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "definition": {
+        "goal": "Compare two synthetic electricity scenarios.",
+        "functionalUnit": {
+          "amount": "1",
+          "unit": "kWh",
+          "referenceFlowId": "flow-electricity"
+        },
+        "systemBoundary": "Synthetic cradle-to-gate fixture only.",
+        "assumptions": [
+          {
+            "id": "assumption-1",
+            "statement": "All values and identities are synthetic.",
+            "evidenceRef": "source-fixture"
+          }
+        ],
+        "methodRefs": [
+          {
+            "type": "datasetRevision",
+            "datasetType": "lciamethod",
+            "id": "method-fixture",
+            "version": "01.00.000"
+          },
+          {
+            "type": "datasetRevision",
+            "datasetType": "lciamethod",
+            "id": "method-acid-fixture",
+            "version": "01.04.000"
+          }
+        ]
+      },
+      "modelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model"
+      },
+      "validation": "passed",
+      "modelPreparationId": "preparation-base"
+    }
+  ],
+  "scenarioRevisions": [
+    {
+      "scenarioId": "scenario-base",
+      "scenarioRevisionId": "scenario-rev-base",
+      "studyId": "study-1",
+      "studyRevisionId": "study-rev-1",
+      "parentScenarioRevisionId": null,
+      "revision": 2,
+      "status": "frozen",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "overrides": [],
+      "effectiveModelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model"
+      },
+      "modelPreparationId": "preparation-scenario-base"
+    },
+    {
+      "scenarioId": "scenario-alternative",
+      "scenarioRevisionId": "scenario-rev-alternative",
+      "studyId": "study-1",
+      "studyRevisionId": "study-rev-1",
+      "parentScenarioRevisionId": null,
+      "revision": 2,
+      "status": "frozen",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "overrides": [
+        {
+          "path": "/parameters/energy/value",
+          "value": 0.8
+        }
+      ],
+      "effectiveModelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-alternative",
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digestScope": "worker_prepared_model"
+      },
+      "modelPreparationId": "preparation-scenario-alternative"
+    }
+  ],
+  "runs": [
+    {
+      "runId": "run-base",
+      "studyId": "study-1",
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-base",
+      "inputHash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "effectiveModelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model"
+      },
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "engineId": "solver-worker",
+      "profileId": "lca.study-deterministic-p0.v1",
+      "execution": {
+        "jobId": "job-base",
+        "status": "completed"
+      },
+      "resultRef": {
+        "type": "runResult",
+        "id": "result-base",
+        "contentHash": "4444444444444444444444444444444444444444444444444444444444444444",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.runResult.v1",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "validity": {
+        "status": "current",
+        "checkedAt": "2026-11-02T00:00:00Z",
+        "reasonCodes": []
+      },
+      "modelPreparationId": "preparation-scenario-base"
+    },
+    {
+      "runId": "run-alternative",
+      "studyId": "study-1",
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-alternative",
+      "inputHash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "effectiveModelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-alternative",
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digestScope": "worker_prepared_model"
+      },
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "engineId": "solver-worker",
+      "profileId": "lca.study-deterministic-p0.v1",
+      "execution": {
+        "jobId": "job-alternative",
+        "status": "completed"
+      },
+      "resultRef": {
+        "type": "runResult",
+        "id": "result-alternative",
+        "contentHash": "6666666666666666666666666666666666666666666666666666666666666666",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.runResult.v1",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "validity": {
+        "status": "current",
+        "checkedAt": "2026-11-02T00:00:00Z",
+        "reasonCodes": []
+      },
+      "modelPreparationId": "preparation-scenario-alternative"
+    }
+  ],
+  "analyses": [
+    {
+      "analysisId": "analysis-compare",
+      "studyId": "study-1",
+      "runIds": ["run-base", "run-alternative"],
+      "profileId": "fixture-compare.v1",
+      "configHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": "ready",
+      "comparability": {
+        "status": "comparable",
+        "reasonCodes": []
+      },
+      "factsRef": {
+        "type": "analysisFacts",
+        "id": "facts-compare",
+        "contentHash": "7777777777777777777777777777777777777777777777777777777777777777",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.analysisFacts.v1",
+        "digestScope": "artifact_bytes_sha256"
+      }
+    }
+  ],
+  "reports": [
+    {
+      "reportRevisionId": "report-rev-1",
+      "studyId": "study-1",
+      "parentReportRevisionId": null,
+      "authorId": "user-author",
+      "revision": 2,
+      "status": "frozen",
+      "contentHash": "8888888888888888888888888888888888888888888888888888888888888888",
+      "runIds": ["run-base", "run-alternative"],
+      "analysisIds": ["analysis-compare"],
+      "factsRefs": [
+        {
+          "type": "runResult",
+          "id": "result-base",
+          "contentHash": "4444444444444444444444444444444444444444444444444444444444444444",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.runResult.v1",
+          "digestScope": "artifact_bytes_sha256"
+        },
+        {
+          "type": "runResult",
+          "id": "result-alternative",
+          "contentHash": "6666666666666666666666666666666666666666666666666666666666666666",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.runResult.v1",
+          "digestScope": "artifact_bytes_sha256"
+        },
+        {
+          "type": "analysisFacts",
+          "id": "facts-compare",
+          "contentHash": "7777777777777777777777777777777777777777777777777777777777777777",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.analysisFacts.v1",
+          "digestScope": "artifact_bytes_sha256"
+        }
+      ],
+      "contentRef": {
+        "type": "reportContent",
+        "id": "report-content",
+        "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.reportContent.v1",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "templateId": "fixture-report-template.v1",
+      "finalization": {
+        "status": "finalized",
+        "profileId": "fixture-reviewed.v1",
+        "reviewRequirement": "independent",
+        "finalizedAt": "2026-11-02T00:00:00Z",
+        "reviewIds": ["review-1"]
+      },
+      "validitySnapshot": {
+        "status": "current",
+        "checkedAt": "2026-11-02T00:00:00Z",
+        "reasonCodes": []
+      }
+    }
+  ],
+  "reviews": [
+    {
+      "reviewId": "review-1",
+      "studyId": "study-1",
+      "target": {
+        "type": "reportRevision",
+        "revisionId": "report-rev-1",
+        "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      "reviewClass": "independent",
+      "decision": "approve",
+      "actorId": "user-reviewer",
+      "clientId": "fixture-client",
+      "authorizationEvidenceRef": "synthetic-grant-1",
+      "decidedAt": "2026-11-02T00:00:00Z",
+      "supersedesReviewId": null
+    }
+  ],
+  "exports": [
+    {
+      "exportId": "export-1",
+      "studyId": "study-1",
+      "reportRevisionId": "report-rev-1",
+      "reportContentHash": "8888888888888888888888888888888888888888888888888888888888888888",
+      "status": "ready",
+      "projectionRef": {
+        "type": "reportProjection",
+        "id": "projection-1",
+        "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.reportProjection.v1",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "grantEpoch": 1,
+      "factsRefs": [
+        {
+          "type": "runResult",
+          "id": "result-base",
+          "contentHash": "4444444444444444444444444444444444444444444444444444444444444444",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.runResult.v1",
+          "digestScope": "artifact_bytes_sha256"
+        },
+        {
+          "type": "runResult",
+          "id": "result-alternative",
+          "contentHash": "6666666666666666666666666666666666666666666666666666666666666666",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.runResult.v1",
+          "digestScope": "artifact_bytes_sha256"
+        },
+        {
+          "type": "analysisFacts",
+          "id": "facts-compare",
+          "contentHash": "7777777777777777777777777777777777777777777777777777777777777777",
+          "byteSize": 128,
+          "mediaType": "application/json",
+          "schemaVersion": "fixture.analysisFacts.v1",
+          "digestScope": "artifact_bytes_sha256"
+        }
+      ],
+      "rendererVersion": "fixture-renderer.v1",
+      "viewModelVersion": "fixture-view-model.v1",
+      "resourcesRef": {
+        "type": "renderResources",
+        "id": "resources-1",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.renderResources.v1",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "actorId": "user-author",
+      "policyId": "fixture-private-export.v1",
+      "disclosureDecision": "allowed",
+      "generatedAt": "2026-11-02T00:00:00Z",
+      "validitySnapshot": {
+        "status": "current",
+        "checkedAt": "2026-11-02T00:00:00Z",
+        "reasonCodes": []
+      },
+      "reviewIds": ["review-1"],
+      "receipt": {
+        "schemaVersion": "lca.study-export-receipt.v1",
+        "exportBindingHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "keyId": "SYNTHETIC-NOT-A-TRUST-ANCHOR",
+        "algorithm": "Ed25519",
+        "signature": "SYNTHETIC_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "disclosureContextHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    }
+  ],
+  "shares": [
+    {
+      "shareId": "share-1",
+      "studyId": "study-1",
+      "reportRevisionId": "report-rev-1",
+      "exportId": "export-1",
+      "projectionHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "grantEpoch": 1,
+      "recipientId": "user-recipient",
+      "status": "active",
+      "expiresAt": "2099-01-01T00:00:00Z",
+      "capabilities": ["view_report", "download_export"]
+    }
+  ],
+  "modelSourceSnapshots": [
+    {
+      "snapshotId": "source-snapshot-1",
+      "studyId": "study-1",
+      "originRef": {
+        "type": "datasetRevision",
+        "datasetType": "lifecyclemodel",
+        "id": "source-lifecycle-model",
+        "version": "01.00.000"
+      },
+      "sourceArtifactRef": {
+        "type": "modelSource",
+        "id": "source-artifact-1",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.tidas-lifecyclemodel-source.v1"
+      },
+      "digestScope": "artifact_bytes_sha256",
+      "licenseRef": "license-fixture",
+      "issuerId": "fixture-source-resolver",
+      "observedAt": "2026-11-02T00:00:00Z"
+    }
+  ],
+  "modelPreparations": [
+    {
+      "preparationId": "preparation-base",
+      "studyId": "study-1",
+      "source": {
+        "type": "modelSourceSnapshot",
+        "snapshotId": "source-snapshot-1",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "digestScope": "artifact_bytes_sha256"
+      },
+      "profileId": "lca.study-deterministic-p0.v1",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "execution": {
+        "jobId": "prep-job-base",
+        "status": "completed"
+      },
+      "modelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model"
+      },
+      "inputArtifactRef": {
+        "type": "modelInput",
+        "id": "model-input-base",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.prepared-model-input.v1"
+      },
+      "inputHash": null
+    },
+    {
+      "preparationId": "preparation-scenario-base",
+      "studyId": "study-1",
+      "source": {
+        "type": "scenarioRevision",
+        "scenarioRevisionId": "scenario-rev-base",
+        "expectedRevision": 1,
+        "contentHash": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "profileId": "lca.study-deterministic-p0.v1",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "execution": {
+        "jobId": "prep-job-scenario-base",
+        "status": "completed"
+      },
+      "modelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model"
+      },
+      "inputArtifactRef": {
+        "type": "modelInput",
+        "id": "model-input-base",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.prepared-model-input.v1"
+      },
+      "inputHash": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    {
+      "preparationId": "preparation-scenario-alternative",
+      "studyId": "study-1",
+      "source": {
+        "type": "scenarioRevision",
+        "scenarioRevisionId": "scenario-rev-alternative",
+        "expectedRevision": 1,
+        "contentHash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "profileId": "lca.study-deterministic-p0.v1",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "execution": {
+        "jobId": "prep-job-scenario-alternative",
+        "status": "completed"
+      },
+      "modelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-alternative",
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digestScope": "worker_prepared_model"
+      },
+      "inputArtifactRef": {
+        "type": "modelInput",
+        "id": "model-input-alternative",
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.prepared-model-input.v1"
+      },
+      "inputHash": "5555555555555555555555555555555555555555555555555555555555555555"
+    }
+  ]
+}

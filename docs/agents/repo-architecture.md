@@ -16,6 +16,7 @@ whenToUpdate:
   - when deploy or validation architecture changes enough to make this map misleading
 checkPaths:
   - docs/agents/repo-architecture.md
+  - contracts/lca-study/**
   - .docpact/config.yaml
   - package.json
   - pnpm-lock.yaml
@@ -59,6 +60,7 @@ Data Product closure intent admits allocation v3, v4 and v5 and forwards an expl
 
 | Path group | Stability | Why it matters |
 | --- | --- | --- |
+| `contracts/lca-study/v1/**` and `docs/agents/lca-study-api-contract.md` | versioned contract only | P0 strict Study requests/responses, typed references and offline relationship checks; no Function entrypoint or enabled runtime |
 | `supabase/functions/<name>/index.ts` | stable | default Edge Function entrypoint; baseline `pnpm check` includes every enabled `index.ts` root in one bounded shared Deno graph |
 | `supabase/functions/<name>/handler.ts` | stable | larger routes sometimes split real logic here while `index.ts` stays thin |
 | `supabase/functions/portal_r0_hmac_verify_v1/**` and `_shared/portal_r0_*` | disposable | non-business EdgeOne Web Crypto/Supabase Deno interoperability fixture with R0-only HMAC, publishable-key, Redis, namespace, receipt, local-test, and live Preview deployment contracts |

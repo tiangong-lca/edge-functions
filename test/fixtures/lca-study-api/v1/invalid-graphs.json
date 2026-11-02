@@ -1,0 +1,706 @@
+{
+  "schemaVersion": "lca.study-api-negative-cases.v1",
+  "observedAt": "2026-11-02T00:00:00Z",
+  "cases": [
+    {
+      "name": "duplicate-study",
+      "patches": [
+        {
+          "path": "/studies/1",
+          "value": {
+            "studyId": "study-1",
+            "revision": 1,
+            "scope": {
+              "kind": "user",
+              "id": "user-author"
+            },
+            "title": "Synthetic two-scenario study",
+            "status": "active",
+            "currentRevisionId": "study-rev-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.unique_identity"
+    },
+    {
+      "name": "dangling-head",
+      "patches": [
+        {
+          "path": "/studies/0/currentRevisionId",
+          "value": "missing"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "study.head_binding"
+    },
+    {
+      "name": "revision-cross-study",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/studyId",
+          "value": "other-study"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "revision.study_binding"
+    },
+    {
+      "name": "frozen-unvalidated",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/validation",
+          "value": "not_checked"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "revision.freeze_validation"
+    },
+    {
+      "name": "self-parent",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/parentRevisionId",
+          "value": "study-rev-1"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.acyclic_lineage"
+    },
+    {
+      "name": "scenario-dangling-base",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/studyRevisionId",
+          "value": "missing"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.base_binding"
+    },
+    {
+      "name": "run-unfrozen-scenario",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/status",
+          "value": "draft"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.frozen_scenario"
+    },
+    {
+      "name": "duplicate-graph-overrides",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/overrides",
+          "value": [
+            {
+              "path": "/parameters/x/value",
+              "value": 1
+            },
+            {
+              "path": "/parameters/x/value",
+              "value": 1
+            }
+          ]
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.unique_override"
+    },
+    {
+      "name": "run-wrong-model",
+      "patches": [
+        {
+          "path": "/runs/0/effectiveModelRef/modelRevisionId",
+          "value": "different-model"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.effective_model_binding"
+    },
+    {
+      "name": "run-model-hash-drift",
+      "patches": [
+        {
+          "path": "/runs/0/effectiveModelRef/contentHash",
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.immutable_reference"
+    },
+    {
+      "name": "completed-missing-result",
+      "patches": [
+        {
+          "path": "/runs/0/resultRef",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.result_state"
+    },
+    {
+      "name": "result-kind-confusion",
+      "patches": [
+        {
+          "path": "/runs/0/resultRef/type",
+          "value": "analysisFacts"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.result_kind"
+    },
+    {
+      "name": "analysis-duplicate-run",
+      "patches": [
+        {
+          "path": "/analyses/0/runIds",
+          "value": ["run-base", "run-base"]
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "analysis.unique_runs"
+    },
+    {
+      "name": "analysis-dangling-run",
+      "patches": [
+        {
+          "path": "/analyses/0/runIds/0",
+          "value": "missing"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "analysis.run_binding"
+    },
+    {
+      "name": "analysis-not-comparable",
+      "patches": [
+        {
+          "path": "/analyses/0/comparability/status",
+          "value": "not_comparable"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "analysis.comparison_gate"
+    },
+    {
+      "name": "ready-analysis-no-facts",
+      "patches": [
+        {
+          "path": "/analyses/0/factsRef",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "analysis.facts_state"
+    },
+    {
+      "name": "report-foreign-facts",
+      "patches": [
+        {
+          "path": "/reports/0/factsRefs/0",
+          "value": {
+            "type": "runResult",
+            "id": "unbound-result",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "byteSize": 128,
+            "mediaType": "application/json",
+            "schemaVersion": "fixture.runResult.v1",
+            "digestScope": "artifact_bytes_sha256"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "report.facts_binding"
+    },
+    {
+      "name": "report-facts-drift",
+      "patches": [
+        {
+          "path": "/reports/0/factsRefs/0/contentHash",
+          "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.immutable_reference"
+    },
+    {
+      "name": "finalized-draft",
+      "patches": [
+        {
+          "path": "/reports/0/status",
+          "value": "draft"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "report.finalize_frozen"
+    },
+    {
+      "name": "missing-required-review",
+      "patches": [
+        {
+          "path": "/reviews/0/decision",
+          "value": "comment"
+        }
+      ],
+      "expectedCode": "REVIEW_REQUIRED",
+      "expectedRule": "report.required_review"
+    },
+    {
+      "name": "review-old-content",
+      "patches": [
+        {
+          "path": "/reviews/0/target/contentHash",
+          "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.exact_target"
+    },
+    {
+      "name": "independent-self-review",
+      "patches": [
+        {
+          "path": "/reviews/0/actorId",
+          "value": "user-author"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "review.independent_actor"
+    },
+    {
+      "name": "review-self-supersedes",
+      "patches": [
+        {
+          "path": "/reviews/0/supersedesReviewId",
+          "value": "review-1"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.acyclic_lineage"
+    },
+    {
+      "name": "export-report-hash",
+      "patches": [
+        {
+          "path": "/exports/0/reportContentHash",
+          "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "export.exact_report"
+    },
+    {
+      "name": "export-missing-receipt",
+      "patches": [
+        {
+          "path": "/exports/0/receipt",
+          "value": null
+        }
+      ],
+      "expectedCode": "DISCLOSURE_DENIED",
+      "expectedRule": "export.ready_disclosure_receipt"
+    },
+    {
+      "name": "export-denied",
+      "patches": [
+        {
+          "path": "/exports/0/disclosureDecision",
+          "value": "denied"
+        }
+      ],
+      "expectedCode": "DISCLOSURE_DENIED",
+      "expectedRule": "export.ready_disclosure_receipt"
+    },
+    {
+      "name": "export-future-review",
+      "patches": [
+        {
+          "path": "/exports/0/generatedAt",
+          "value": "2026-11-01T00:00:00Z"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "export.review_snapshot"
+    },
+    {
+      "name": "share-report-mismatch",
+      "patches": [
+        {
+          "path": "/shares/0/reportRevisionId",
+          "value": "another-report"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.exact_export"
+    },
+    {
+      "name": "share-projection-mismatch",
+      "patches": [
+        {
+          "path": "/shares/0/projectionHash",
+          "value": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.exact_export"
+    },
+    {
+      "name": "share-grant-epoch",
+      "patches": [
+        {
+          "path": "/shares/0/grantEpoch",
+          "value": 2
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.exact_export"
+    },
+    {
+      "name": "share-expired",
+      "patches": [
+        {
+          "path": "/shares/0/expiresAt",
+          "value": "2020-01-01T00:00:00Z"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.not_expired"
+    },
+    {
+      "name": "share-grants-study",
+      "patches": [
+        {
+          "path": "/shares/0/capabilities",
+          "value": ["view_study"]
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "raw-locator-record",
+      "patches": [
+        {
+          "path": "/runs/0/resultRef/objectKey",
+          "value": "private/path"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "future-expired-share",
+      "patches": [
+        {
+          "path": "/shares/0/status",
+          "value": "expired"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.expiry_state"
+    },
+    {
+      "name": "malformed-receipt-signature",
+      "patches": [
+        {
+          "path": "/exports/0/receipt/signature",
+          "value": "short"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "self-review-by-another-actor",
+      "patches": [
+        {
+          "path": "/reviews/0/reviewClass",
+          "value": "self"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "review.self_actor"
+    },
+    {
+      "name": "same-job-different-run",
+      "patches": [
+        {
+          "path": "/runs/1/execution/jobId",
+          "value": "job-base"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "graph.unique_identity"
+    },
+    {
+      "name": "active-share-expired-export",
+      "patches": [
+        {
+          "path": "/exports/0/status",
+          "value": "expired"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.active_export"
+    },
+    {
+      "name": "active-share-denied-export",
+      "patches": [
+        {
+          "path": "/exports/0/status",
+          "value": "expired"
+        },
+        {
+          "path": "/exports/0/disclosureDecision",
+          "value": "denied"
+        }
+      ],
+      "expectedCode": "FORBIDDEN",
+      "expectedRule": "share.active_export"
+    },
+    {
+      "name": "source-snapshot-kind",
+      "patches": [
+        {
+          "path": "/modelSourceSnapshots/0/sourceArtifactRef/type",
+          "value": "runResult"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_source.artifact_kind"
+    },
+    {
+      "name": "preparation-foreign-study",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/studyId",
+          "value": "foreign-study"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.study_binding"
+    },
+    {
+      "name": "preparation-stale-source-hash",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/source/contentHash",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.source_snapshot"
+    },
+    {
+      "name": "preparation-not-ready-with-result",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/execution/status",
+          "value": "running"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.result_state"
+    },
+    {
+      "name": "preparation-no-input-artifact",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/inputArtifactRef",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.result_state"
+    },
+    {
+      "name": "prepared-model-wrong-domain",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/modelRef/digestScope",
+          "value": "artifact_bytes_sha256"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "preparation-stale-scenario-cas",
+      "patches": [
+        {
+          "path": "/modelPreparations/1/source/expectedRevision",
+          "value": 2
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.scenario_snapshot"
+    },
+    {
+      "name": "unissued-study-model",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/modelPreparationId",
+          "value": "missing"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "revision.prepared_model"
+    },
+    {
+      "name": "scenario-unprepared-model",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/modelPreparationId",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.prepared_model"
+    },
+    {
+      "name": "scenario-base-preparation-confusion",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/modelPreparationId",
+          "value": "preparation-base"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.prepared_model"
+    },
+    {
+      "name": "run-wrong-preparation",
+      "patches": [
+        {
+          "path": "/runs/0/modelPreparationId",
+          "value": "preparation-base"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.prepared_model_binding"
+    },
+    {
+      "name": "scenario-preparation-missing-run-input-hash",
+      "patches": [
+        {
+          "path": "/modelPreparations/1/inputHash",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.run_input_identity"
+    },
+    {
+      "name": "durable-failed-validation-retired",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/validation",
+          "value": "failed"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "review-fork-two-successors",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "head-changes",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "request_changes",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        },
+        {
+          "path": "/reviews/2",
+          "value": {
+            "reviewId": "head-withdraw",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "withdraw",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-04T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.unique_supersession"
+    },
+    {
+      "name": "review-wrong-actor-successor",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "wrong-actor",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "request_changes",
+            "actorId": "another-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.append_binding"
+    },
+    {
+      "name": "review-annotation-supersedes",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "bad-annotation",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "comment",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.comment_annotation"
+    }
+  ]
+}

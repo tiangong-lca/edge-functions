@@ -16,6 +16,7 @@ whenToUpdate:
   - when documentation ownership becomes redundant or ambiguous
 checkPaths:
   - AGENTS.md
+  - contracts/lca-study/**
   - README.md
   - .docpact/**/*.yaml
   - docs/agents/**
@@ -63,6 +64,7 @@ Start here when the task may change Edge runtime behavior, auth/deploy semantics
 | `.docpact/config.yaml` | machine-readable repo facts, routing intents, governed-doc rules, ownership, coverage, freshness | explanatory prose or narrative walkthroughs |
 | `docs/agents/repo-validation.md` | minimum proof by change type, probe/deploy proof guidance, PR validation note shape | repo contract, branch policy truth, large setup notes |
 | `docs/agents/repo-architecture.md` | compact repo mental model, stable path map, hotspot families, common misreads | checklists or current proof queue |
+| `docs/agents/lca-study-api-contract.md` | versioned Study API vocabulary, compatibility, permissions and offline P0 evidence | deployed endpoints, SQL invariants, numerical algorithms or live authorization proof |
 | `README.md` | human landing context, setup, local serve, operator-facing notes, and request-example guidance | machine-readable routing or lint semantics or the raw request-collection artifact |
 | `.github/PULL_REQUEST_TEMPLATE/*.md` | branch-specific PR note shape and handoff prompts | canonical proof rules or repo ownership truth |
 
@@ -86,6 +88,7 @@ Do not start from repo landing prose or raw function inventories when the core c
 - human setup and request-example guidance stay in `README.md`
 - `test.example.http` is a supporting request collection for concrete payloads, not a governed source doc
 - repo-local documentation maintenance is enforced locally by the pre-push docpact gate; `.github/workflows/ai-doc-lint.yml` is manual-dispatch fallback
+- Study contract routing uses `lca-study-contract`; its `contracts/lca-study/v1/` schemas and offline fixtures enable no Function, database migration or deployed capability
 - the main routing intents are `function-runtime`, `auth-runtime`, `portal-public-runtime`, `command-runtime`, `data-product-runtime`, `review-quality-diagnostic`, `search-and-embedding`, `lca-runtime`, `tidas-package`, `deploy-auth-drift`, `proof`, `repo-docs`, and `root-integration`
 
 ## Minimal Execution Facts
