@@ -36,7 +36,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedCommit: 3aa8260d67920673cb023f5847b046660b74c56e
 lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
 related:
   - ../../AGENTS.md
@@ -408,6 +408,6 @@ Snapshot method IDs, revisions, units and numeric values remain authoritative fo
 
 Release-owned final Results use separate `_shared/result_query_v2.ts` modes `source_results` and `final_query`. Actor-only `api.qry_source_final_results_v2` enumerates direct relations with publication-bound pagination; `api.qry_final_result_query_v2` resolves exact selected Results, including Derived Results independently of ancestor visibility. The worker envelope binds publication, immutable artifact, Result and deployed reader hash. Edge repeats the descriptor check after I/O, pins runtime/publication for cursors, and projects frozen public metadata. Release owns projection, HDF5/ZIP generation and publication; Worker owns the read/cache runtime. These routes do not compute or materialize Results.
 
-`_shared/result_download_v2.ts` owns `final_download`. Actor `api.qry_final_result_download_v2` applies complete-Candidate selection and support-data RLS. Edge verifies the canonical storage target and signs the two fixed Result ZIP names with explicit read-only credentials. A post-signing live recheck precedes disclosure; URLs remain bearer capabilities for at most 60 seconds. Legacy behavior stays in its existing path, never selected by a v2 failure.
+`_shared/result_download_v2.ts` owns `final_download`. Actor `api.qry_final_result_download_v2` applies complete-Candidate selection and support-data RLS. Edge verifies the canonical storage target and signs the two fixed Result ZIP names with explicit read-only credentials. The Supabase signer uses a custom-role secret key only on the server and obtains a single-object Storage capability; it does not disclose an Auth session token in a presigned S3 URL. A post-signing live recheck precedes disclosure; URLs remain bearer capabilities for at most 60 seconds. Legacy behavior stays in its existing path, never selected by a v2 failure.
 
 `lca_release_results` keeps its existing metadata/download modes and adds an explicit authenticated `query` mode through `_shared/result_query.ts`. The actor client reads the exact original Process using `public` RLS before the service client resolves `api.svc_result_query_resolve`. Database owns current formal-release membership; Worker owns file integrity, indexing and local cache. The gateway signs the exact descriptor-bound request and validates both returned result identity and numeric DTO before projecting frozen metadata. It does not use Portal Redis, fetch mutable labels, accept client storage paths or cache permission decisions. See README for the wire/configuration contract.
