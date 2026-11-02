@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: 'dc3868b99a14c212e4659ef25cc32fb0f7404354'
-lastReviewedNote: 'Edge #521: reviewed Study contracts and offline evidence; merge retains separately reviewed #523 S3 fixes. P0 adds no Function, authorization, database, numerical or deployment behavior.'
+lastReviewedCommit: 3aa8260d67920673cb023f5847b046660b74c56e
+lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -300,7 +300,7 @@ Run locally executable gates with `pnpm lint` and `pnpm check`; `pnpm qualify:st
 
 ## Published HDF5 results
 
-For Release-owned final Results, run `test/result_query_v2_test.ts` in addition to the tests below. Real Supabase clients with synthetic RPC replies verify actor-only `api` profiles, exact source/Result selection, publication/runtime-bound cursors, Derived isolation, UTF-8 bounds, cold preparation, timeout cleanup, reader builds and in-flight withdrawal/runtime rotation. DTOs preserve signed LCI, zero LCIA, frozen method versions and full units. Real pinned S3 SDK signing covers both fixed ZIP formats without external I/O, exact target matching, complete-selection denials, post-signing withdrawal and the 60-second capability boundary. These tests do not establish hosted auth, Database RLS, object integrity or browser behavior; cross-repository and hosted qualification must supply those independent proofs before rollout. Dependency additions require the ordinary dependency-triggered CI; local Deno tests do not establish a hosted stack pass.
+For Release-owned final Results, run `test/result_query_v2_test.ts` in addition to the tests below. Real Supabase clients with synthetic RPC replies verify actor-only `api` profiles, exact source/Result selection, publication/runtime-bound cursors, Derived isolation, UTF-8 bounds, cold preparation, timeout cleanup, reader builds and in-flight withdrawal/runtime rotation. DTOs preserve signed LCI, zero LCIA, frozen method versions and full units. Real pinned S3 SDK signing covers both fixed ZIP formats without external I/O, exact target matching, complete-selection denials, post-signing withdrawal and the 60-second capability boundary. The restricted Storage signer also covers exact project/object URL binding, server-key non-disclosure, malformed/foreign responses, cancellation, mixed credentials and Supabase session-token rejection. These tests do not establish hosted auth, Database RLS, object integrity or browser behavior; cross-repository and hosted qualification must supply those independent proofs before rollout. Dependency additions require the ordinary dependency-triggered CI; local Deno tests do not establish a hosted stack pass.
 
 Run `test/result_query_test.ts` with `test/lca_release_results_test.ts` plus the canonical baseline. Real Supabase client transports with synthetic responses prove explicit actor `public` profile/version filtering, service RPC payload, repeated authorization after warm reads/revocation, cold202, immutable identity, HMAC UTF-8 framing, numeric signs/small values/frozen units, request and response bounds, cancellation and capacity release. The HMAC golden vector is independently computed with Python SHA-256. Existing anonymous metadata/download modes remain covered. Paired Database/Worker and browser qualification remain required before rollout; these tests do not establish live publication or production performance.
 

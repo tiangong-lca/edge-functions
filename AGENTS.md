@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: 'dc3868b99a14c212e4659ef25cc32fb0f7404354'
-lastReviewedNote: 'Edge #521: reviewed Study contracts and offline evidence; merge retains separately reviewed #523 S3 fixes. P0 adds no Function, authorization, database, numerical or deployment behavior.'
+lastReviewedCommit: 3aa8260d67920673cb023f5847b046660b74c56e
+lastReviewedNote: 'Edge #527: reviewed restricted Storage single-object ZIP signing and credential non-disclosure; actor authorization and publication boundaries are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

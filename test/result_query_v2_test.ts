@@ -3,7 +3,10 @@ import './fixtures/final-result-gateway.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
 import { createLcaReleaseResultsHandler } from '../supabase/functions/lca_release_results/index.ts';
 import { signResultQuery } from '../supabase/functions/_shared/result_query.ts';
-import { finalDownloadTarget } from '../supabase/functions/_shared/result_download_v2.ts';
+import {
+  finalDownloadTarget,
+  type FinalDownloadConfig,
+} from '../supabase/functions/_shared/result_download_v2.ts';
 
 // SDK test roots merge several fetch overloads; inspect the browser transport fields explicitly.
 function fetchInit(
@@ -104,7 +107,8 @@ function setup(
     reader?: typeof fetch;
     timeoutMs?: number;
     serviceUrl?: string;
-    downloadConfig?: typeof config;
+    downloadConfig?: FinalDownloadConfig;
+    downloadFetch?: typeof fetch;
   } = {},
 ) {
   const counts = { actor: 0, database: 0, reader: 0 };
@@ -141,7 +145,11 @@ function setup(
     get serviceSupabase(): never {
       throw new Error('v2 must never construct a service client');
     },
-    finalDownload: { config: options.downloadConfig ?? config },
+    finalDownload: {
+      config: options.downloadConfig ?? config,
+      fetch: options.downloadFetch,
+      timeoutMs: options.timeoutMs,
+    },
     resultQuery: {
       serviceUrl: options.serviceUrl ?? 'https://query.example.invalid',
       secret,
@@ -640,5 +648,178 @@ Deno.test(
       { endpoint: 'https://storage.example.invalid/path' },
     ])
       await assertRejects(() => finalDownloadTarget({ ...config, ...patch }));
+  },
+);
+
+const restrictedConfig: FinalDownloadConfig = {
+  ...config,
+  signer: 'supabase-storage',
+  endpoint: 'https://abcdefghijklmnopqrst.storage.supabase.co/storage/v1/s3',
+  bucket: 'lca_results',
+  prefix: 'lca_results',
+  accessKeyId: '',
+  secretAccessKey: '',
+  signingKey: 'sb_secret_synthetic_fixture_only',
+};
+const zipPath = (format: string) =>
+  `/object/sign/lca_results/lca_results/release-candidates/${'c'.repeat(64)}/result.${format}.zip`;
+const zipDescriptor = async (format = 'tidas') => ({
+  publicationId,
+  candidateHash: 'c'.repeat(64),
+  targetHash: (await finalDownloadTarget(restrictedConfig)).targetHash,
+  file: { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 },
+});
+Deno.test(
+  'restricted Storage ZIP signing sends only the dedicated key and returns one object capability',
+  async () => {
+    for (const format of ['tidas', 'ilcd']) {
+      const d = await zipDescriptor(format);
+      let signs = 0;
+      const { handler, counts } = setup({
+        downloadConfig: restrictedConfig,
+        database: () => ({ ok: true, data: d }),
+        downloadFetch: async (input, init) => {
+          signs++;
+          assertEquals(
+            String(input),
+            `https://abcdefghijklmnopqrst.supabase.co/storage/v1${zipPath(format)}`,
+          );
+          const h = new Headers(fetchInit(init)?.headers);
+          assertEquals(h.get('apikey'), restrictedConfig.signingKey);
+          assertEquals(h.get('Authorization'), `Bearer ${restrictedConfig.signingKey}`);
+          assertEquals(fetchInit(init)?.redirect, 'error');
+          assertEquals(fetchInit(init)?.signal instanceof AbortSignal, true);
+          assertEquals(JSON.parse(String(fetchInit(init)?.body)), { expiresIn: 60 });
+          return reply({ signedURL: `${zipPath(format)}?token=header.object.signature` });
+        },
+      });
+      const r = await handler(downloadRequest(format));
+      assertEquals(r.status, 200);
+      const body = await r.json();
+      const url = new URL(body.data.url);
+      assertEquals(url.origin, 'https://abcdefghijklmnopqrst.supabase.co');
+      assertEquals(url.pathname, '/storage/v1' + zipPath(format));
+      assertEquals(url.searchParams.get('download'), `result.${format}.zip`);
+      assertEquals([...url.searchParams.keys()].sort(), ['download', 'token']);
+      assertEquals(JSON.stringify(body).includes(restrictedConfig.signingKey!), false);
+      assertEquals(counts.database, 2);
+      assertEquals(signs, 1);
+    }
+  },
+);
+Deno.test(
+  'restricted signer refuses foreign/substituted/malformed provider capabilities',
+  async () => {
+    const d = await zipDescriptor();
+    for (const signedURL of [
+      `https://evil.invalid${zipPath('tidas')}?token=a.b.c`,
+      `${zipPath('ilcd')}?token=a.b.c`,
+      `${zipPath('tidas')}?token=a.b.c&token=d.e.f`,
+      `${zipPath('tidas')}?token=a.b.c&extra=1`,
+      `${zipPath('tidas')}?token=a.b.c#fragment`,
+      `${zipPath('tidas')}?token=${restrictedConfig.signingKey}`,
+      `${zipPath('tidas')}?token=${'x'.repeat(9000)}`,
+    ]) {
+      const { handler } = setup({
+        downloadConfig: restrictedConfig,
+        database: () => ({ ok: true, data: d }),
+        downloadFetch: async () => reply({ signedURL }),
+      });
+      const r = await handler(downloadRequest());
+      assertEquals(r.status, 503);
+      assertEquals((await r.text()).includes(restrictedConfig.signingKey!), false);
+    }
+  },
+);
+Deno.test('restricted signer denies before I/O and rechecks withdrawal after signing', async () => {
+  const d = await zipDescriptor();
+  for (const deniedAt of [1, 2]) {
+    let signs = 0;
+    const { handler } = setup({
+      downloadConfig: restrictedConfig,
+      database: (_n, _a, count) =>
+        count === deniedAt
+          ? { ok: false, code: 'result_package_not_available', status: 404 }
+          : { ok: true, data: d },
+      downloadFetch: async () => {
+        signs++;
+        return reply({ signedURL: `${zipPath('tidas')}?token=a.b.c` });
+      },
+    });
+    const r = await handler(downloadRequest());
+    assertEquals(r.status, 404);
+    assertEquals((await r.text()).includes('token='), false);
+    assertEquals(signs, deniedAt - 1);
+  }
+});
+Deno.test(
+  'restricted signer fails closed on network/auth failure and cancelled requests',
+  async () => {
+    const d = await zipDescriptor();
+    for (const status of [302, 400, 401, 403, 500]) {
+      const { handler } = setup({
+        downloadConfig: restrictedConfig,
+        database: () => ({ ok: true, data: d }),
+        downloadFetch: async () => reply({ message: restrictedConfig.signingKey }, status),
+      });
+      const r = await handler(downloadRequest());
+      assertEquals(r.status, 503);
+      assertEquals((await r.text()).includes(restrictedConfig.signingKey!), false);
+    }
+    let aborted = false;
+    const { handler } = setup({
+      downloadConfig: restrictedConfig,
+      timeoutMs: 5,
+      database: () => ({ ok: true, data: d }),
+      downloadFetch: (_input, init) =>
+        new Promise((_resolve, reject) => {
+          const signal = fetchInit(init)!.signal!;
+          signal.addEventListener(
+            'abort',
+            () => {
+              aborted = true;
+              reject(new Error('aborted'));
+            },
+            { once: true },
+          );
+        }),
+    });
+    const r = await handler(downloadRequest());
+    assertEquals(r.status, 503);
+    await r.body?.cancel();
+    assertEquals(aborted, true);
+  },
+);
+Deno.test(
+  'Supabase JWT session credentials and mixed signer configurations cannot leak into browser URLs',
+  async () => {
+    const awaitedDescriptor = await zipDescriptor();
+    for (const bad of [
+      {
+        ...restrictedConfig,
+        signer: 's3' as const,
+        signingKey: undefined,
+        accessKeyId: 'project',
+        secretAccessKey: 'anon',
+        sessionToken: 'auth.jwt.token',
+      },
+      { ...restrictedConfig, accessKeyId: 'mixed-key' },
+      { ...restrictedConfig, sessionToken: 'auth.jwt.token' },
+      { ...restrictedConfig, signingKey: 'legacy.jwt.token' },
+    ]) {
+      const { handler } = setup({
+        downloadConfig: bad,
+        database: () => ({
+          ok: true,
+          data: awaitedDescriptor,
+        }),
+        downloadFetch: () => {
+          throw new Error('must reject before signing');
+        },
+      });
+      const r = await handler(downloadRequest());
+      assertEquals(r.status, 503);
+      await r.body?.cancel();
+    }
   },
 );
