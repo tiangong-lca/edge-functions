@@ -1,7 +1,7 @@
 version: 1
 layout: repo
 lastReviewedAt: '2026-11-02'
-lastReviewedCommit: '3aa8260d67920673cb023f5847b046660b74c56e'
+lastReviewedCommit: '74190270023953f9cf73a1d84ab5e7fa574a9f9f'
 lastReviewedNote: 'Edge #527: reviewed restricted Storage single-object ZIP signing and credential non-disclosure; actor authorization and publication boundaries are unchanged.'
 
 # Keep deterministic governance facts here.
@@ -16,10 +16,16 @@ catalog:
       workflowDocs:
         - docs/agents/repo-validation.md
         - docs/agents/repo-architecture.md
+        - docs/agents/lca-study-api-contract.md
       workspaceIntegrationRequired: true
 
 ownership:
   domains:
+    - id: lca-study-public-contract
+      paths:
+        include:
+          - contracts/lca-study/**
+      ownerRepo: edge-functions
     - id: edge-runtime-and-shared-modules
       paths:
         include:
@@ -67,6 +73,7 @@ ownership:
 
 coverage:
   include:
+    - contracts/lca-study/**
     - .githooks/**
     - scripts/docpact
     - scripts/docpact-gate.sh
@@ -76,6 +83,7 @@ coverage:
     - .docpact/**
     - docs/agents/repo-validation.md
     - docs/agents/repo-architecture.md
+    - docs/agents/lca-study-api-contract.md
     - .github/PULL_REQUEST_TEMPLATE/*.md
     - .github/workflows/ai-doc-lint.yml
     - .github/workflows/ci.yml
@@ -106,6 +114,12 @@ freshness:
 
 routing:
   intents:
+    lca-study-contract:
+      paths:
+        - contracts/lca-study/**
+        - docs/agents/lca-study-api-contract.md
+        - test/lca_study_api_v1_contract_test.ts
+        - test/fixtures/lca-study-api/**
     local-docpact-gate:
       paths:
         - .githooks/pre-push
@@ -329,6 +343,7 @@ docInventory:
     - .docpact/config.yaml
     - docs/agents/repo-validation.md
     - docs/agents/repo-architecture.md
+    - docs/agents/lca-study-api-contract.md
     - .github/PULL_REQUEST_TEMPLATE/feature-to-dev.md
     - .github/PULL_REQUEST_TEMPLATE/promote-dev-to-main.md
 
@@ -337,6 +352,28 @@ repo:
   owner: edge-functions
 
 rules:
+  - id: edge-functions-lca-study-public-contract
+    scope: repo
+    repo: edge-functions
+    triggers:
+      - path: contracts/lca-study/**
+        kind: public-contract-code
+      - path: docs/agents/lca-study-api-contract.md
+        kind: public-contract-doc
+      - path: test/lca_study_api_v1_contract_test.ts
+        kind: public-contract-test
+      - path: test/fixtures/lca-study-api/**
+        kind: public-contract-fixture
+    requiredDocs:
+      - path: docs/agents/lca-study-api-contract.md
+        mode: review_or_update
+      - path: .docpact/config.yaml
+        mode: review_or_update
+      - path: docs/agents/repo-architecture.md
+        mode: review_or_update
+      - path: docs/agents/repo-validation.md
+        mode: review_or_update
+    reason: Study wire definitions, compatibility, offline relationship evidence and later runtime enforcement must remain distinct and owned without enabling endpoints or deployment.
   - id: edge-functions-bootstrap-contract
     scope: repo
     repo: edge-functions

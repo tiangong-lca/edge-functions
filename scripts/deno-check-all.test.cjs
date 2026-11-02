@@ -16,7 +16,7 @@ test('checks the exact inventory through one bounded shared graph', () => {
   );
   const targets = discoverTargets();
 
-  assert.equal(targets.length, 168);
+  assert.equal(targets.length, 169);
   assert.ok(targets.includes('test/runtime_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/supabase_sdk_wire_test.ts'));
   assert.ok(targets.includes('test/zod_consumer_compatibility_test.ts'));
@@ -26,8 +26,9 @@ test('checks the exact inventory through one bounded shared graph', () => {
     false,
   );
   // Includes published-result query authorization and transport proof (#513).
-  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 91);
+  assert.equal(targets.filter((target) => target.startsWith('test/')).length, 92);
   assert.ok(targets.includes('test/result_query_v2_test.ts'));
+  assert.ok(targets.includes('test/lca_study_api_v1_contract_test.ts'));
 
   const batches = buildCheckBatches(targets);
   assert.equal(MAX_ROOTS_PER_BATCH, 200);
