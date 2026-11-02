@@ -40,8 +40,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
-lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
+lastReviewedCommit: 3aa8260d67920673cb023f5847b046660b74c56e
+lastReviewedNote: 'Edge #527: reviewed restricted Storage single-object ZIP signing and credential non-disclosure; actor authorization and publication boundaries are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
