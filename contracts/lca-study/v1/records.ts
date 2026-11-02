@@ -129,7 +129,7 @@ export const studyRevisionSchema = z
     definition: definitionSchema,
     modelPreparationId: idSchema,
     modelRef: modelRefSchema,
-    validation: z.enum(['not_checked', 'passed', 'failed']),
+    validation: z.enum(['not_checked', 'passed']),
   })
   .strict();
 

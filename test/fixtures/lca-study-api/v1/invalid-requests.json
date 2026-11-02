@@ -848,5 +848,57 @@
     },
     "expectedCode": "INVALID_REQUEST",
     "expectedRule": "request.structure"
+  },
+  {
+    "name": "annotation-cannot-supersede",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-22",
+      "operation": "review.record",
+      "idempotencyKey": "key-22",
+      "reportRevisionId": "report-rev-1",
+      "expectedContentHash": "8888888888888888888888888888888888888888888888888888888888888888",
+      "reviewClass": "independent",
+      "decision": "comment",
+      "authorizationEvidenceRef": "synthetic-grant-1",
+      "supersedesReviewId": "review-1"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "review.comment_annotation"
+  },
+  {
+    "name": "withdraw-cannot-start-chain",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-22",
+      "operation": "review.record",
+      "idempotencyKey": "key-22",
+      "reportRevisionId": "report-rev-1",
+      "expectedContentHash": "8888888888888888888888888888888888888888888888888888888888888888",
+      "reviewClass": "independent",
+      "decision": "withdraw",
+      "authorizationEvidenceRef": "synthetic-grant-1",
+      "supersedesReviewId": null
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "review.withdraw_requires_head"
+  },
+  {
+    "name": "caller-cannot-claim-validation-passed",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-8",
+      "operation": "revision.freeze",
+      "idempotencyKey": "key-8",
+      "target": {
+        "type": "studyRevision",
+        "id": "study-rev-1",
+        "expectedRevision": 2
+      },
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "validation": "passed"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
   }
 ]

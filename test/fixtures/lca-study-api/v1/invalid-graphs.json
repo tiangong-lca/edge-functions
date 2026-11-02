@@ -50,7 +50,7 @@
       "patches": [
         {
           "path": "/studyRevisions/0/validation",
-          "value": "failed"
+          "value": "not_checked"
         }
       ],
       "expectedCode": "REFERENCE_MISMATCH",
@@ -593,6 +593,114 @@
       ],
       "expectedCode": "REFERENCE_MISMATCH",
       "expectedRule": "model_preparation.run_input_identity"
+    },
+    {
+      "name": "durable-failed-validation-retired",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/validation",
+          "value": "failed"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "review-fork-two-successors",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "head-changes",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "request_changes",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        },
+        {
+          "path": "/reviews/2",
+          "value": {
+            "reviewId": "head-withdraw",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "withdraw",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-04T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.unique_supersession"
+    },
+    {
+      "name": "review-wrong-actor-successor",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "wrong-actor",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "request_changes",
+            "actorId": "another-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.append_binding"
+    },
+    {
+      "name": "review-annotation-supersedes",
+      "patches": [
+        {
+          "path": "/reviews/1",
+          "value": {
+            "reviewId": "bad-annotation",
+            "studyId": "study-1",
+            "target": {
+              "type": "reportRevision",
+              "revisionId": "report-rev-1",
+              "contentHash": "8888888888888888888888888888888888888888888888888888888888888888"
+            },
+            "reviewClass": "independent",
+            "decision": "comment",
+            "actorId": "user-reviewer",
+            "clientId": "fixture-client",
+            "authorizationEvidenceRef": "synthetic-grant-1",
+            "decidedAt": "2026-11-03T00:00:00Z",
+            "supersedesReviewId": "review-1"
+          }
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "review.comment_annotation"
     }
   ]
 }

@@ -1,10 +1,26 @@
-import { API_SCHEMA, type ContractIssue } from './common.ts';
-import { graphSchema, type FixtureGraph } from './records.ts';
+import { API_SCHEMA, modelRefSchema, type ContractIssue } from './common.ts';
+import { definitionSchema, graphSchema, type FixtureGraph } from './records.ts';
 import { requestSchema, type StudyApiRequest } from './requests.ts';
 import { responseSchema, type StudyApiResponse } from './responses.ts';
 
 export type ValidationResult<T> =
   { ok: true; value: T; issues: [] } | { ok: false; issues: ContractIssue[] };
+
+/** Synthetic internal seam, never a public request or a runtime validation authority. */
+export type RevisionFreezeFixtureEvidence =
+  | {
+      outcome: 'passed';
+      binding: {
+        revisionId: string;
+        expectedRevision: number;
+        contentHash: string;
+        modelPreparationId: string;
+        modelRef: FixtureGraph['studyRevisions'][number]['modelRef'];
+        definition: FixtureGraph['studyRevisions'][number]['definition'];
+      };
+    }
+  | { outcome: 'failed'; code: 'INVALID_REQUEST' | 'REFERENCE_MISMATCH' }
+  | { outcome: 'unavailable' };
 
 function pointer(path: PropertyKey[]): string {
   return (
@@ -58,6 +74,20 @@ export function validateRequest(input: unknown): ValidationResult<StudyApiReques
       path: '/contentRef/type',
       ruleId: 'report.content_kind',
     });
+  }
+  if (value.operation === 'review.record') {
+    if (value.decision === 'comment' && value.supersedesReviewId !== null)
+      issues.push({
+        code: 'INVALID_REQUEST',
+        path: '/supersedesReviewId',
+        ruleId: 'review.comment_annotation',
+      });
+    if (value.decision === 'withdraw' && value.supersedesReviewId === null)
+      issues.push({
+        code: 'INVALID_REQUEST',
+        path: '/supersedesReviewId',
+        ruleId: 'review.withdraw_requires_head',
+      });
   }
   return issues.length ? { ok: false, issues } : { ok: true, value, issues: [] };
 }
@@ -207,6 +237,7 @@ export function validateResponseForRequest(
 export function validateFixturePrecondition(
   request: StudyApiRequest,
   graph: FixtureGraph,
+  revisionValidation?: RevisionFreezeFixtureEvidence,
 ): ContractIssue[] {
   if (!('target' in request)) return [];
   const { target } = request;
@@ -274,6 +305,58 @@ export function validateFixturePrecondition(
           path: '/modelPreparationId',
           ruleId: 'precondition.prepared_model',
         },
+      ];
+  }
+  if (request.operation === 'revision.freeze') {
+    const revision = graph.studyRevisions.find((value) => value.revisionId === request.target.id);
+    if (!revision || revision.status !== 'draft')
+      return [{ code: 'FROZEN_REVISION', path: '/target', ruleId: 'precondition.freeze_draft' }];
+    if (revision.validation !== 'not_checked')
+      return [
+        {
+          code: 'INVALID_REQUEST',
+          path: '/validation',
+          ruleId: 'precondition.draft_validation_state',
+        },
+      ];
+    if (!revisionValidation || revisionValidation.outcome === 'unavailable')
+      return [
+        {
+          code: 'CAPABILITY_UNAVAILABLE',
+          path: '/target',
+          ruleId: 'precondition.validation_unavailable',
+        },
+      ];
+    if (revisionValidation.outcome === 'failed')
+      return [
+        {
+          code: revisionValidation.code,
+          path: '/target',
+          ruleId: 'precondition.validation_rejected',
+        },
+      ];
+    const binding = revisionValidation.binding;
+    const definition = definitionSchema.safeParse(binding.definition);
+    const model = modelRefSchema.safeParse(binding.modelRef);
+    const prepared = graph.modelPreparations.find(
+      (value) => value.preparationId === revision.modelPreparationId,
+    );
+    if (
+      binding.revisionId !== revision.revisionId ||
+      binding.expectedRevision !== revision.revision ||
+      binding.contentHash !== revision.contentHash ||
+      binding.modelPreparationId !== revision.modelPreparationId ||
+      !model.success ||
+      JSON.stringify(model.data) !== JSON.stringify(revision.modelRef) ||
+      !definition.success ||
+      JSON.stringify(definition.data) !== JSON.stringify(revision.definition) ||
+      !prepared ||
+      prepared.studyId !== revision.studyId ||
+      prepared.execution.status !== 'completed' ||
+      JSON.stringify(prepared.modelRef) !== JSON.stringify(revision.modelRef)
+    )
+      return [
+        { code: 'REFERENCE_MISMATCH', path: '/target', ruleId: 'precondition.validation_binding' },
       ];
   }
   return [];
@@ -394,34 +477,57 @@ export function validateFixtureGraph(
     (item) => item.supersedesReviewId,
     '/reviews',
   );
-  const modelProvenance = [
-    ...graph.modelSourceSnapshots.map((item) => ({
-      id: 'snapshot:' + item.snapshotId,
-      parent: null as string | null,
-    })),
-    ...graph.modelPreparations.map((item) => ({
-      id: 'preparation:' + item.preparationId,
-      parent:
-        item.source.type === 'modelSourceSnapshot'
-          ? 'snapshot:' + item.source.snapshotId
-          : 'scenario:' + item.source.scenarioRevisionId,
-    })),
-    ...graph.studyRevisions.map((item) => ({
-      id: 'revision:' + item.revisionId,
-      parent: 'preparation:' + item.modelPreparationId,
-    })),
-    ...graph.scenarioRevisions.map((item) => ({
-      id: 'scenario:' + item.scenarioRevisionId,
-      parent: 'revision:' + item.studyRevisionId,
-    })),
+  const modelEdges: Array<[string, string]> = [
+    ...graph.modelPreparations.map((item): [string, string] => [
+      'preparation:' + item.preparationId,
+      item.source.type === 'modelSourceSnapshot'
+        ? 'snapshot:' + item.source.snapshotId
+        : 'scenario:' + item.source.scenarioRevisionId,
+    ]),
+    ...graph.studyRevisions.flatMap((item): Array<[string, string]> => [
+      ['revision:' + item.revisionId, 'preparation:' + item.modelPreparationId],
+      ...(item.parentRevisionId
+        ? [['revision:' + item.revisionId, 'revision:' + item.parentRevisionId] as [string, string]]
+        : []),
+    ]),
+    ...graph.scenarioRevisions.flatMap((item): Array<[string, string]> => [
+      ['scenario:' + item.scenarioRevisionId, 'revision:' + item.studyRevisionId],
+      ...(item.parentScenarioRevisionId
+        ? [
+            [
+              'scenario:' + item.scenarioRevisionId,
+              'scenario:' + item.parentScenarioRevisionId,
+            ] as [string, string],
+          ]
+        : []),
+    ]),
   ];
-  acyclic(
-    modelProvenance,
-    (item) => item.id,
-    (item) => item.parent,
-    '/modelPreparations',
-    'model.acyclic_provenance',
-  );
+  const adjacency = new Map<string, string[]>();
+  for (const [from, to] of modelEdges) adjacency.set(from, [...(adjacency.get(from) ?? []), to]);
+  const colors = new Map<string, 'active' | 'complete'>();
+  for (const node of adjacency.keys()) {
+    if (colors.has(node)) continue;
+    colors.set(node, 'active');
+    const stack = [{ node, next: 0 }];
+    while (stack.length > 0) {
+      const frame = stack[stack.length - 1];
+      const children = adjacency.get(frame.node) ?? [];
+      if (frame.next === children.length) {
+        colors.set(frame.node, 'complete');
+        stack.pop();
+        continue;
+      }
+      const child = children[frame.next++];
+      if (colors.get(child) === 'active') {
+        reject('/modelPreparations', 'model.acyclic_provenance');
+        continue;
+      }
+      if (!colors.has(child)) {
+        colors.set(child, 'active');
+        stack.push({ node: child, next: 0 });
+      }
+    }
+  }
 
   const artifacts = new Map<string, string>();
   const models = new Map<string, string>();
@@ -544,6 +650,8 @@ export function validateFixtureGraph(
       reject(p + '/modelRef', 'revision.prepared_model');
     if (item.status === 'frozen' && item.validation !== 'passed')
       reject(p + '/validation', 'revision.freeze_validation');
+    if (item.status === 'draft' && item.validation !== 'not_checked')
+      reject(p + '/validation', 'revision.draft_validation_state');
     if (item.parentRevisionId !== null) {
       const parent = revisions.get(item.parentRevisionId);
       if (
@@ -673,13 +781,36 @@ export function validateFixtureGraph(
         !previous ||
         previous.target.revisionId !== item.target.revisionId ||
         previous.target.contentHash !== item.target.contentHash ||
+        previous.studyId !== item.studyId ||
         previous.actorId !== item.actorId ||
+        previous.reviewClass !== item.reviewClass ||
+        previous.decision === 'comment' ||
         previous.reviewId === item.reviewId ||
         Date.parse(previous.decidedAt) > Date.parse(item.decidedAt)
       )
         reject(p + '/supersedesReviewId', 'review.append_binding');
     }
+    if (item.decision === 'comment' && item.supersedesReviewId !== null)
+      reject(p + '/supersedesReviewId', 'review.comment_annotation');
+    if (item.decision === 'withdraw' && item.supersedesReviewId === null)
+      reject(p + '/supersedesReviewId', 'review.withdraw_requires_head');
   });
+  const substantiveChains = new Map<string, typeof graph.reviews>();
+  for (const review of graph.reviews) {
+    if (review.decision === 'comment') continue;
+    const key = JSON.stringify([
+      review.studyId,
+      review.target.revisionId,
+      review.target.contentHash,
+      review.actorId,
+      review.reviewClass,
+    ]);
+    substantiveChains.set(key, [...(substantiveChains.get(key) ?? []), review]);
+  }
+  for (const chain of substantiveChains.values()) {
+    if (chain.filter((review) => review.supersedesReviewId === null).length !== 1)
+      reject('/reviews', 'review.explicit_head_chain');
+  }
   const priorReviewIds = graph.reviews.flatMap((item) =>
     item.supersedesReviewId ? [item.supersedesReviewId] : [],
   );
@@ -737,7 +868,9 @@ export function validateFixtureGraph(
       const cutoff = Date.parse(item.finalization.finalizedAt ?? '');
       const superseded = new Set(
         graph.reviews
-          .filter((review) => Date.parse(review.decidedAt) <= cutoff)
+          .filter(
+            (review) => review.decision !== 'comment' && Date.parse(review.decidedAt) <= cutoff,
+          )
           .map((review) => review.supersedesReviewId),
       );
       if (

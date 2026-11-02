@@ -662,3 +662,215 @@ Deno.test(
     assert(validateFixtureGraph(graph, OBSERVED_AT).ok);
   },
 );
+
+Deno.test(
+  'Revision freeze needs exact internal validation evidence and rejects failures without mutation',
+  () => {
+    const graph = structuredClone(validGraph);
+    graph.scenarioRevisions = [];
+    graph.modelPreparations = [graph.modelPreparations[0]];
+    graph.runs = [];
+    graph.analyses = [];
+    graph.reports = [];
+    graph.reviews = [];
+    graph.exports = [];
+    graph.shares = [];
+    const revision = graph.studyRevisions[0];
+    revision.status = 'draft';
+    revision.validation = 'not_checked';
+    assert(validateFixtureGraph(graph, OBSERVED_AT).ok);
+    const freeze = validateRequest({
+      schemaVersion: API_SCHEMA,
+      requestId: 'validate-freeze',
+      operation: 'revision.freeze',
+      idempotencyKey: 'validate-key',
+      target: {
+        type: 'studyRevision',
+        id: revision.revisionId,
+        expectedRevision: revision.revision,
+      },
+      expectedContentHash: revision.contentHash,
+    });
+    assert(freeze.ok);
+    const before = JSON.stringify(graph);
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph)[0]?.code,
+      'CAPABILITY_UNAVAILABLE',
+    );
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph, { outcome: 'unavailable' })[0]?.code,
+      'CAPABILITY_UNAVAILABLE',
+    );
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph, {
+        outcome: 'failed',
+        code: 'INVALID_REQUEST',
+      })[0]?.code,
+      'INVALID_REQUEST',
+    );
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph, {
+        outcome: 'failed',
+        code: 'REFERENCE_MISMATCH',
+      })[0]?.code,
+      'REFERENCE_MISMATCH',
+    );
+    const evidence = {
+      outcome: 'passed' as const,
+      binding: {
+        revisionId: revision.revisionId,
+        expectedRevision: revision.revision,
+        contentHash: revision.contentHash,
+        modelPreparationId: revision.modelPreparationId,
+        modelRef: revision.modelRef,
+        definition: revision.definition,
+      },
+    };
+    assertEquals(validateFixturePrecondition(freeze.value, graph, evidence), []);
+    const stale = structuredClone(evidence);
+    stale.binding.expectedRevision++;
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph, stale)[0]?.ruleId,
+      'precondition.validation_binding',
+    );
+    const changedDefinition = structuredClone(evidence);
+    changedDefinition.binding.definition.methodRefs.reverse();
+    assertEquals(
+      validateFixturePrecondition(freeze.value, graph, changedDefinition)[0]?.code,
+      'REFERENCE_MISMATCH',
+    );
+    assertEquals(JSON.stringify(graph), before);
+    // The test describes the atomic effect; the helper performs no transition.
+    const committed = structuredClone(graph);
+    committed.studyRevisions[0].status = 'frozen';
+    committed.studyRevisions[0].validation = 'passed';
+    committed.studyRevisions[0].revision++;
+    assert(validateFixtureGraph(committed, OBSERVED_AT).ok);
+    const prevalidatedDraft = structuredClone(graph);
+    prevalidatedDraft.studyRevisions[0].validation = 'passed';
+    const invalid = validateFixtureGraph(prevalidatedDraft, OBSERVED_AT);
+    assert(
+      !invalid.ok &&
+        invalid.issues.some((issue) => issue.ruleId === 'revision.draft_validation_state'),
+    );
+  },
+);
+
+Deno.test('Model provenance rejects mixed parent and producer cycles', () => {
+  const graph = structuredClone(validGraph);
+  const second = {
+    ...graph.studyRevisions[0],
+    revisionId: 'revision-second',
+    parentRevisionId: graph.studyRevisions[0].revisionId,
+  };
+  graph.studyRevisions.push(second);
+  graph.scenarioRevisions[1].studyRevisionId = second.revisionId;
+  graph.runs[1].studyRevisionId = second.revisionId;
+  graph.studyRevisions[0].modelPreparationId = graph.modelPreparations[2].preparationId;
+  graph.studyRevisions[0].modelRef = graph.modelPreparations[2].modelRef!;
+  const result = validateFixtureGraph(graph, OBSERVED_AT);
+  assert(!result.ok && result.issues.some((issue) => issue.ruleId === 'model.acyclic_provenance'));
+
+  const scenarioParent = structuredClone(validGraph);
+  const derived = {
+    ...scenarioParent.studyRevisions[0],
+    revisionId: 'revision-derived',
+    parentRevisionId: scenarioParent.studyRevisions[0].revisionId,
+    modelPreparationId: scenarioParent.modelPreparations[1].preparationId,
+    modelRef: scenarioParent.modelPreparations[1].modelRef!,
+  };
+  scenarioParent.studyRevisions.push(derived);
+  scenarioParent.scenarioRevisions[1].studyRevisionId = derived.revisionId;
+  scenarioParent.runs[1].studyRevisionId = derived.revisionId;
+  scenarioParent.scenarioRevisions[0].parentScenarioRevisionId =
+    scenarioParent.scenarioRevisions[1].scenarioRevisionId;
+  const mixed = validateFixtureGraph(scenarioParent, OBSERVED_AT);
+  assert(!mixed.ok && mixed.issues.some((issue) => issue.ruleId === 'model.acyclic_provenance'));
+});
+
+Deno.test('Branch parents must be distinct frozen revisions of the same Study', () => {
+  const graph = structuredClone(validGraph);
+  const parent = {
+    ...graph.studyRevisions[0],
+    revisionId: 'draft-parent',
+    status: 'draft' as const,
+    validation: 'not_checked' as const,
+  };
+  graph.studyRevisions.push(parent);
+  graph.studyRevisions[0].parentRevisionId = parent.revisionId;
+  const invalid = validateFixtureGraph(graph, OBSERVED_AT);
+  assert(!invalid.ok && invalid.issues.some((issue) => issue.ruleId === 'revision.parent_binding'));
+  const scenarios = structuredClone(validGraph);
+  scenarios.scenarioRevisions[0].parentScenarioRevisionId =
+    scenarios.scenarioRevisions[1].scenarioRevisionId;
+  scenarios.scenarioRevisions[1].status = 'draft';
+  scenarios.scenarioRevisions[1].revision = 1;
+  scenarios.scenarioRevisions[1].modelPreparationId = null;
+  scenarios.scenarioRevisions[1].effectiveModelRef = null;
+  const badParent = validateFixtureGraph(scenarios, OBSERVED_AT);
+  assert(
+    !badParent.ok && badParent.issues.some((issue) => issue.ruleId === 'scenario.parent_binding'),
+  );
+});
+
+Deno.test(
+  'Review annotations preserve approval and substantive decisions require one explicit chain',
+  () => {
+    const graph = structuredClone(validGraph);
+    const initial = graph.reviews[0];
+    graph.reviews.push({
+      ...initial,
+      reviewId: 'annotation',
+      decision: 'comment',
+      decidedAt: '2026-11-03T00:00:00Z',
+      supersedesReviewId: null,
+    });
+    graph.reports[0].finalization.finalizedAt = '2026-11-04T00:00:00Z';
+    assert(validateFixtureGraph(graph, '2026-11-05T00:00:00Z').ok);
+    graph.reviews.push({
+      ...initial,
+      reviewId: 'changes',
+      decision: 'request_changes',
+      decidedAt: '2026-11-03T12:00:00Z',
+      supersedesReviewId: initial.reviewId,
+    });
+    const newFinalization = validateFixtureGraph(graph, '2026-11-05T00:00:00Z');
+    assert(
+      !newFinalization.ok &&
+        newFinalization.issues.some((issue) => issue.ruleId === 'report.required_review'),
+    );
+    graph.reports[0].finalization.finalizedAt = OBSERVED_AT;
+    assert(validateFixtureGraph(graph, '2026-11-05T00:00:00Z').ok);
+    const rootless = structuredClone(validGraph);
+    rootless.reviews[0].decision = 'withdraw';
+    const noHead = validateFixtureGraph(rootless, OBSERVED_AT);
+    assert(
+      !noHead.ok && noHead.issues.some((issue) => issue.ruleId === 'review.withdraw_requires_head'),
+    );
+    const duplicateRoot = structuredClone(validGraph);
+    duplicateRoot.reviews.push({
+      ...duplicateRoot.reviews[0],
+      reviewId: 'another-root',
+      decidedAt: '2026-11-03T00:00:00Z',
+    });
+    const ambiguous = validateFixtureGraph(duplicateRoot, '2026-11-04T00:00:00Z');
+    assert(
+      !ambiguous.ok &&
+        ambiguous.issues.some((issue) => issue.ruleId === 'review.explicit_head_chain'),
+    );
+    const wrongClass = structuredClone(validGraph);
+    wrongClass.reviews.push({
+      ...wrongClass.reviews[0],
+      reviewId: 'wrong-class',
+      reviewClass: 'internal',
+      decision: 'request_changes',
+      decidedAt: '2026-11-03T00:00:00Z',
+      supersedesReviewId: initial.reviewId,
+    });
+    const invalidClass = validateFixtureGraph(wrongClass, '2026-11-04T00:00:00Z');
+    assert(
+      !invalidClass.ok &&
+        invalidClass.issues.some((issue) => issue.ruleId === 'review.append_binding'),
+    );
+  },
+);
