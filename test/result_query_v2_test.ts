@@ -506,8 +506,16 @@ function downloadRequest(format = 'tidas') {
 }
 Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signing', async () => {
   const endpoint = 'https://abcdefghijklmnopqrst.storage.supabase.co/storage/v1/s3';
-  const downloadConfig = { ...config, endpoint };
-  const { target, targetHash } = await finalDownloadTarget(downloadConfig);
+  const downloadConfig = { ...config, endpoint, bucket: 'lca_results' };
+  const { target, targetHash } = await finalDownloadTarget({ ...config, endpoint });
+  const supabaseTargetHash = (await finalDownloadTarget(downloadConfig)).targetHash;
+  assertEquals(
+    supabaseTargetHash,
+    'f76a8f2ce1f462bba6f446b7a02a1871c182bbbdc03cabd67ac1961f62487c35',
+  );
+  await assertRejects(() => finalDownloadTarget({ ...config, bucket: 'lca_results' }));
+  for (const bucket of ['../bucket', 'bucket/child', 'bucket?key', 'bucket%2Fkey', 'a'.repeat(64)])
+    await assertRejects(() => finalDownloadTarget({ ...downloadConfig, bucket }));
   assertEquals(target.endpoint, endpoint);
   // Independent Python SHA-256 over sorted compact JSON; shared with Release.
   assertEquals(targetHash, '5a28a7316cbdf68e3169f93f35527b0da247b40949954fa2d3c303ef02b3da23');
@@ -527,7 +535,12 @@ Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signi
       downloadConfig,
       database: () => ({
         ok: true,
-        data: { publicationId, candidateHash: 'c'.repeat(64), targetHash, file },
+        data: {
+          publicationId,
+          candidateHash: 'c'.repeat(64),
+          targetHash: supabaseTargetHash,
+          file,
+        },
       }),
     });
     const response = await handler(downloadRequest(format));
@@ -536,7 +549,7 @@ Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signi
     assertEquals(url.origin, new URL(endpoint).origin);
     assertEquals(
       url.pathname,
-      `/storage/v1/s3/synthetic-results/test-owned/release-candidates/${'c'.repeat(64)}/${file.name}`,
+      `/storage/v1/s3/lca_results/test-owned/release-candidates/${'c'.repeat(64)}/${file.name}`,
     );
     assertEquals(url.searchParams.get('X-Amz-Expires'), '60');
     assertMatch(url.searchParams.get('X-Amz-Signature')!, /^[0-9a-f]{64}$/);
