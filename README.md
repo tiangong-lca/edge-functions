@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: '2026-10-25'
-lastReviewedCommit: 65aec47600a1489635bf6826973ccc4935d6b0ce
-lastReviewedNote: 'Edge #502: reviewed loopback-only implicit auth probes, explicit remote selection and fail-closed URL/flag validation; maintainer deploy refs and Edge business runtime remain unchanged.'
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
+lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -650,3 +650,15 @@ Authenticated `POST lca_release_results` accepts `mode: "query"`, exact `process
 Deploy the separate Worker result service and configure server-only `RESULT_QUERY_SERVICE_URL` (HTTPS origin; loopback HTTP for local tests only) and `RESULT_QUERY_SERVICE_SECRET` (at least 32 UTF-8 bytes, shared with Worker). No browser variable receives either value. The internal request signs `timestamp + "." + exact UTF-8 JSON body` with HMAC-SHA256 and a hexadecimal signature. The service's 30-second freshness check requires synchronized clocks.
 
 The gateway bounds bodies to 64 KiB, upstream responses to 2 MiB, per-isolate queries to eight, and the source/descriptor/transport phase to eight seconds. Responses use `Cache-Control: no-store`. Cold preparation returns 202 and `Retry-After: 2`; the client may retry the same authorized lookup without creating calculation jobs. Successful payloads expose only the selected process and its frozen result metadata, never full indexes, raw file references or internal row ordinals. Standard ZIP download continues through the existing release endpoint.
+
+## Release-owned final Results (v2)
+
+Authenticated `POST lca_release_results` also has three explicit v2 modes. They use the actor's `api` RPCs, never a service client or calculation job. Deploy the matching Database final Result facades and Worker v2 reader before enabling these requests in Platform. Existing `query` and metadata/download modes retain their legacy semantics; a failed v2 request never falls back to v1.
+
+- `source_results`: exact `sourceId`/`sourceVersion`, optional `limit` (1–100, default 100), `afterKey` and `publicationId`. Database checks current source RLS and returns only direct Result relations in the current publication. A continuation requires the returned publication ID. `data.publication.format` distinguishes `final-result-pair.v2` from `legacy-four-zip.v1`; no publication is `null`, and empty results are ordinary. Derived ancestors are not source lookup results.
+- `final_query`: exact `resultId`/`resultVersion`, optional `publicationId`/`runtimeRevision`, and overview/LCI/LCIA `query` kinds. Both pins are required for an LCI cursor. V2 cursor/filter limits are 4096/256 UTF-8 bytes. Database resolves the selected, globally registered Result and active reader revision. Edge signs `/internal/results/query-v2`, checks the actual reader executable hash, then repeats live authorization. A published Derived Result can be viewed without access to its private ancestors.
+- `final_download`: `publicationId` and `format` (`tidas` or `ilcd`). Database permits only a complete prebuilt Candidate ZIP: every Result root must be selected and every support dataset readable by this actor. Partial selection has no whole-Candidate download. No query files or client-chosen paths are signed.
+
+V2 query responses contain `publicationId`, `releaseVersion`, `runtimeRevision`, exact `result` and `data`. Ready `data.result` includes the frozen quantitative reference and `relationKind`. LCI item keys preserve flow ID/version, direction, location, function type and full flow-property/unit-group/internal-unit identity; values retain their sign. LCIA retains frozen method ID/version/name/unit and zero amounts. Missing LCIA returns `RESULT_LCIA_NOT_AVAILABLE` (404), never synthetic zeros. Internal ordinals, content hashes, ancestor identities, file locators and reader hashes are omitted. Cold 202 contains `data.status: "preparing"` with `Retry-After: 2`; repeat the same pinned lookup. Runtime rotation is 409; invalid/replayed cursors may be 422. Restart a page sequence after either event. Withdrawal or an unselected Result is 404. Replies use `no-store`; live lookups and private reader I/O share the eight-second/eight-request budget.
+
+V2 uses existing `RESULT_QUERY_SERVICE_*` configuration. ZIP signing uses explicit `FINAL_RESULT_S3_*` variables in `supabase/.env.example`: the same database target hash, bucket, region, optional endpoint and prefix as Release. Edge recomputes the canonical `storage-target.v1` hash and checks the Database descriptor. Use dedicated read-only credentials and optional session token; no ambient provider chain or legacy storage fallback applies. Custom endpoints require HTTPS except literal loopback HTTP for fixtures. Signed GET URLs cover exactly `release-candidates/<candidate hash>/result.<format>.zip` under that prefix, expire after 60 seconds, and return stored SHA-256/size alongside the URL. Authorization is rechecked after signing. Issued URLs remain bearer capabilities until expiry; browsers must not persist them as stable dataset links.

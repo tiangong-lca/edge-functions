@@ -577,3 +577,21 @@ curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
     --header 'Content-Type: application/json' \
     --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
     --data '{"mode":"query","processId":"{{$dotenv PROCESS_ID}}","processVersion":"01.00.000","query":{"kind":"lci","limit":100}}'
+
+### @name LCA_Final_Source_Results：Local (direct Result selection; v2)
+curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
+    --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
+    --header 'Content-Type: application/json' \
+    --data '{"mode":"source_results","sourceId":"{{$dotenv PROCESS_ID}}","sourceVersion":"01.00.000","limit":100}'
+
+### @name LCA_Final_Result_LCI：Local (exact processed Result; v2)
+curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
+    --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
+    --header 'Content-Type: application/json' \
+    --data '{"mode":"final_query","resultId":"{{$dotenv FINAL_RESULT_ID}}","resultVersion":"01.00.000","query":{"kind":"lci","limit":100}}'
+
+### @name LCA_Final_Result_ZIP：Local (complete Candidate only)
+curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
+    --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
+    --header 'Content-Type: application/json' \
+    --data '{"mode":"final_download","publicationId":"{{$dotenv FINAL_PUBLICATION_ID}}","format":"tidas"}'

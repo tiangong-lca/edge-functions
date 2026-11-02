@@ -35,9 +35,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 3b699afeae7db63ad7b07f2385fceaed94813027
-lastReviewedNote: 'Edge #509: reviewed exact snapshot method revision and frozen unit preservation, optional label enrichment, legacy reads and unchanged calculation and deployment boundaries.'
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
+lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -405,5 +405,9 @@ Edge does not interpret descriptor fields or maintain an LCIA algorithm version.
 Snapshot method IDs, revisions, units and numeric values remain authoritative for private and published result reads. The optional `impact_version` field carries the snapshot revision in `process_all_impacts` rows. Package-preview labels may be enriched only from the exact method ID/revision pair; independent ID/version query filters are post-filtered to those pairs. Missing revisions skip live method lookup and retain frozen names and units. Metadata enrichment never substitutes a latest revision or changes calculation readiness.
 
 ## HDF5 query gateway
+
+Release-owned final Results use separate `_shared/result_query_v2.ts` modes `source_results` and `final_query`. Actor-only `api.qry_source_final_results_v2` enumerates direct relations with publication-bound pagination; `api.qry_final_result_query_v2` resolves exact selected Results, including Derived Results independently of ancestor visibility. The worker envelope binds publication, immutable artifact, Result and deployed reader hash. Edge repeats the descriptor check after I/O, pins runtime/publication for cursors, and projects frozen public metadata. Release owns projection, HDF5/ZIP generation and publication; Worker owns the read/cache runtime. These routes do not compute or materialize Results.
+
+`_shared/result_download_v2.ts` owns `final_download`. Actor `api.qry_final_result_download_v2` applies complete-Candidate selection and support-data RLS. Edge verifies the canonical storage target and signs the two fixed Result ZIP names with explicit read-only credentials. A post-signing live recheck precedes disclosure; URLs remain bearer capabilities for at most 60 seconds. Legacy behavior stays in its existing path, never selected by a v2 failure.
 
 `lca_release_results` keeps its existing metadata/download modes and adds an explicit authenticated `query` mode through `_shared/result_query.ts`. The actor client reads the exact original Process using `public` RLS before the service client resolves `api.svc_result_query_resolve`. Database owns current formal-release membership; Worker owns file integrity, indexing and local cache. The gateway signs the exact descriptor-bound request and validates both returned result identity and numeric DTO before projecting frozen metadata. It does not use Portal Redis, fetch mutable labels, accept client storage paths or cache permission decisions. See README for the wire/configuration contract.

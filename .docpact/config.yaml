@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-10-30'
-lastReviewedCommit: 'eca933c1938d08f002ba58482dfb2f9cfac8d009'
-lastReviewedNote: 'Edge #509: reviewed exact snapshot method revision and frozen unit preservation, optional label enrichment, legacy reads and unchanged calculation and deployment boundaries.'
+lastReviewedAt: '2026-11-01'
+lastReviewedCommit: 'fcf848e83edea0f89402475d7a40f92b45897967'
+lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -192,6 +192,9 @@ routing:
         - test/data_product_results_test.ts
     lca-release-runtime:
       paths:
+        - supabase/functions/_shared/result_query*.ts
+        - supabase/functions/_shared/result_download_v2.ts
+        - test/result_query*_test.ts
         - supabase/functions/app_lca_release_commands/**
         - supabase/functions/lca_release_results/**
         - supabase/functions/_shared/commands/lca_release/**
@@ -550,6 +553,12 @@ rules:
     scope: repo
     repo: edge-functions
     triggers:
+      - path: supabase/functions/_shared/result_query*.ts
+        kind: runtime-code
+      - path: supabase/functions/_shared/result_download_v2.ts
+        kind: runtime-code
+      - path: test/result_query*_test.ts
+        kind: runtime-test
       - path: supabase/functions/app_lca_release_commands/**
         kind: runtime-code
       - path: supabase/functions/lca_release_results/**
