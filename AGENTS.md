@@ -39,9 +39,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
-lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
+lastReviewedAt: 2026-11-02
+lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

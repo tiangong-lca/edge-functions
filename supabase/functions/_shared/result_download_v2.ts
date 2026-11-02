@@ -57,7 +57,7 @@ export async function finalDownloadTarget(config: FinalDownloadConfig) {
   const prefix = config.prefix ?? '';
   if (
     !sha.safeParse(config.databaseTargetHash).success ||
-    !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(config.bucket) ||
+    typeof config.bucket !== 'string' ||
     !/^[a-z0-9-]{1,64}$/.test(config.region) ||
     prefix.length > 256 ||
     (prefix !== '' &&
@@ -73,13 +73,23 @@ export async function finalDownloadTarget(config: FinalDownloadConfig) {
       url.password ||
       url.search ||
       url.hash ||
-      url.pathname !== '/' ||
+      !(
+        url.pathname === '/' ||
+        (url.pathname === '/storage/v1/s3' &&
+          (/^[a-z0-9]{20}\.storage\.supabase\.co$/.test(url.hostname) ||
+            ['127.0.0.1', '[::1]'].includes(url.hostname)))
+      ) ||
       (url.protocol !== 'https:' &&
         !(url.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(url.hostname)))
     )
       throw new Error('Invalid final Result storage configuration');
-    endpoint = url.origin;
+    endpoint = url.origin + (url.pathname === '/' ? '' : url.pathname);
   }
+  const bucketPattern = endpoint?.endsWith('/storage/v1/s3')
+    ? /^[a-z0-9][a-z0-9._-]{1,61}[a-z0-9]$/
+    : /^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/;
+  if (!bucketPattern.test(config.bucket))
+    throw new Error('Invalid final Result storage configuration');
   const target = {
     bucket: config.bucket,
     databaseTargetHash: config.databaseTargetHash,
