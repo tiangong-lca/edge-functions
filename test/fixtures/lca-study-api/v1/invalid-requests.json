@@ -1,0 +1,435 @@
+[
+  {
+    "name": "unknown-schema",
+    "input": {
+      "schemaVersion": "lca.study-api.v999",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "Synthetic study"
+    },
+    "expectedCode": "UNSUPPORTED_SCHEMA",
+    "expectedRule": "schema.version"
+  },
+  {
+    "name": "actor-injection",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "Synthetic study",
+      "actorId": "another-user"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "owner-injection",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "Synthetic study",
+      "ownerId": "another-user"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "scope-impersonation",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "user",
+        "id": "another-user"
+      },
+      "title": "Synthetic study"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "unknown-operation",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.publish",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "Synthetic study"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "blank-title",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "   "
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "oversized-title",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-2",
+      "operation": "study.create",
+      "idempotencyKey": "key-2",
+      "scope": {
+        "kind": "personal"
+      },
+      "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "credential-injection",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-12",
+      "operation": "run.submit",
+      "idempotencyKey": "key-12",
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-base",
+      "expectedInputHash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "profileId": "lca.study-deterministic-p0.v1",
+      "accessToken": "SYNTHETIC-NOT-A-REAL-TOKEN"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "kernel-override",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-12",
+      "operation": "run.submit",
+      "idempotencyKey": "key-12",
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-base",
+      "expectedInputHash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "solver_semantics": {
+          "chosenByClient": true
+        }
+      },
+      "profileId": "lca.study-deterministic-p0.v1"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "uppercase-hash",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-12",
+      "operation": "run.submit",
+      "idempotencyKey": "key-12",
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-base",
+      "expectedInputHash": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "profileId": "lca.study-deterministic-p0.v1"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "missing-idempotency",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-12",
+      "operation": "run.submit",
+      "idempotencyKey": null,
+      "studyRevisionId": "study-rev-1",
+      "scenarioRevisionId": "scenario-rev-base",
+      "expectedInputHash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "profileId": "lca.study-deterministic-p0.v1"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "fractional-cas",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-8",
+      "operation": "revision.freeze",
+      "idempotencyKey": "key-8",
+      "target": {
+        "type": "studyRevision",
+        "id": "study-rev-1",
+        "expectedRevision": 1.1
+      },
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "authority-finalized",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-17",
+      "operation": "report.create",
+      "idempotencyKey": "key-17",
+      "studyId": "study-1",
+      "parentReportRevisionId": null,
+      "runIds": ["run-base", "run-alternative"],
+      "analysisIds": ["analysis-compare"],
+      "contentRef": {
+        "type": "reportContent",
+        "id": "report-content",
+        "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.reportContent.v1"
+      },
+      "templateId": "fixture-report-template.v1",
+      "status": "finalized"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "raw-storage-locator",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-17",
+      "operation": "report.create",
+      "idempotencyKey": "key-17",
+      "studyId": "study-1",
+      "parentReportRevisionId": null,
+      "runIds": ["run-base", "run-alternative"],
+      "analysisIds": ["analysis-compare"],
+      "contentRef": {
+        "type": "reportContent",
+        "id": "report-content",
+        "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.reportContent.v1",
+        "objectKey": "private/key"
+      },
+      "templateId": "fixture-report-template.v1"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "wrong-content-kind",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-17",
+      "operation": "report.create",
+      "idempotencyKey": "key-17",
+      "studyId": "study-1",
+      "parentReportRevisionId": null,
+      "runIds": ["run-base", "run-alternative"],
+      "analysisIds": ["analysis-compare"],
+      "contentRef": {
+        "type": "analysisFacts",
+        "id": "facts-compare",
+        "contentHash": "7777777777777777777777777777777777777777777777777777777777777777",
+        "byteSize": 128,
+        "mediaType": "application/json",
+        "schemaVersion": "fixture.analysisFacts.v1"
+      },
+      "templateId": "fixture-report-template.v1"
+    },
+    "expectedCode": "REFERENCE_MISMATCH",
+    "expectedRule": "report.content_kind"
+  },
+  {
+    "name": "duplicate-override",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-10",
+      "operation": "scenario.save",
+      "idempotencyKey": "key-10",
+      "target": {
+        "type": "scenarioRevision",
+        "id": "scenario-rev-base",
+        "expectedRevision": 2
+      },
+      "overrides": [
+        {
+          "path": "/parameters/energy/value",
+          "value": 1
+        },
+        {
+          "path": "/parameters/energy/value",
+          "value": 2
+        }
+      ]
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "scenario.unique_override"
+  },
+  {
+    "name": "unsafe-override-path",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-10",
+      "operation": "scenario.save",
+      "idempotencyKey": "key-10",
+      "target": {
+        "type": "scenarioRevision",
+        "id": "scenario-rev-base",
+        "expectedRevision": 2
+      },
+      "overrides": [
+        {
+          "path": "/__proto__/polluted",
+          "value": true
+        }
+      ]
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "duplicate-runs",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-15",
+      "operation": "analysis.request",
+      "idempotencyKey": "key-15",
+      "runIds": ["run-base", "run-base"],
+      "profileId": "fixture-compare.v1",
+      "configHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.unique_references"
+  },
+  {
+    "name": "anonymous-share",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-25",
+      "operation": "share.create",
+      "idempotencyKey": "key-25",
+      "exportId": "export-1",
+      "recipientId": null,
+      "expiresAt": "2099-01-01T00:00:00Z",
+      "capabilities": ["view_report"]
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "unbounded-share-rights",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-25",
+      "operation": "share.create",
+      "idempotencyKey": "key-25",
+      "exportId": "export-1",
+      "recipientId": "user-recipient",
+      "expiresAt": "2099-01-01T00:00:00Z",
+      "capabilities": ["view_report", "view_study"]
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "share-follow-latest",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-25",
+      "operation": "share.create",
+      "idempotencyKey": "key-25",
+      "exportId": "export-1",
+      "recipientId": "user-recipient",
+      "expiresAt": "2099-01-01T00:00:00Z",
+      "capabilities": ["view_report"],
+      "followLatest": true
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  },
+  {
+    "name": "implicit-latest-method",
+    "input": {
+      "schemaVersion": "lca.study-api.v1",
+      "requestId": "req-6",
+      "operation": "revision.create",
+      "idempotencyKey": "key-6",
+      "studyId": "study-1",
+      "parentRevisionId": null,
+      "definition": {
+        "goal": "Compare two synthetic electricity scenarios.",
+        "functionalUnit": {
+          "amount": "1",
+          "unit": "kWh",
+          "referenceFlowId": "flow-electricity"
+        },
+        "systemBoundary": "Synthetic cradle-to-gate fixture only.",
+        "methodRef": {
+          "type": "datasetRevision",
+          "datasetType": "lciamethod",
+          "id": "method-fixture",
+          "version": "latest",
+          "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "licenseRef": "license-fixture"
+        },
+        "assumptions": [
+          {
+            "id": "assumption-1",
+            "statement": "All values and identities are synthetic.",
+            "evidenceRef": "source-fixture"
+          }
+        ]
+      },
+      "modelRef": {
+        "type": "modelRevision",
+        "modelRevisionId": "model-base",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "expectedCode": "INVALID_REQUEST",
+    "expectedRule": "request.structure"
+  }
+]

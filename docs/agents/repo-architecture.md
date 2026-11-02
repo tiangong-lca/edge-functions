@@ -16,6 +16,7 @@ whenToUpdate:
   - when deploy or validation architecture changes enough to make this map misleading
 checkPaths:
   - docs/agents/repo-architecture.md
+  - contracts/lca-study/**
   - .docpact/config.yaml
   - package.json
   - pnpm-lock.yaml
@@ -35,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
-lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
+lastReviewedAt: 2026-11-02
+lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedNote: 'Edge #521: reviewed pure Study API v1 schemas, offline fixtures and routing; existing Function, auth, database, numerical and deployment behavior is unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -59,6 +60,7 @@ Data Product closure intent admits allocation v3, v4 and v5 and forwards an expl
 
 | Path group | Stability | Why it matters |
 | --- | --- | --- |
+| `contracts/lca-study/v1/**` and `docs/agents/lca-study-api-contract.md` | versioned contract only | P0 strict Study requests/responses, typed references and offline relationship checks; no Function entrypoint or enabled runtime |
 | `supabase/functions/<name>/index.ts` | stable | default Edge Function entrypoint; baseline `pnpm check` includes every enabled `index.ts` root in one bounded shared Deno graph |
 | `supabase/functions/<name>/handler.ts` | stable | larger routes sometimes split real logic here while `index.ts` stays thin |
 | `supabase/functions/portal_r0_hmac_verify_v1/**` and `_shared/portal_r0_*` | disposable | non-business EdgeOne Web Crypto/Supabase Deno interoperability fixture with R0-only HMAC, publishable-key, Redis, namespace, receipt, local-test, and live Preview deployment contracts |

@@ -16,6 +16,7 @@ whenToUpdate:
   - when deploy, auth-probe, or documentation-governance behavior changes
 checkPaths:
   - docs/agents/repo-validation.md
+  - contracts/lca-study/**
   - .docpact/config.yaml
   - package.json
   - pnpm-lock.yaml
@@ -35,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
-lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
+lastReviewedAt: 2026-11-02
+lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedNote: 'Edge #521: reviewed pure Study API v1 schemas, offline fixtures and routing; existing Function, auth, database, numerical and deployment behavior is unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -48,6 +49,8 @@ related:
 # edge-functions Validation Guide
 
 ## Default Baseline
+
+The Study P0 contract adds `test/lca_study_api_v1_contract_test.ts`, importing only the pure `contracts/lca-study/v1/` definitions and synthetic fixtures. Run `deno test --config supabase/functions/deno.json --allow-read test/lca_study_api_v1_contract_test.ts` for focused validation, followed by the canonical baseline below. The existing top-level test inventory includes its whole dependency graph without a deployed Function. Strict wire checks, static exact-reference/CAS/review/export/share relationships and real runtime authorization are distinct proof levels; see [the authoritative Study contract](lca-study-api-contract.md). No database, signer, provider, deployment or hosted auth proof is claimed by these offline tests.
 
 Unless the change is doc-only, the default local baseline is:
 
