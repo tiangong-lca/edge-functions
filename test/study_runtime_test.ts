@@ -719,7 +719,7 @@ Deno.test(
       new URL('./fixtures/lca-study-api/v2/worker-cement-prepared.artifact', import.meta.url),
     );
     const hash = await sha256(bytes);
-    assertEquals(hash, '56ba460a7f2eeb8fd6c7d4aece6b31a6a376fe5266567c0d593aebd7e348e23a');
+    assertEquals(hash, '2c2973070d318cf28c8a0cc099b0f938c055c039a25217854356d5ef59275adf');
     const manifest = preparedInputSchema.parse(JSON.parse(new TextDecoder().decode(bytes)));
     assert(manifest.studyBinding);
     assertEquals(manifest.coverage.length, 5);
@@ -1021,5 +1021,45 @@ Deno.test(
       assertEquals(response.status, 200, name);
       assert(responseSchema.safeParse(await response.json()).success, name);
     }
+  },
+);
+
+Deno.test(
+  'Study actual PostgreSQL definition vectors match the authoritative v2 inherited schema',
+  async () => {
+    const { definitionSchema } = await import('../contracts/lca-study/v1/records.ts');
+    const cases = JSON.parse(
+      await Deno.readTextFile(
+        new URL('./fixtures/lca-study-api/v2/database-definition-vectors.json', import.meta.url),
+      ),
+    );
+    assertEquals(cases.length, 32);
+    for (const c of cases) {
+      assertEquals(c.dbAccepted, c.expected, c.name);
+      assertEquals(definitionSchema.safeParse(c.definition).success, c.dbAccepted, c.name);
+    }
+  },
+);
+
+Deno.test(
+  'Study live qualification refuses remote/alternate projects before any account operation',
+  async () => {
+    const { localConfigSchema } = await import('../scripts/qualify-study-core.ts');
+    const config = {
+      schemaVersion: 'lca.study-local-core-config.v1',
+      projectId: 'study894',
+      supabaseUrl: 'http://127.0.0.1:56421',
+      publishableKey: 'synthetic',
+      serviceKey: 'synthetic',
+      fixturePath: '/tmp/synthetic.json',
+    };
+    assert(localConfigSchema.safeParse(config).success);
+    for (const patch of [
+      { supabaseUrl: 'https://production.invalid' },
+      { supabaseUrl: 'http://localhost:56421' },
+      { supabaseUrl: 'http://127.0.0.1:54321' },
+      { projectId: 'other-project' },
+    ])
+      assertEquals(localConfigSchema.safeParse({ ...config, ...patch }).success, false);
   },
 );

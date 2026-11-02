@@ -37,7 +37,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: '2026-11-03'
-lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
+lastReviewedCommit: '8935708af2d9299ac5d3f5f91d45fb711c247a59'
 lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - ../../AGENTS.md
@@ -55,6 +55,8 @@ W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lc
 ## Default Baseline
 
 For W04 run `deno test --config supabase/functions/deno.json --allow-read --allow-env test/study_runtime_test.ts`, followed by the canonical baseline. Preserve actual handler/SDK actor-api headers, strict v2 schema, fixed redacted errors, byte/time/cancellation bounds, source exact-version recovery, profile gates, server-only freeze consumption and artifact integrity plus authorization recheck. Real SQL concurrent CAS/idempotency/team revocation, lease-fenced Worker completion and exporter qualification remain independent integration gates; mocked RPCs do not establish them.
+
+The opt-in `scripts/qualify-study-core.ts` harness adds actual local GoTrue → handler → SDK → PostgREST core proof on the explicitly owned study894 stack. Follow the [runtime contract](lca-study-runtime-contract.md) for mode-0600 configuration, namespace seeding, stability coordination and retained-fixture/reset ownership. Run a targeted `deno check --config supabase/functions/deno.json scripts/qualify-study-core.ts`; it is imported by the default safety-guard regression but never provisions users or starts a server during `pnpm check`. Its core result is separate from W06 producer, hosted and report qualification.
 
 The Study P0 contract adds `test/lca_study_api_v1_contract_test.ts`, importing only the pure `contracts/lca-study/v1/` definitions and synthetic fixtures. Run `deno test --config supabase/functions/deno.json --allow-read test/lca_study_api_v1_contract_test.ts` for focused validation, followed by the canonical baseline below. The existing top-level test inventory includes its whole dependency graph without a deployed Function. Strict wire checks, static exact-reference/CAS/review/export/share relationships and real runtime authorization are distinct proof levels; see [the authoritative Study contract](lca-study-api-contract.md). No database, signer, provider, deployment or hosted auth proof is claimed by these offline tests.
 

@@ -128,6 +128,7 @@ routing:
         - supabase/functions/app_lca_study/**
         - supabase/functions/_shared/study/**
         - test/study_runtime_test.ts
+        - scripts/qualify-study-core.ts
         - docs/agents/lca-study-runtime-contract.md
     local-docpact-gate:
       paths:
@@ -395,6 +396,8 @@ rules:
         kind: runtime-shared
       - path: test/study_runtime_test.ts
         kind: runtime-proof
+      - path: scripts/qualify-study-core.ts
+        kind: local-runtime-qualification
       - path: docs/agents/lca-study-runtime-contract.md
         kind: runtime-contract
     requiredDocs:
