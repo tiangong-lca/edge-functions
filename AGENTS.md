@@ -41,7 +41,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 8935708af2d9299ac5d3f5f91d45fb711c247a59
+lastReviewedCommit: 16ede69c654c6c07085a59d09d2286dc98ea1428
 lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - .docpact/config.yaml

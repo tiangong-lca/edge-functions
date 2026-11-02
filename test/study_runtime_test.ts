@@ -1063,3 +1063,213 @@ Deno.test(
       assertEquals(localConfigSchema.safeParse({ ...config, ...patch }).success, false);
   },
 );
+
+Deno.test(
+  'Study Database expiry and revocation still reject unconsumed intents and stale receipt access',
+  async () => {
+    const dbNow = Date.now(),
+      ttl = dbNow + 120000;
+    const revision = { ...graph.studyRevisions[0], status: 'draft', validation: 'not_checked' };
+    const intent = {
+      kind: 'revisionValidationIntent',
+      intentId: 'unconsumed-intent',
+      expiresAt: new Date(ttl).toISOString(),
+      revision,
+      preparation: graph.modelPreparations[0],
+    };
+    const request = {
+      ...write,
+      operation: 'revision.freeze',
+      target: {
+        type: 'studyRevision',
+        id: revision.revisionId,
+        expectedRevision: revision.revision,
+      },
+      expectedContentHash: revision.contentHash,
+    };
+    let dbClock = ttl + 1,
+      validateCalls = 0,
+      consumeAttempts = 0,
+      writes = 0;
+    const transport: typeof fetch = async (input, init) => {
+      const r = new Request(input, init);
+      if (r.url.endsWith('/rpc/cmd_study_v1'))
+        return Response.json(
+          dbClock < ttl
+            ? { ok: true, data: intent }
+            : { ok: false, code: 'CAPABILITY_UNAVAILABLE' },
+        );
+      consumeAttempts++;
+      if (dbClock >= ttl) return Response.json({ ok: false, code: 'CAPABILITY_UNAVAILABLE' });
+      writes++;
+      return Response.json({
+        ok: true,
+        data: {
+          type: 'studyRevision',
+          value: {
+            ...revision,
+            status: 'frozen',
+            validation: 'passed',
+            revision: revision.revision + 1,
+          },
+        },
+      });
+    };
+    const client = (key: string) =>
+      createClient('https://freeze-expired.invalid', key, {
+        db: { schema: 'api' },
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { fetch: transport },
+      }) as unknown as SupabaseClient;
+    const f = fixture(
+      createStudyRepository(client('actor'), () => client('service')),
+      {
+        validateRevision: async () => {
+          validateCalls++;
+          dbClock = ttl + 1;
+          return { outcome: 'passed' };
+        },
+      },
+    );
+    assertEquals(await code(await f.send(request)), 'CAPABILITY_UNAVAILABLE');
+    assertEquals(validateCalls, 0);
+    assertEquals(consumeAttempts, 0);
+    dbClock = dbNow;
+    assertEquals(await code(await f.send(request)), 'CAPABILITY_UNAVAILABLE');
+    assertEquals(validateCalls, 1);
+    assertEquals(consumeAttempts, 1);
+    assertEquals(writes, 0);
+    const revoked = fixture(
+      { dispatch: async () => ({ ok: false, code: 'FORBIDDEN' }) },
+      {
+        validateRevision: async () => {
+          writes++;
+          return { outcome: 'passed' };
+        },
+      },
+    );
+    assertEquals(await code(await revoked.send(request)), 'FORBIDDEN');
+    assertEquals(writes, 0);
+  },
+);
+
+Deno.test(
+  'Study actual PostgreSQL freeze replies recover a lost success after TTL despite host clock skew',
+  async () => {
+    const source = JSON.parse(
+      await Deno.readTextFile(
+        new URL('./fixtures/lca-study-api/v2/database-freeze-recovery-dtos.json', import.meta.url),
+      ),
+    );
+    const intent = source.originalIntentAtIssue.data,
+      expires = Date.parse(intent.expiresAt);
+    const request = source.committedAfterTtl.request;
+    let committed = false,
+      validations = 0,
+      consumes = 0;
+    const transport: typeof fetch = async (input, init) => {
+      const r = new Request(input, init);
+      if (r.url.endsWith('/rpc/cmd_study_v1'))
+        return Response.json(
+          committed ? source.committedAfterTtl.result : source.originalIntentAtIssue,
+        );
+      assert(r.url.endsWith('/rpc/svc_study_revision_freeze_consume_v1'));
+      assertEquals((await r.json()).p_intent_id, intent.intentId);
+      consumes++;
+      committed = true;
+      return Response.json(source.committedAfterTtl.result);
+    };
+    const client = (key: string) =>
+      createClient('https://sql-freeze-recovery.invalid', key, {
+        db: { schema: 'api' },
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { fetch: transport },
+      }) as unknown as SupabaseClient;
+    const f = fixture(
+      createStudyRepository(client('actor'), () => client('service')),
+      {
+        config: () => ({
+          ...config,
+          profiles: [
+            {
+              profileId: intent.preparation.profileId,
+              calculationContractRef: intent.preparation.calculationContractRef,
+            },
+          ],
+        }),
+        validateRevision: async () => {
+          validations++;
+          return { outcome: 'passed' };
+        },
+      },
+    );
+    const originalNow = Date.now;
+    let hostNow = expires - 120000 + 332000;
+    Date.now = () => hostNow;
+    try {
+      const lost = await f.send(request);
+      assertEquals(lost.status, 200);
+      await lost.body?.cancel();
+      hostNow = expires + 86400000;
+      const replay = await f.send({ ...request, requestId: 'sql-recovered-after-ttl' });
+      assertEquals(replay.status, 200);
+      const body = await replay.json();
+      assertEquals(body.data, source.committedAfterTtl.result.data);
+      assertEquals(validations, 1);
+      assertEquals(consumes, 1);
+    } finally {
+      Date.now = originalNow;
+    }
+    const malformed = fixture(
+      {
+        dispatch: async () => ({
+          ...source.originalIntentAtIssue,
+          data: { ...intent, expiresAt: 'not-a-timestamp' },
+        }),
+      },
+      {
+        validateRevision: async () => {
+          throw new Error('malformed intent must not validate');
+        },
+      },
+    );
+    assertEquals(await code(await malformed.send(request)), 'UPSTREAM_UNAVAILABLE');
+  },
+);
+
+Deno.test(
+  'Study actual PostgreSQL expired and revoked actor replays never validate or consume',
+  async () => {
+    const source = JSON.parse(
+      await Deno.readTextFile(
+        new URL('./fixtures/lca-study-api/v2/database-freeze-recovery-dtos.json', import.meta.url),
+      ),
+    );
+    let validations = 0,
+      consumes = 0;
+    for (const [name, expected] of [
+      ['expiredUnconsumed', 'CAPABILITY_UNAVAILABLE'],
+      ['revokedCaller', 'FORBIDDEN'],
+    ]) {
+      const vector = source[name];
+      const client = createClient('https://sql-freeze-negative.invalid', 'actor', {
+        db: { schema: 'api' },
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { fetch: async () => Response.json(vector.result) },
+      }) as unknown as SupabaseClient;
+      const repository = createStudyRepository(client, () => {
+        consumes++;
+        throw new Error('actor rejection must not consume');
+      });
+      const f = fixture(repository, {
+        validateRevision: async () => {
+          validations++;
+          return { outcome: 'passed' };
+        },
+      });
+      assertEquals(await code(await f.send(vector.request)), expected, name);
+    }
+    assertEquals(validations, 0);
+    assertEquals(consumes, 0);
+  },
+);

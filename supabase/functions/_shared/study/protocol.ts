@@ -104,13 +104,13 @@ export function assertIntent(
   intent: ValidationIntent,
   request: StudyApiRequest,
   profiles: QualifiedProfile[],
-  now: number,
 ): void {
+  // expiresAt is shape-checked by intentSchema. Database clocks govern issue,
+  // replay and consumption; a skewed Edge wall clock must not strand recovery.
   if (request.operation !== 'revision.freeze') throw new StudyFailure('REFERENCE_MISMATCH', 502);
   const r = intent.revision,
     p = intent.preparation;
   if (
-    Date.parse(intent.expiresAt) <= now ||
     r.revisionId !== request.target.id ||
     r.revision !== request.target.expectedRevision ||
     r.contentHash !== request.expectedContentHash ||

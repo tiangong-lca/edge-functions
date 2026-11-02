@@ -44,7 +44,6 @@ export type HandlerOptions = {
   config?: () => RuntimeConfig;
   validateRevision?: ServerValidator | null;
   timeoutMs?: number;
-  now?: () => number;
 };
 const MAX_BODY_BYTES = 256 * 1024;
 const statusFor = (code: string) =>
@@ -330,7 +329,7 @@ export function createStudyHandler(options: HandlerOptions = {}) {
         };
       } else if (request.operation === 'revision.freeze' && intentSchema.safeParse(data).success) {
         const intent = intentSchema.parse(data);
-        assertIntent(intent, request, config.profiles, (options.now ?? Date.now)());
+        assertIntent(intent, request, config.profiles);
         if (options.validateRevision === null)
           throw new StudyFailure('CAPABILITY_UNAVAILABLE', 503, 'freeze.validator_unavailable');
         const decision = await (

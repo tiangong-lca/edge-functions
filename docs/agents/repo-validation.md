@@ -36,8 +36,8 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-11-03'
-lastReviewedCommit: '8935708af2d9299ac5d3f5f91d45fb711c247a59'
+lastReviewedAt: 2026-11-03
+lastReviewedCommit: 16ede69c654c6c07085a59d09d2286dc98ea1428
 lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - ../../AGENTS.md
@@ -92,6 +92,8 @@ In addition to the canonical gates, use actual installed SDKs with in-process fa
 ### Browser preflight regression
 
 For shared CORS changes, exercise actual cross-origin requests in both Firefox and Chromium with the complete Functions JS header set: Authorization, apikey, Content-Type, x-client-info, and x-region when a function region is selected. Isolated Firefox 140.0.2 and 153.0 regressions showed that wildcard header permission allowed POST but did not reuse its preflight cache; explicitly naming the SDK headers restored reuse. Keeping `*` alongside those names preserves other callers' header permission. Compare the old and new header policy across more than the browser's default cache lifetime, and prove that a changed/expired bearer still reaches authentication and receives 401 rather than reusing success. Include an additional caller header to verify wildcard compatibility. `test/command_runtime_test.ts` separately proves explicit SDK header coverage, preflight bypassing actor/business work, POST resolving its actor on every call, and unsupported methods remaining rejected. No response-cache directive or credential wildcard is introduced.
+
+Freeze regression must cover the Database clock as expiry authority, a host wall clock ahead of a fresh database intent, same-key actor recovery after committed-result response loss and intent TTL, and expired-unconsumed/revoked rejections. SDK/handler tests consume captured actual SQL outcomes without pretending their synthetic transport is a live numerical producer.
 
 ## Dependency proposals and scoped CI
 
