@@ -22,6 +22,14 @@ import {
 } from '../_shared/commands/lca_release/repository.ts';
 import { corsHeaders } from '../_shared/cors.ts';
 import { createSupabaseServiceClient } from '../_shared/supabase_client.ts';
+import {
+  finalQueryRequestSchema,
+  sourceResultsRequestSchema,
+  finalDownloadRequestSchema,
+  queryFinalResult,
+  sourceFinalResults,
+} from '../_shared/result_query_v2.ts';
+import { downloadFinalResult, type FinalDownloadOptions } from '../_shared/result_download_v2.ts';
 
 const uuidSchema = z.string().uuid();
 
@@ -37,6 +45,9 @@ export const lcaReleaseResultsRequestSchema = z.preprocess(
   },
   z.discriminatedUnion('mode', [
     publishedQueryRequestSchema,
+    finalQueryRequestSchema,
+    sourceResultsRequestSchema,
+    finalDownloadRequestSchema,
     z.object({ mode: z.literal('current') }).strict(),
     z
       .object({
@@ -59,6 +70,7 @@ type ResultsRepository = Pick<
 export type LcaReleaseResultsHandlerOptions = {
   serviceSupabase?: SupabaseClient;
   resultQuery?: ResultQueryOptions;
+  finalDownload?: FinalDownloadOptions;
   publicRepository?: ResultsRepository;
   repositoryForActor?: (supabase: SupabaseClient) => ResultsRepository;
   resolveActor?: (req: Request) => Promise<ActorContextResult>;
@@ -140,6 +152,28 @@ export function createLcaReleaseResultsHandler(options: LcaReleaseResultsHandler
         400,
         parsed.error.flatten(),
       );
+    }
+
+    if (
+      parsed.data.mode === 'final_query' ||
+      parsed.data.mode === 'source_results' ||
+      parsed.data.mode === 'final_download'
+    ) {
+      const actor = await (options.resolveActor ?? resolveActorContext)(req);
+      if (!actor.ok) {
+        actor.response.headers.set('Cache-Control', 'no-store');
+        return actor.response;
+      }
+      return parsed.data.mode === 'final_query'
+        ? queryFinalResult(parsed.data, actor.value.supabase, req.signal, options.resultQuery)
+        : parsed.data.mode === 'source_results'
+          ? sourceFinalResults(parsed.data, actor.value.supabase, req.signal, options.resultQuery)
+          : downloadFinalResult(
+              parsed.data,
+              actor.value.supabase,
+              req.signal,
+              options.finalDownload,
+            );
     }
 
     if (parsed.data.mode === 'query') {

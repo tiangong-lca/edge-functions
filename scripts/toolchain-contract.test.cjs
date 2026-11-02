@@ -61,6 +61,8 @@ test('keeps Supabase Edge Runtime-compatible Deno authoritative and auxiliary to
 test('pins the latest reviewed Edge-compatible runtime dependency graph', () => {
   const imports = readJson('supabase/functions/deno.json').imports;
   assert.deepEqual(imports, {
+    '@aws-sdk/client-s3': 'npm:@aws-sdk/client-s3@3.1161.0',
+    '@aws-sdk/s3-request-presigner': 'npm:@aws-sdk/s3-request-presigner@3.1161.0',
     '@aws-sdk/client-sagemaker-runtime': 'npm:@aws-sdk/client-sagemaker-runtime@3.1152.0',
     '@openai/openai': 'npm:openai@7.38.0',
     '@supabase/functions-js/edge-runtime.d.ts':
