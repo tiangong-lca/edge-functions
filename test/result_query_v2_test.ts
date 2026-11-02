@@ -651,6 +651,12 @@ Deno.test(
   },
 );
 
+function scopedZipJwt(patch: Record<string, unknown> = {}) {
+  const enc = (value: unknown) =>
+    btoa(JSON.stringify(value)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const now = Math.floor(Date.now() / 1000);
+  return `${enc({ alg: 'HS256', typ: 'JWT' })}.${enc({ iss: 'supabase', ref: 'abcdefghijklmnopqrst', role: 'lca_result_zip_reader_g20261102', iat: now, exp: now + 3600, jti: '00000000-0000-4000-8000-000000000527', ...patch })}.synthetic`;
+}
 const restrictedConfig: FinalDownloadConfig = {
   ...config,
   signer: 'supabase-storage',
@@ -659,7 +665,8 @@ const restrictedConfig: FinalDownloadConfig = {
   prefix: 'lca_results',
   accessKeyId: '',
   secretAccessKey: '',
-  signingKey: 'sb_secret_synthetic_fixture_only',
+  signingKey: scopedZipJwt(),
+  publicApiKey: 'sb_publishable_synthetic_fixture_only',
 };
 const zipPath = (format: string) =>
   `/object/sign/lca_results/lca_results/release-candidates/${'c'.repeat(64)}/result.${format}.zip`;
@@ -685,7 +692,7 @@ Deno.test(
             `https://abcdefghijklmnopqrst.supabase.co/storage/v1${zipPath(format)}`,
           );
           const h = new Headers(fetchInit(init)?.headers);
-          assertEquals(h.get('apikey'), restrictedConfig.signingKey);
+          assertEquals(h.get('apikey'), restrictedConfig.publicApiKey);
           assertEquals(h.get('Authorization'), `Bearer ${restrictedConfig.signingKey}`);
           assertEquals(fetchInit(init)?.redirect, 'error');
           assertEquals(fetchInit(init)?.signal instanceof AbortSignal, true);
@@ -820,6 +827,47 @@ Deno.test(
       const r = await handler(downloadRequest());
       assertEquals(r.status, 503);
       await r.body?.cancel();
+    }
+  },
+);
+
+Deno.test(
+  'restricted ZIP credentials reject broad roles, wrong projects, expiry and opaque server keys before I/O',
+  async () => {
+    const descriptor = await zipDescriptor();
+    const now = Math.floor(Date.now() / 1000);
+    const invalid = [
+      ...[
+        { role: 'service_role' },
+        { role: 'authenticated' },
+        { role: 'lca_result_zip_reader' },
+        { ref: 'wrongproject' },
+        { iss: 'other' },
+        { exp: now + 59 },
+        { exp: now + 91 * 86400 },
+        { iat: now + 120 },
+        { exp: 'later' },
+        { jti: 'missing-identity' },
+      ].map((claims) => ({ signingKey: scopedZipJwt(claims) })),
+      { signingKey: 'sb_secret_unqualified_opaque_key' },
+      { publicApiKey: 'sb_secret_forbidden_gateway_key' },
+      { publicApiKey: scopedZipJwt({ role: 'service_role' }) },
+      { publicApiKey: undefined },
+    ];
+    for (const patch of invalid) {
+      let signs = 0;
+      const { handler } = setup({
+        downloadConfig: { ...restrictedConfig, ...patch },
+        database: () => ({ ok: true, data: descriptor }),
+        downloadFetch: () => {
+          signs++;
+          throw new Error('Must reject before I/O');
+        },
+      });
+      const response = await handler(downloadRequest());
+      assertEquals(response.status, 503);
+      assertEquals(signs, 0);
+      await response.body?.cancel();
     }
   },
 );

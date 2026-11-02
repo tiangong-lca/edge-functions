@@ -40,7 +40,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: 3aa8260d67920673cb023f5847b046660b74c56e
+lastReviewedCommit: 74190270023953f9cf73a1d84ab5e7fa574a9f9f
 lastReviewedNote: 'Edge #527: reviewed restricted Storage single-object ZIP signing and credential non-disclosure; actor authorization and publication boundaries are unchanged.'
 related:
   - .docpact/config.yaml
