@@ -73,12 +73,17 @@ export async function finalDownloadTarget(config: FinalDownloadConfig) {
       url.password ||
       url.search ||
       url.hash ||
-      url.pathname !== '/' ||
+      !(
+        url.pathname === '/' ||
+        (url.pathname === '/storage/v1/s3' &&
+          (/^[a-z0-9]{20}\.storage\.supabase\.co$/.test(url.hostname) ||
+            ['127.0.0.1', '[::1]'].includes(url.hostname)))
+      ) ||
       (url.protocol !== 'https:' &&
         !(url.protocol === 'http:' && ['127.0.0.1', '[::1]'].includes(url.hostname)))
     )
       throw new Error('Invalid final Result storage configuration');
-    endpoint = url.origin;
+    endpoint = url.origin + (url.pathname === '/' ? '' : url.pathname);
   }
   const target = {
     bucket: config.bucket,
