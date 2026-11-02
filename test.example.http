@@ -598,5 +598,5 @@ curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
     --header 'Content-Type: application/json' \
     --data '{"mode":"final_download","publicationId":"{{$dotenv FINAL_PUBLICATION_ID}}","format":"tidas"}'
 
-# Edge #527: hosted Supabase ZIP links use the server-only restricted Storage signer.
+# Edge #527: hosted Supabase ZIP links use the native Storage signer with existing server credentials.
 # The request above remains actor-scoped; no S3 key or Auth session token belongs in a download URL.
