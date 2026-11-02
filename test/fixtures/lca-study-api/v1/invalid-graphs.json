@@ -208,7 +208,8 @@
             "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
             "byteSize": 128,
             "mediaType": "application/json",
-            "schemaVersion": "fixture.runResult.v1"
+            "schemaVersion": "fixture.runResult.v1",
+            "digestScope": "artifact_bytes_sha256"
           }
         }
       ],
@@ -460,6 +461,138 @@
       ],
       "expectedCode": "FORBIDDEN",
       "expectedRule": "share.active_export"
+    },
+    {
+      "name": "source-snapshot-kind",
+      "patches": [
+        {
+          "path": "/modelSourceSnapshots/0/sourceArtifactRef/type",
+          "value": "runResult"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_source.artifact_kind"
+    },
+    {
+      "name": "preparation-foreign-study",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/studyId",
+          "value": "foreign-study"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.study_binding"
+    },
+    {
+      "name": "preparation-stale-source-hash",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/source/contentHash",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.source_snapshot"
+    },
+    {
+      "name": "preparation-not-ready-with-result",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/execution/status",
+          "value": "running"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.result_state"
+    },
+    {
+      "name": "preparation-no-input-artifact",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/inputArtifactRef",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.result_state"
+    },
+    {
+      "name": "prepared-model-wrong-domain",
+      "patches": [
+        {
+          "path": "/modelPreparations/0/modelRef/digestScope",
+          "value": "artifact_bytes_sha256"
+        }
+      ],
+      "expectedCode": "INVALID_REQUEST",
+      "expectedRule": "graph.structure"
+    },
+    {
+      "name": "preparation-stale-scenario-cas",
+      "patches": [
+        {
+          "path": "/modelPreparations/1/source/expectedRevision",
+          "value": 2
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.scenario_snapshot"
+    },
+    {
+      "name": "unissued-study-model",
+      "patches": [
+        {
+          "path": "/studyRevisions/0/modelPreparationId",
+          "value": "missing"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "revision.prepared_model"
+    },
+    {
+      "name": "scenario-unprepared-model",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/modelPreparationId",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.prepared_model"
+    },
+    {
+      "name": "scenario-base-preparation-confusion",
+      "patches": [
+        {
+          "path": "/scenarioRevisions/0/modelPreparationId",
+          "value": "preparation-base"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "scenario.prepared_model"
+    },
+    {
+      "name": "run-wrong-preparation",
+      "patches": [
+        {
+          "path": "/runs/0/modelPreparationId",
+          "value": "preparation-base"
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "run.prepared_model_binding"
+    },
+    {
+      "name": "scenario-preparation-missing-run-input-hash",
+      "patches": [
+        {
+          "path": "/modelPreparations/1/inputHash",
+          "value": null
+        }
+      ],
+      "expectedCode": "REFERENCE_MISMATCH",
+      "expectedRule": "model_preparation.run_input_identity"
     }
   ]
 }

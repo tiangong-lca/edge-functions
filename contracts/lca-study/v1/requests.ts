@@ -3,17 +3,25 @@ import {
   API_SCHEMA,
   artifactRefSchema,
   calculationContractRefSchema,
+  cursorSchema,
   hashSchema,
   idSchema,
   modelRefSchema,
+  resourceKindSchema,
   target,
   text,
   timestampSchema,
 } from './common.ts';
-import { definitionSchema, overrideSchema } from './records.ts';
+import {
+  definitionSchema,
+  modelOriginRefSchema,
+  modelPreparationSourceSchema,
+  overrideSchema,
+} from './records.ts';
 
 const envelope = { schemaVersion: z.literal(API_SCHEMA), requestId: idSchema };
 const write = { ...envelope, idempotencyKey: idSchema };
+const pagination = { cursor: cursorSchema, limit: z.number().int().min(1).max(100) };
 const scope = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('personal') }).strict(),
   z.object({ kind: z.literal('team'), teamId: idSchema }).strict(),
@@ -23,6 +31,39 @@ const variants = [
   z.object({ ...envelope, operation: z.literal('capability.read') }).strict(),
   z.object({ ...write, operation: z.literal('study.create'), scope, title: text(512) }).strict(),
   z.object({ ...envelope, operation: z.literal('study.read'), studyId: idSchema }).strict(),
+  z.object({ ...envelope, operation: z.literal('study.list'), ...pagination }).strict(),
+  z
+    .object({
+      ...envelope,
+      operation: z.literal('study.resources.list'),
+      studyId: idSchema,
+      kind: resourceKindSchema,
+      ...pagination,
+    })
+    .strict(),
+  z.object({ ...envelope, operation: z.literal('revision.read'), revisionId: idSchema }).strict(),
+  z
+    .object({ ...envelope, operation: z.literal('scenario.read'), scenarioRevisionId: idSchema })
+    .strict(),
+  z
+    .object({
+      ...write,
+      operation: z.literal('model.source.resolve'),
+      studyId: idSchema,
+      originRef: modelOriginRefSchema,
+    })
+    .strict(),
+  z
+    .object({
+      ...write,
+      operation: z.literal('model.prepare'),
+      studyId: idSchema,
+      source: modelPreparationSourceSchema,
+      profileId: idSchema,
+      calculationContractRef: calculationContractRefSchema,
+    })
+    .strict(),
+  z.object({ ...envelope, operation: z.literal('model.read'), preparationId: idSchema }).strict(),
   z.object({ ...write, operation: z.literal('study.archive'), target: target('study') }).strict(),
   z
     .object({
@@ -39,6 +80,7 @@ const variants = [
       studyId: idSchema,
       parentRevisionId: idSchema.nullable(),
       definition: definitionSchema,
+      modelPreparationId: idSchema,
       modelRef: modelRefSchema,
     })
     .strict(),
@@ -48,6 +90,7 @@ const variants = [
       operation: z.literal('revision.save'),
       target: target('studyRevision'),
       definition: definitionSchema,
+      modelPreparationId: idSchema,
       modelRef: modelRefSchema,
     })
     .strict(),
@@ -82,6 +125,7 @@ const variants = [
       operation: z.literal('scenario.freeze'),
       target: target('scenarioRevision'),
       expectedContentHash: hashSchema,
+      modelPreparationId: idSchema,
     })
     .strict(),
   z

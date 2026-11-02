@@ -3,11 +3,11 @@ import {
   artifactRefSchema,
   calculationContractRefSchema,
   contentStatusSchema,
+  datasetVersionSchema,
   generationSchema,
   hashSchema,
   idSchema,
   modelRefSchema,
-  sourceRefSchema,
   text,
   timestampSchema,
   validitySchema,
@@ -15,6 +15,84 @@ import {
 } from './common.ts';
 
 const positiveDecimal = text(64).regex(/^(?:[1-9]\d*(?:\.\d+)?|0\.\d*[1-9]\d*)$/u);
+export const methodRefsSchema = z
+  .array(
+    z
+      .object({
+        type: z.literal('datasetRevision'),
+        datasetType: z.literal('lciamethod'),
+        id: idSchema,
+        version: datasetVersionSchema,
+      })
+      .strict(),
+  )
+  .min(1)
+  .max(32)
+  .superRefine((refs, context) => {
+    const seen = new Set<string>();
+    refs.forEach((ref, index) => {
+      if (seen.has(ref.id))
+        context.addIssue({
+          code: 'custom',
+          path: [index],
+          message:
+            'method category IDs must be unique; conflicting versions are not selectable together',
+        });
+      seen.add(ref.id);
+    });
+  });
+
+export const modelOriginRefSchema = z
+  .object({
+    type: z.literal('datasetRevision'),
+    datasetType: z.literal('lifecyclemodel'),
+    id: idSchema,
+    version: datasetVersionSchema,
+  })
+  .strict();
+export const modelSourceSnapshotSchema = z
+  .object({
+    snapshotId: idSchema,
+    studyId: idSchema,
+    originRef: modelOriginRefSchema,
+    sourceArtifactRef: artifactRefSchema,
+    digestScope: z.literal('artifact_bytes_sha256'),
+    licenseRef: idSchema,
+    issuerId: idSchema,
+    observedAt: timestampSchema,
+  })
+  .strict();
+export const modelPreparationSourceSchema = z.discriminatedUnion('type', [
+  z
+    .object({
+      type: z.literal('modelSourceSnapshot'),
+      snapshotId: idSchema,
+      contentHash: hashSchema,
+      digestScope: z.literal('artifact_bytes_sha256'),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('scenarioRevision'),
+      scenarioRevisionId: idSchema,
+      expectedRevision: generationSchema,
+      contentHash: hashSchema,
+    })
+    .strict(),
+]);
+export const modelPreparationSchema = z
+  .object({
+    preparationId: idSchema,
+    studyId: idSchema,
+    source: modelPreparationSourceSchema,
+    profileId: idSchema,
+    calculationContractRef: calculationContractRefSchema,
+    execution: z.object({ jobId: idSchema, status: workerJobStatusSchema }).strict(),
+    modelRef: modelRefSchema.nullable(),
+    inputArtifactRef: artifactRefSchema.nullable(),
+    inputHash: hashSchema.nullable(),
+  })
+  .strict();
 export const definitionSchema = z
   .object({
     goal: text(4096),
@@ -22,10 +100,7 @@ export const definitionSchema = z
       .object({ amount: positiveDecimal, unit: text(128), referenceFlowId: idSchema })
       .strict(),
     systemBoundary: text(4096),
-    methodRef: sourceRefSchema.refine(
-      (ref) => ref.type === 'datasetRevision' && ref.datasetType === 'lciamethod',
-      'exact LCIA method required',
-    ),
+    methodRefs: methodRefsSchema,
     assumptions: z
       .array(z.object({ id: idSchema, statement: text(4096), evidenceRef: idSchema }).strict())
       .max(128),
@@ -52,6 +127,7 @@ export const studyRevisionSchema = z
     status: contentStatusSchema,
     contentHash: hashSchema,
     definition: definitionSchema,
+    modelPreparationId: idSchema,
     modelRef: modelRefSchema,
     validation: z.enum(['not_checked', 'passed', 'failed']),
   })
@@ -77,7 +153,8 @@ export const scenarioRevisionSchema = z
     status: contentStatusSchema,
     contentHash: hashSchema,
     overrides: z.array(overrideSchema).max(256),
-    effectiveModelRef: modelRefSchema,
+    modelPreparationId: idSchema.nullable(),
+    effectiveModelRef: modelRefSchema.nullable(),
   })
   .strict();
 
@@ -88,6 +165,7 @@ export const runSchema = z
     studyRevisionId: idSchema,
     scenarioRevisionId: idSchema,
     inputHash: hashSchema,
+    modelPreparationId: idSchema,
     effectiveModelRef: modelRefSchema,
     calculationContractRef: calculationContractRefSchema,
     engineId: z.literal('solver-worker'),
@@ -215,6 +293,8 @@ export const graphSchema = z
   .object({
     schemaVersion: z.literal('lca.study-api-fixture-graph.v1'),
     studies: z.array(studySchema).max(128),
+    modelSourceSnapshots: z.array(modelSourceSnapshotSchema).max(256),
+    modelPreparations: z.array(modelPreparationSchema).max(256),
     studyRevisions: z.array(studyRevisionSchema).max(256),
     scenarioRevisions: z.array(scenarioRevisionSchema).max(256),
     runs: z.array(runSchema).max(256),

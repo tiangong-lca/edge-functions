@@ -1,6 +1,7 @@
 import { API_SCHEMA, type ContractIssue } from './common.ts';
 import { graphSchema, type FixtureGraph } from './records.ts';
 import { requestSchema, type StudyApiRequest } from './requests.ts';
+import { responseSchema, type StudyApiResponse } from './responses.ts';
 
 export type ValidationResult<T> =
   { ok: true; value: T; issues: [] } | { ok: false; issues: ContractIssue[] };
@@ -61,6 +62,147 @@ export function validateRequest(input: unknown): ValidationResult<StudyApiReques
   return issues.length ? { ok: false, issues } : { ok: true, value, issues: [] };
 }
 
+/** Correlation/selection checks only; opaque cursors and actor access require runtime verification. */
+export function validateResponseForRequest(
+  request: StudyApiRequest,
+  input: unknown,
+): ValidationResult<StudyApiResponse> {
+  const parsed = responseSchema.safeParse(input);
+  if (!parsed.success)
+    return {
+      ok: false,
+      issues: [{ code: 'REFERENCE_MISMATCH', path: '/data', ruleId: 'response.structure' }],
+    };
+  const value = parsed.data;
+  if (value.requestId !== request.requestId)
+    return {
+      ok: false,
+      issues: [
+        { code: 'REFERENCE_MISMATCH', path: '/requestId', ruleId: 'response.request_binding' },
+      ],
+    };
+  if (!value.ok) return { ok: true, value, issues: [] };
+  const data = value.data;
+  let expectedType: string;
+  if (request.operation === 'study.list') expectedType = 'studyPage';
+  else if (request.operation === 'study.resources.list') expectedType = 'resourcePage';
+  else if (request.operation === 'capability.read') expectedType = 'capabilities';
+  else if (request.operation === 'model.source.resolve') expectedType = 'modelSourceSnapshot';
+  else if (request.operation.startsWith('model.')) expectedType = 'modelPreparation';
+  else if (request.operation.startsWith('revision.')) expectedType = 'studyRevision';
+  else if (request.operation.startsWith('scenario.')) expectedType = 'scenarioRevision';
+  else if (request.operation.startsWith('report.')) expectedType = 'reportRevision';
+  else expectedType = request.operation.split('.')[0];
+  if (data.type !== expectedType)
+    return {
+      ok: false,
+      issues: [
+        { code: 'REFERENCE_MISMATCH', path: '/data/type', ruleId: 'response.operation_kind' },
+      ],
+    };
+  if (
+    request.operation === 'study.resources.list' &&
+    data.type === 'resourcePage' &&
+    (data.studyId !== request.studyId ||
+      data.kind !== request.kind ||
+      data.items.length > request.limit)
+  )
+    return {
+      ok: false,
+      issues: [{ code: 'REFERENCE_MISMATCH', path: '/data', ruleId: 'page.request_selection' }],
+    };
+  if (
+    request.operation === 'study.list' &&
+    data.type === 'studyPage' &&
+    data.items.length > request.limit
+  )
+    return {
+      ok: false,
+      issues: [{ code: 'REFERENCE_MISMATCH', path: '/data/items', ruleId: 'page.request_limit' }],
+    };
+  if ('value' in data) {
+    const record = data.value as Record<string, unknown>;
+    const selectionKeys = [
+      'studyId',
+      'revisionId',
+      'scenarioRevisionId',
+      'preparationId',
+      'runId',
+      'analysisId',
+      'reportRevisionId',
+      'exportId',
+      'shareId',
+    ] as const;
+    if (
+      request.operation.endsWith('.read') &&
+      selectionKeys.some(
+        (key) => key in request && record[key] !== (request as Record<string, unknown>)[key],
+      )
+    )
+      return {
+        ok: false,
+        issues: [
+          { code: 'REFERENCE_MISMATCH', path: '/data/value', ruleId: 'response.resource_binding' },
+        ],
+      };
+    if ('studyId' in request && record.studyId !== request.studyId)
+      return {
+        ok: false,
+        issues: [
+          {
+            code: 'REFERENCE_MISMATCH',
+            path: '/data/value/studyId',
+            ruleId: 'response.study_binding',
+          },
+        ],
+      };
+  }
+  if (
+    request.operation === 'model.source.resolve' &&
+    data.type === 'modelSourceSnapshot' &&
+    JSON.stringify(request.originRef) !== JSON.stringify(data.value.originRef)
+  )
+    return {
+      ok: false,
+      issues: [
+        {
+          code: 'REFERENCE_MISMATCH',
+          path: '/data/value/originRef',
+          ruleId: 'response.model_origin',
+        },
+      ],
+    };
+  if (
+    request.operation === 'model.prepare' &&
+    data.type === 'modelPreparation' &&
+    (JSON.stringify(request.source) !== JSON.stringify(data.value.source) ||
+      request.profileId !== data.value.profileId ||
+      JSON.stringify(request.calculationContractRef) !==
+        JSON.stringify(data.value.calculationContractRef))
+  )
+    return {
+      ok: false,
+      issues: [
+        { code: 'REFERENCE_MISMATCH', path: '/data/value', ruleId: 'response.preparation_source' },
+      ],
+    };
+  if (
+    request.operation === 'run.submit' &&
+    data.type === 'run' &&
+    (request.studyRevisionId !== data.value.studyRevisionId ||
+      request.scenarioRevisionId !== data.value.scenarioRevisionId ||
+      request.expectedInputHash !== data.value.inputHash ||
+      request.profileId !== data.value.profileId ||
+      JSON.stringify(request.calculationContractRef) !==
+        JSON.stringify(data.value.calculationContractRef))
+  )
+    return {
+      ok: false,
+      issues: [{ code: 'REFERENCE_MISMATCH', path: '/data/value', ruleId: 'response.run_intent' }],
+    };
+  return { ok: true, value, issues: [] };
+}
+
 /** A supplied fixture snapshot is NOT a fresh database authorization/concurrency check. */
 export function validateFixturePrecondition(
   request: StudyApiRequest,
@@ -105,6 +247,34 @@ export function validateFixturePrecondition(
         ruleId: 'precondition.content_hash',
       },
     ];
+  }
+  if (request.operation === 'scenario.freeze') {
+    const preparation = graph.modelPreparations.find(
+      (value) => value.preparationId === request.modelPreparationId,
+    );
+    const scenario = graph.scenarioRevisions.find(
+      (value) => value.scenarioRevisionId === request.target.id,
+    );
+    if (
+      !scenario ||
+      !preparation ||
+      preparation.studyId !== scenario.studyId ||
+      preparation.execution.status !== 'completed' ||
+      !preparation.modelRef ||
+      !preparation.inputArtifactRef ||
+      preparation.inputHash === null ||
+      preparation.source.type !== 'scenarioRevision' ||
+      preparation.source.scenarioRevisionId !== scenario.scenarioRevisionId ||
+      preparation.source.contentHash !== scenario.contentHash ||
+      preparation.source.expectedRevision !== scenario.revision
+    )
+      return [
+        {
+          code: 'REFERENCE_MISMATCH',
+          path: '/modelPreparationId',
+          ruleId: 'precondition.prepared_model',
+        },
+      ];
   }
   return [];
 }
@@ -153,6 +323,17 @@ export function validateFixtureGraph(
     return result;
   }
   const studies = index(graph.studies, (item) => item.studyId, '/studies');
+  const snapshots = index(
+    graph.modelSourceSnapshots,
+    (item) => item.snapshotId,
+    '/modelSourceSnapshots',
+  );
+  const preparations = index(
+    graph.modelPreparations,
+    (item) => item.preparationId,
+    '/modelPreparations',
+  );
+  index(graph.modelPreparations, (item) => item.execution.jobId, '/modelPreparations');
   const revisions = index(graph.studyRevisions, (item) => item.revisionId, '/studyRevisions');
   const scenarios = index(
     graph.scenarioRevisions,
@@ -171,6 +352,7 @@ export function validateFixtureGraph(
     id: (item: T) => string,
     parent: (item: T) => string | null,
     path: string,
+    ruleId = 'graph.acyclic_lineage',
   ) {
     const parents = new Map(items.map((item) => [id(item), parent(item)]));
     const complete = new Set<string>();
@@ -179,7 +361,7 @@ export function validateFixtureGraph(
       let cursor: string | null | undefined = id(item);
       while (cursor != null && !complete.has(cursor)) {
         if (seen.has(cursor)) {
-          reject(path, 'graph.acyclic_lineage');
+          reject(path, ruleId);
           break;
         }
         seen.add(cursor);
@@ -212,6 +394,34 @@ export function validateFixtureGraph(
     (item) => item.supersedesReviewId,
     '/reviews',
   );
+  const modelProvenance = [
+    ...graph.modelSourceSnapshots.map((item) => ({
+      id: 'snapshot:' + item.snapshotId,
+      parent: null as string | null,
+    })),
+    ...graph.modelPreparations.map((item) => ({
+      id: 'preparation:' + item.preparationId,
+      parent:
+        item.source.type === 'modelSourceSnapshot'
+          ? 'snapshot:' + item.source.snapshotId
+          : 'scenario:' + item.source.scenarioRevisionId,
+    })),
+    ...graph.studyRevisions.map((item) => ({
+      id: 'revision:' + item.revisionId,
+      parent: 'preparation:' + item.modelPreparationId,
+    })),
+    ...graph.scenarioRevisions.map((item) => ({
+      id: 'scenario:' + item.scenarioRevisionId,
+      parent: 'revision:' + item.studyRevisionId,
+    })),
+  ];
+  acyclic(
+    modelProvenance,
+    (item) => item.id,
+    (item) => item.parent,
+    '/modelPreparations',
+    'model.acyclic_provenance',
+  );
 
   const artifacts = new Map<string, string>();
   const models = new Map<string, string>();
@@ -227,14 +437,24 @@ export function validateFixtureGraph(
       `/studyRevisions/${i}/modelRef`,
     ),
   );
-  graph.scenarioRevisions.forEach((item, i) =>
-    bind(
-      models,
-      item.effectiveModelRef.modelRevisionId,
-      item.effectiveModelRef.contentHash,
-      `/scenarioRevisions/${i}/effectiveModelRef`,
-    ),
-  );
+  graph.scenarioRevisions.forEach((item, i) => {
+    if (item.effectiveModelRef)
+      bind(
+        models,
+        item.effectiveModelRef.modelRevisionId,
+        item.effectiveModelRef.contentHash,
+        `/scenarioRevisions/${i}/effectiveModelRef`,
+      );
+  });
+  graph.modelPreparations.forEach((item, i) => {
+    if (item.modelRef)
+      bind(
+        models,
+        item.modelRef.modelRevisionId,
+        item.modelRef.contentHash,
+        `/modelPreparations/${i}/modelRef`,
+      );
+  });
   graph.runs.forEach((item, i) =>
     bind(
       models,
@@ -244,6 +464,10 @@ export function validateFixtureGraph(
     ),
   );
   const artifactGroups = [
+    ...graph.modelSourceSnapshots.map((item) => item.sourceArtifactRef),
+    ...graph.modelPreparations.flatMap((item) =>
+      item.inputArtifactRef ? [item.inputArtifactRef] : [],
+    ),
     ...graph.runs.flatMap((item) => (item.resultRef ? [item.resultRef] : [])),
     ...graph.analyses.flatMap((item) => (item.factsRef ? [item.factsRef] : [])),
     ...graph.reports.flatMap((item) => [...item.factsRefs, item.contentRef]),
@@ -261,9 +485,63 @@ export function validateFixtureGraph(
       reject(`/studies/${i}/currentRevisionId`, 'study.head_binding');
     }
   });
+  graph.modelSourceSnapshots.forEach((item, i) => {
+    const p = `/modelSourceSnapshots/${i}`;
+    if (!studies.has(item.studyId)) reject(p + '/studyId', 'model_source.study_binding');
+    if (item.sourceArtifactRef.type !== 'modelSource')
+      reject(p + '/sourceArtifactRef', 'model_source.artifact_kind');
+  });
+  graph.modelPreparations.forEach((item, i) => {
+    const p = `/modelPreparations/${i}`;
+    if (!studies.has(item.studyId)) reject(p + '/studyId', 'model_preparation.study_binding');
+    if (
+      (item.execution.status === 'completed') !==
+        (item.modelRef !== null && item.inputArtifactRef !== null) ||
+      (item.execution.status !== 'completed' &&
+        (item.modelRef !== null || item.inputArtifactRef !== null || item.inputHash !== null))
+    )
+      reject(p, 'model_preparation.result_state');
+    if (
+      item.execution.status === 'completed' &&
+      item.source.type === 'scenarioRevision' &&
+      item.inputHash === null
+    )
+      reject(p + '/inputHash', 'model_preparation.run_input_identity');
+    if (item.inputArtifactRef && item.inputArtifactRef.type !== 'modelInput')
+      reject(p + '/inputArtifactRef', 'model_preparation.input_kind');
+    if (item.source.type === 'modelSourceSnapshot') {
+      const snapshot = snapshots.get(item.source.snapshotId);
+      if (
+        !snapshot ||
+        snapshot.studyId !== item.studyId ||
+        snapshot.sourceArtifactRef.contentHash !== item.source.contentHash
+      )
+        reject(p + '/source', 'model_preparation.source_snapshot');
+    } else {
+      const scenario = scenarios.get(item.source.scenarioRevisionId);
+      if (
+        !scenario ||
+        scenario.studyId !== item.studyId ||
+        item.source.expectedRevision > scenario.revision - (scenario.status === 'frozen' ? 1 : 0) ||
+        (item.source.expectedRevision ===
+          scenario.revision - (scenario.status === 'frozen' ? 1 : 0) &&
+          scenario.contentHash !== item.source.contentHash)
+      )
+        reject(p + '/source', 'model_preparation.scenario_snapshot');
+    }
+  });
   graph.studyRevisions.forEach((item, i) => {
     const p = `/studyRevisions/${i}`;
     if (!studies.has(item.studyId)) reject(p + '/studyId', 'revision.study_binding');
+    const prepared = preparations.get(item.modelPreparationId);
+    if (
+      !prepared ||
+      prepared.studyId !== item.studyId ||
+      prepared.execution.status !== 'completed' ||
+      prepared.modelRef?.modelRevisionId !== item.modelRef.modelRevisionId ||
+      prepared.modelRef?.contentHash !== item.modelRef.contentHash
+    )
+      reject(p + '/modelRef', 'revision.prepared_model');
     if (item.status === 'frozen' && item.validation !== 'passed')
       reject(p + '/validation', 'revision.freeze_validation');
     if (item.parentRevisionId !== null) {
@@ -285,6 +563,24 @@ export function validateFixtureGraph(
       reject(p + '/studyRevisionId', 'scenario.base_binding');
     if (duplicates(item.overrides.map((entry) => entry.path)))
       reject(p + '/overrides', 'scenario.unique_override');
+    if (item.status === 'frozen') {
+      const preparation = item.modelPreparationId
+        ? preparations.get(item.modelPreparationId)
+        : undefined;
+      if (
+        !preparation ||
+        preparation.studyId !== item.studyId ||
+        preparation.execution.status !== 'completed' ||
+        preparation.source.type !== 'scenarioRevision' ||
+        preparation.source.scenarioRevisionId !== item.scenarioRevisionId ||
+        preparation.source.contentHash !== item.contentHash ||
+        preparation.source.expectedRevision + 1 !== item.revision ||
+        !item.effectiveModelRef ||
+        JSON.stringify(preparation.modelRef) !== JSON.stringify(item.effectiveModelRef)
+      )
+        reject(p + '/modelPreparationId', 'scenario.prepared_model');
+    } else if (item.modelPreparationId !== null || item.effectiveModelRef !== null)
+      reject(p + '/effectiveModelRef', 'scenario.draft_unfrozen_model');
     if (item.parentScenarioRevisionId !== null) {
       const parent = scenarios.get(item.parentScenarioRevisionId);
       if (
@@ -311,10 +607,24 @@ export function validateFixtureGraph(
       reject(p + '/scenarioRevisionId', 'run.frozen_scenario');
     if (
       scenario &&
-      (scenario.effectiveModelRef.modelRevisionId !== item.effectiveModelRef.modelRevisionId ||
+      (!scenario.effectiveModelRef ||
+        scenario.effectiveModelRef.modelRevisionId !== item.effectiveModelRef.modelRevisionId ||
         scenario.effectiveModelRef.contentHash !== item.effectiveModelRef.contentHash)
     )
       reject(p + '/effectiveModelRef', 'run.effective_model_binding');
+    const preparation = preparations.get(item.modelPreparationId);
+    if (
+      !preparation ||
+      preparation.studyId !== item.studyId ||
+      preparation.execution.status !== 'completed' ||
+      item.modelPreparationId !== scenario?.modelPreparationId ||
+      JSON.stringify(preparation.modelRef) !== JSON.stringify(item.effectiveModelRef) ||
+      preparation.profileId !== item.profileId ||
+      preparation.inputHash !== item.inputHash ||
+      JSON.stringify(preparation.calculationContractRef) !==
+        JSON.stringify(item.calculationContractRef)
+    )
+      reject(p + '/modelPreparationId', 'run.prepared_model_binding');
     if ((item.execution.status === 'completed') !== (item.resultRef !== null))
       reject(p + '/resultRef', 'run.result_state');
     if (item.resultRef !== null && item.resultRef.type !== 'runResult')

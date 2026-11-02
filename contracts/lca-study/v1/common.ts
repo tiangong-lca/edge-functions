@@ -23,6 +23,25 @@ export function text(maximum = 512) {
 
 export const idSchema = text(128).regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/u);
 export const hashSchema = z.string().regex(/^[a-f0-9]{64}$/u);
+export const datasetVersionSchema = z.string().regex(/^\d{2}\.\d{2}\.\d{3}$/u);
+export const cursorSchema = z
+  .string()
+  .min(1)
+  .max(4096)
+  .regex(/^[A-Za-z0-9_-]+$/u)
+  .nullable();
+export const resourceKindSchema = z.enum([
+  'studyRevision',
+  'scenarioRevision',
+  'modelSourceSnapshot',
+  'modelPreparation',
+  'run',
+  'analysis',
+  'reportRevision',
+  'review',
+  'export',
+  'share',
+]);
 export const timestampSchema = z.string().datetime({ offset: true });
 export const generationSchema = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
 export const contentStatusSchema = z.enum(['draft', 'frozen']);
@@ -57,6 +76,7 @@ export const artifactRefSchema = z
   .object({
     type: z.enum([
       'modelInput',
+      'modelSource',
       'runResult',
       'analysisFacts',
       'reportContent',
@@ -65,6 +85,7 @@ export const artifactRefSchema = z
     ]),
     id: idSchema,
     contentHash: hashSchema,
+    digestScope: z.literal('artifact_bytes_sha256'),
     byteSize: z.number().int().min(1).max(Number.MAX_SAFE_INTEGER),
     mediaType: z.enum(['application/json', 'application/zip', 'text/html']),
     schemaVersion: idSchema,
@@ -76,6 +97,7 @@ export const modelRefSchema = z
     type: z.literal('modelRevision'),
     modelRevisionId: idSchema,
     contentHash: hashSchema,
+    digestScope: z.literal('worker_prepared_model'),
   })
   .strict();
 
@@ -85,7 +107,7 @@ export const sourceRefSchema = z.discriminatedUnion('type', [
       type: z.literal('datasetRevision'),
       datasetType: z.enum(['process', 'flow', 'lciamethod', 'unitgroup', 'flowproperty', 'source']),
       id: idSchema,
-      version: z.string().regex(/^\d{2}\.\d{2}\.\d{3}$/u),
+      version: datasetVersionSchema,
       contentHash: hashSchema,
       licenseRef: idSchema,
     })

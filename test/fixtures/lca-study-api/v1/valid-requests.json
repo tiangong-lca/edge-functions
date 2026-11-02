@@ -58,27 +58,35 @@
         "referenceFlowId": "flow-electricity"
       },
       "systemBoundary": "Synthetic cradle-to-gate fixture only.",
-      "methodRef": {
-        "type": "datasetRevision",
-        "datasetType": "lciamethod",
-        "id": "method-fixture",
-        "version": "01.00.000",
-        "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "licenseRef": "license-fixture"
-      },
       "assumptions": [
         {
           "id": "assumption-1",
           "statement": "All values and identities are synthetic.",
           "evidenceRef": "source-fixture"
         }
+      ],
+      "methodRefs": [
+        {
+          "type": "datasetRevision",
+          "datasetType": "lciamethod",
+          "id": "method-fixture",
+          "version": "01.00.000"
+        },
+        {
+          "type": "datasetRevision",
+          "datasetType": "lciamethod",
+          "id": "method-acid-fixture",
+          "version": "01.04.000"
+        }
       ]
     },
     "modelRef": {
       "type": "modelRevision",
       "modelRevisionId": "model-base",
-      "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    }
+      "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digestScope": "worker_prepared_model"
+    },
+    "modelPreparationId": "preparation-base"
   },
   {
     "schemaVersion": "lca.study-api.v1",
@@ -98,27 +106,35 @@
         "referenceFlowId": "flow-electricity"
       },
       "systemBoundary": "Synthetic cradle-to-gate fixture only.",
-      "methodRef": {
-        "type": "datasetRevision",
-        "datasetType": "lciamethod",
-        "id": "method-fixture",
-        "version": "01.00.000",
-        "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "licenseRef": "license-fixture"
-      },
       "assumptions": [
         {
           "id": "assumption-1",
           "statement": "All values and identities are synthetic.",
           "evidenceRef": "source-fixture"
         }
+      ],
+      "methodRefs": [
+        {
+          "type": "datasetRevision",
+          "datasetType": "lciamethod",
+          "id": "method-fixture",
+          "version": "01.00.000"
+        },
+        {
+          "type": "datasetRevision",
+          "datasetType": "lciamethod",
+          "id": "method-acid-fixture",
+          "version": "01.04.000"
+        }
       ]
     },
     "modelRef": {
       "type": "modelRevision",
       "modelRevisionId": "model-base",
-      "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    }
+      "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digestScope": "worker_prepared_model"
+    },
+    "modelPreparationId": "preparation-base"
   },
   {
     "schemaVersion": "lca.study-api.v1",
@@ -163,7 +179,8 @@
       "id": "scenario-rev-base",
       "expectedRevision": 2
     },
-    "expectedContentHash": "1111111111111111111111111111111111111111111111111111111111111111"
+    "expectedContentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "modelPreparationId": "preparation-scenario-base"
   },
   {
     "schemaVersion": "lca.study-api.v1",
@@ -224,7 +241,8 @@
       "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
       "byteSize": 128,
       "mediaType": "application/json",
-      "schemaVersion": "fixture.reportContent.v1"
+      "schemaVersion": "fixture.reportContent.v1",
+      "digestScope": "artifact_bytes_sha256"
     },
     "templateId": "fixture-report-template.v1"
   },
@@ -244,7 +262,8 @@
       "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
       "byteSize": 128,
       "mediaType": "application/json",
-      "schemaVersion": "fixture.reportContent.v1"
+      "schemaVersion": "fixture.reportContent.v1",
+      "digestScope": "artifact_bytes_sha256"
     }
   },
   {
@@ -328,5 +347,71 @@
     "requestId": "req-27",
     "operation": "share.read",
     "shareId": "share-1"
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-28",
+    "operation": "study.list",
+    "cursor": null,
+    "limit": 20
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-29",
+    "operation": "study.resources.list",
+    "studyId": "study-1",
+    "kind": "studyRevision",
+    "cursor": null,
+    "limit": 20
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-30",
+    "operation": "revision.read",
+    "revisionId": "study-rev-1"
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-31",
+    "operation": "scenario.read",
+    "scenarioRevisionId": "scenario-rev-base"
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-32",
+    "operation": "model.source.resolve",
+    "idempotencyKey": "key-32",
+    "studyId": "study-1",
+    "originRef": {
+      "type": "datasetRevision",
+      "datasetType": "lifecyclemodel",
+      "id": "source-lifecycle-model",
+      "version": "01.00.000"
+    }
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-33",
+    "operation": "model.prepare",
+    "idempotencyKey": "key-33",
+    "studyId": "study-1",
+    "source": {
+      "type": "modelSourceSnapshot",
+      "snapshotId": "source-snapshot-1",
+      "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "digestScope": "artifact_bytes_sha256"
+    },
+    "profileId": "lca.study-deterministic-p0.v1",
+    "calculationContractRef": {
+      "kind": "calculation_contract",
+      "schema": "lca.calculation-contract.v1",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  },
+  {
+    "schemaVersion": "lca.study-api.v1",
+    "requestId": "req-34",
+    "operation": "model.read",
+    "preparationId": "preparation-base"
   }
 ]

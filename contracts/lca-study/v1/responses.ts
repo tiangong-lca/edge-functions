@@ -1,16 +1,7 @@
 import { z } from 'zod';
 import { API_SCHEMA, ERROR_CODES, idSchema, issueSchema, text } from './common.ts';
-import {
-  analysisSchema,
-  exportSchema,
-  reportRevisionSchema,
-  reviewSchema,
-  runSchema,
-  scenarioRevisionSchema,
-  shareSchema,
-  studyRevisionSchema,
-  studySchema,
-} from './records.ts';
+import { studySchema } from './records.ts';
+import { resourceItemSchema, resourcePageSchema, studyPageSchema } from './pages.ts';
 import { OPERATIONS } from './requests.ts';
 
 const capabilitiesSchema = z
@@ -22,17 +13,12 @@ const capabilitiesSchema = z
   })
   .strict();
 
-export const responseDataSchema = z.discriminatedUnion('type', [
+export const responseDataSchema = z.union([
   capabilitiesSchema,
   z.object({ type: z.literal('study'), value: studySchema }).strict(),
-  z.object({ type: z.literal('studyRevision'), value: studyRevisionSchema }).strict(),
-  z.object({ type: z.literal('scenarioRevision'), value: scenarioRevisionSchema }).strict(),
-  z.object({ type: z.literal('run'), value: runSchema }).strict(),
-  z.object({ type: z.literal('analysis'), value: analysisSchema }).strict(),
-  z.object({ type: z.literal('reportRevision'), value: reportRevisionSchema }).strict(),
-  z.object({ type: z.literal('review'), value: reviewSchema }).strict(),
-  z.object({ type: z.literal('export'), value: exportSchema }).strict(),
-  z.object({ type: z.literal('share'), value: shareSchema }).strict(),
+  resourceItemSchema,
+  resourcePageSchema,
+  studyPageSchema,
 ]);
 
 export const responseSchema = z.discriminatedUnion('ok', [

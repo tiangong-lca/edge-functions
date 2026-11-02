@@ -7,9 +7,12 @@ import {
   graphSchema,
   OPERATIONS,
   responseSchema,
+  resourcePageSchema,
+  studyPageSchema,
   validateFixtureGraph,
   validateFixturePrecondition,
   validateRequest,
+  validateResponseForRequest,
   type FixtureGraph,
   type StudyApiRequest,
 } from '../contracts/lca-study/v1/index.ts';
@@ -127,6 +130,8 @@ for (const fixture of invalidGraphs.cases) {
 
 Deno.test('Study responses validate every public resource and all stable error codes', () => {
   const records = [
+    ['modelSourceSnapshot', validGraph.modelSourceSnapshots[0]],
+    ['modelPreparation', validGraph.modelPreparations[0]],
     ['study', validGraph.studies[0]],
     ['studyRevision', validGraph.studyRevisions[0]],
     ['scenarioRevision', validGraph.scenarioRevisions[0]],
@@ -345,5 +350,315 @@ Deno.test(
       validateRequest({ ...source, overrides: [{ path: '/parameters/energy/value', value: 0 }] })
         .ok,
     );
+  },
+);
+
+Deno.test('Method selection preserves two exact single-impact categories', () => {
+  const request = validRequests.find(
+    (value) => (value as { operation: string }).operation === 'revision.create',
+  );
+  const parsed = validateRequest(request);
+  assert(parsed.ok && parsed.value.operation === 'revision.create');
+  assertEquals(
+    parsed.value.definition.methodRefs.map((ref) => ref.id),
+    ['method-fixture', 'method-acid-fixture'],
+  );
+  assertEquals(
+    parsed.value.definition.methodRefs.map((ref) => ref.version),
+    ['01.00.000', '01.04.000'],
+  );
+});
+
+Deno.test(
+  'Model preparation issues no references before completion and binds Scenario CAS at freeze',
+  () => {
+    const pending = structuredClone(validGraph);
+    pending.studies[0].currentRevisionId = null;
+    pending.studyRevisions = [];
+    pending.scenarioRevisions = [];
+    pending.runs = [];
+    pending.analyses = [];
+    pending.reports = [];
+    pending.reviews = [];
+    pending.exports = [];
+    pending.shares = [];
+    pending.modelPreparations = [pending.modelPreparations[0]];
+    pending.modelPreparations[0].execution.status = 'queued';
+    pending.modelPreparations[0].modelRef = null;
+    pending.modelPreparations[0].inputArtifactRef = null;
+    assert(validateFixtureGraph(pending, OBSERVED_AT).ok);
+    const draft = structuredClone(validGraph);
+    draft.scenarioRevisions = [draft.scenarioRevisions[0]];
+    draft.modelPreparations = draft.modelPreparations.slice(0, 2);
+    draft.runs = [];
+    draft.analyses = [];
+    draft.reports = [];
+    draft.reviews = [];
+    draft.exports = [];
+    draft.shares = [];
+    const scenario = draft.scenarioRevisions[0];
+    scenario.status = 'draft';
+    scenario.revision = 1;
+    scenario.modelPreparationId = null;
+    scenario.effectiveModelRef = null;
+    assert(validateFixtureGraph(draft, OBSERVED_AT).ok);
+    const freeze = validateRequest({
+      schemaVersion: API_SCHEMA,
+      requestId: 'freeze-prepared',
+      idempotencyKey: 'freeze-key',
+      operation: 'scenario.freeze',
+      target: { type: 'scenarioRevision', id: scenario.scenarioRevisionId, expectedRevision: 1 },
+      expectedContentHash: scenario.contentHash,
+      modelPreparationId: 'preparation-scenario-base',
+    });
+    assert(freeze.ok && freeze.value.operation === 'scenario.freeze');
+    assertEquals(validateFixturePrecondition(freeze.value, draft), []);
+    freeze.value.modelPreparationId = 'preparation-base';
+    assertEquals(
+      validateFixturePrecondition(freeze.value, draft)[0]?.ruleId,
+      'precondition.prepared_model',
+    );
+  },
+);
+
+Deno.test(
+  'Bounded resource pages constrain kind, Study, uniqueness and originating request',
+  () => {
+    const value = validGraph.studyRevisions[0];
+    const page = {
+      type: 'resourcePage',
+      studyId: value.studyId,
+      kind: 'studyRevision',
+      items: [{ type: 'studyRevision', value }],
+      nextCursor: null,
+    };
+    assert(resourcePageSchema.safeParse(page).success);
+    assertEquals(resourcePageSchema.safeParse({ ...page, kind: 'run' }).success, false);
+    assertEquals(
+      resourcePageSchema.safeParse({ ...page, studyId: 'foreign-study' }).success,
+      false,
+    );
+    assertEquals(
+      resourcePageSchema.safeParse({ ...page, items: [page.items[0], page.items[0]] }).success,
+      false,
+    );
+    assertEquals(
+      resourcePageSchema.safeParse({ ...page, nextCursor: '?raw=scope' }).success,
+      false,
+    );
+    const selected = validateRequest({
+      schemaVersion: API_SCHEMA,
+      requestId: 'page-request',
+      operation: 'study.resources.list',
+      studyId: value.studyId,
+      kind: 'studyRevision',
+      cursor: null,
+      limit: 1,
+    });
+    assert(selected.ok);
+    const response = { schemaVersion: API_SCHEMA, requestId: 'page-request', ok: true, data: page };
+    assert(validateResponseForRequest(selected.value, response).ok);
+    const another = {
+      ...page,
+      studyId: 'foreign-study',
+      items: [{ type: 'studyRevision', value: { ...value, studyId: 'foreign-study' } }],
+    };
+    const wrongStudy = validateResponseForRequest(selected.value, { ...response, data: another });
+    assert(!wrongStudy.ok && wrongStudy.issues[0].ruleId === 'page.request_selection');
+    const oversized = {
+      ...page,
+      items: [
+        ...page.items,
+        { type: 'studyRevision', value: { ...value, revisionId: 'revision-2' } },
+      ],
+    };
+    assert(resourcePageSchema.safeParse(oversized).success);
+    assertEquals(
+      validateResponseForRequest(selected.value, { ...response, data: oversized }).ok,
+      false,
+    );
+    assertEquals(
+      validateResponseForRequest(selected.value, { ...response, requestId: 'unrelated-request' })
+        .ok,
+      false,
+    );
+    const studies = { type: 'studyPage', items: [validGraph.studies[0]], nextCursor: null };
+    assert(studyPageSchema.safeParse(studies).success);
+    assertEquals(
+      studyPageSchema.safeParse({ ...studies, items: [...studies.items, ...studies.items] })
+        .success,
+      false,
+    );
+  },
+);
+
+Deno.test(
+  'Session recovery reads bind the requested revision, scenario and preparation identities',
+  () => {
+    const selections = [
+      {
+        operation: 'revision.read',
+        field: 'revisionId',
+        type: 'studyRevision',
+        record: validGraph.studyRevisions[0],
+      },
+      {
+        operation: 'scenario.read',
+        field: 'scenarioRevisionId',
+        type: 'scenarioRevision',
+        record: validGraph.scenarioRevisions[0],
+      },
+      {
+        operation: 'model.read',
+        field: 'preparationId',
+        type: 'modelPreparation',
+        record: validGraph.modelPreparations[0],
+      },
+    ];
+    for (const { operation, field, type, record } of selections) {
+      const id = (record as Record<string, unknown>)[field];
+      const request = validateRequest({
+        schemaVersion: API_SCHEMA,
+        requestId: 'resume',
+        operation,
+        [field]: id,
+      });
+      assert(request.ok);
+      const response = {
+        schemaVersion: API_SCHEMA,
+        requestId: 'resume',
+        ok: true,
+        data: { type, value: record },
+      };
+      assert(validateResponseForRequest(request.value, response).ok);
+      assertEquals(
+        validateResponseForRequest(request.value, {
+          ...response,
+          data: { type, value: { ...record, [field]: 'another-record' } },
+        }).ok,
+        false,
+      );
+    }
+  },
+);
+
+Deno.test('Producer responses bind exact selected source and frozen Run intent', () => {
+  const origin = validGraph.modelSourceSnapshots[0];
+  const sourceRequest = validateRequest({
+    schemaVersion: API_SCHEMA,
+    requestId: 'source-select',
+    idempotencyKey: 'source-key',
+    operation: 'model.source.resolve',
+    studyId: origin.studyId,
+    originRef: origin.originRef,
+  });
+  assert(sourceRequest.ok);
+  const sourceResponse = {
+    schemaVersion: API_SCHEMA,
+    requestId: 'source-select',
+    ok: true,
+    data: { type: 'modelSourceSnapshot', value: origin },
+  };
+  assert(validateResponseForRequest(sourceRequest.value, sourceResponse).ok);
+  assertEquals(
+    validateResponseForRequest(sourceRequest.value, {
+      ...sourceResponse,
+      data: {
+        type: 'modelSourceSnapshot',
+        value: { ...origin, originRef: { ...origin.originRef, id: 'different-origin' } },
+      },
+    }).ok,
+    false,
+  );
+  const run = validGraph.runs[0];
+  const request = validateRequest({
+    schemaVersion: API_SCHEMA,
+    requestId: 'run-select',
+    idempotencyKey: 'run-key',
+    operation: 'run.submit',
+    studyRevisionId: run.studyRevisionId,
+    scenarioRevisionId: run.scenarioRevisionId,
+    expectedInputHash: validGraph.modelPreparations[1].inputHash,
+    calculationContractRef: run.calculationContractRef,
+    profileId: run.profileId,
+  });
+  assert(request.ok);
+  const response = {
+    schemaVersion: API_SCHEMA,
+    requestId: 'run-select',
+    ok: true,
+    data: { type: 'run', value: run },
+  };
+  assert(validateResponseForRequest(request.value, response).ok);
+  assertEquals(
+    validateResponseForRequest(request.value, {
+      ...response,
+      data: { type: 'run', value: { ...run, inputHash: 'e'.repeat(64) } },
+    }).ok,
+    false,
+  );
+});
+
+Deno.test('Saved Scenario drafts retain old completed and failed preparation audit history', () => {
+  const graph = structuredClone(validGraph);
+  graph.scenarioRevisions = [graph.scenarioRevisions[0]];
+  graph.modelPreparations = graph.modelPreparations.slice(0, 2);
+  graph.runs = [];
+  graph.analyses = [];
+  graph.reports = [];
+  graph.reviews = [];
+  graph.exports = [];
+  graph.shares = [];
+  const scenario = graph.scenarioRevisions[0];
+  scenario.status = 'draft';
+  scenario.revision = 2;
+  scenario.contentHash = 'a'.repeat(64);
+  scenario.overrides = [{ path: '/parameters/energy/value', value: 0 }];
+  scenario.modelPreparationId = null;
+  scenario.effectiveModelRef = null;
+  assert(validateFixtureGraph(graph, OBSERVED_AT).ok);
+  const freeze = validateRequest({
+    schemaVersion: API_SCHEMA,
+    requestId: 'stale-preparation',
+    operation: 'scenario.freeze',
+    idempotencyKey: 'freeze-old-key',
+    target: { type: 'scenarioRevision', id: scenario.scenarioRevisionId, expectedRevision: 2 },
+    expectedContentHash: scenario.contentHash,
+    modelPreparationId: graph.modelPreparations[1].preparationId,
+  });
+  assert(freeze.ok);
+  assertEquals(
+    validateFixturePrecondition(freeze.value, graph)[0]?.ruleId,
+    'precondition.prepared_model',
+  );
+  graph.modelPreparations[1].execution.status = 'failed';
+  graph.modelPreparations[1].modelRef = null;
+  graph.modelPreparations[1].inputArtifactRef = null;
+  graph.modelPreparations[1].inputHash = null;
+  assert(validateFixtureGraph(graph, OBSERVED_AT).ok);
+});
+
+Deno.test('Model references cannot bootstrap through their own Scenario producer', () => {
+  const graph = structuredClone(validGraph);
+  graph.studyRevisions[0].modelPreparationId = graph.scenarioRevisions[0].modelPreparationId!;
+  graph.modelPreparations.shift();
+  graph.modelSourceSnapshots = [];
+  const result = validateFixtureGraph(graph, OBSERVED_AT);
+  assert(!result.ok);
+  assert(result.issues.some((issue) => issue.ruleId === 'model.acyclic_provenance'));
+});
+
+Deno.test(
+  'A later StudyRevision may adopt a qualified older Scenario preparation without a cycle',
+  () => {
+    const graph = structuredClone(validGraph);
+    graph.studyRevisions.push({
+      ...graph.studyRevisions[0],
+      revisionId: 'study-rev-2',
+      parentRevisionId: graph.studyRevisions[0].revisionId,
+      modelPreparationId: graph.modelPreparations[1].preparationId,
+      modelRef: graph.modelPreparations[1].modelRef!,
+    });
+    assert(validateFixtureGraph(graph, OBSERVED_AT).ok);
   },
 );
