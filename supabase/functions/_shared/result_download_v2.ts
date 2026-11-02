@@ -32,6 +32,7 @@ const descriptorSchema = z
 export type FinalDownloadConfig = {
   signer?: 's3' | 'supabase-storage';
   signingKey?: string;
+  publicApiKey?: string;
   databaseTargetHash: string;
   bucket: string;
   region: string;
@@ -53,6 +54,7 @@ function configuration(): FinalDownloadConfig {
   return {
     signer,
     signingKey: get('SIGNING_KEY') || undefined,
+    publicApiKey: get('PUBLIC_API_KEY') || undefined,
     databaseTargetHash: get('DATABASE_TARGET_HASH'),
     bucket: get('BUCKET'),
     region: get('REGION'),
@@ -117,6 +119,48 @@ export async function finalDownloadTarget(config: FinalDownloadConfig) {
     targetHash: Array.from(digest, (v) => v.toString(16).padStart(2, '0')).join(''),
   };
 }
+function jwtClaims(value: string): Record<string, unknown> {
+  if (value.length > 8192 || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(value))
+    throw new Error('Invalid ZIP credential');
+  const decode = (part: string) =>
+    JSON.parse(
+      new TextDecoder('utf-8', { fatal: true }).decode(
+        Uint8Array.from(atob(part.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)),
+      ),
+    );
+  const [header, payload] = value.split('.').slice(0, 2).map(decode);
+  if (
+    !['HS256', 'ES256', 'RS256'].includes(header?.alg) ||
+    !payload ||
+    typeof payload !== 'object' ||
+    Array.isArray(payload)
+  )
+    throw new Error('Invalid ZIP credential');
+  return payload;
+}
+function validateStorageCredential(config: FinalDownloadConfig, project: string) {
+  // Configuration guards are not signature verification or actor authorization.
+  // Storage verifies the JWT signature and applies the generation role's real ACL/RLS.
+  const claims = jwtClaims(config.signingKey ?? '');
+  const now = Math.floor(Date.now() / 1000);
+  if (
+    claims.ref !== project ||
+    claims.iss !== 'supabase' ||
+    typeof claims.role !== 'string' ||
+    !/^lca_result_zip_reader_g[0-9]{8}(?:_[0-9]{1,4})?$/.test(claims.role) ||
+    !Number.isSafeInteger(claims.iat) ||
+    !Number.isSafeInteger(claims.exp) ||
+    (claims.iat as number) <= 0 ||
+    (claims.iat as number) > now + 60 ||
+    (claims.exp as number) <= now + 60 ||
+    (claims.exp as number) - (claims.iat as number) > 90 * 86400 ||
+    !z.string().uuid().safeParse(claims.jti).success
+  )
+    throw new Error('Invalid ZIP credential scope or lifetime');
+  const apiKey = config.publicApiKey ?? '';
+  if (!/^sb_publishable_[A-Za-z0-9_-]+$/.test(apiKey) && jwtClaims(apiKey).role !== 'anon')
+    throw new Error('ZIP gateway key must be public');
+}
 async function signSupabaseZip(
   config: FinalDownloadConfig,
   key: string,
@@ -130,13 +174,14 @@ async function signSupabaseZip(
     !/^[a-z0-9]{20}\.storage\.supabase\.co$/.test(endpoint.hostname) ||
     endpoint.pathname !== '/storage/v1/s3' ||
     endpoint.port ||
-    !config.signingKey?.startsWith('sb_secret_') ||
+    !config.signingKey ||
     config.accessKeyId ||
     config.secretAccessKey ||
     config.sessionToken
   )
     throw new Error('Invalid restricted Storage signer configuration');
   const project = endpoint.hostname.split('.')[0];
+  validateStorageCredential(config, project);
   const origin = `https://${project}.supabase.co`;
   const objectPath = [config.bucket, ...key.split('/')].map(encodeURIComponent).join('/');
   const response = await fetcher(`${origin}/storage/v1/object/sign/${objectPath}`, {
@@ -144,7 +189,7 @@ async function signSupabaseZip(
     redirect: 'error',
     signal,
     headers: {
-      apikey: config.signingKey,
+      apikey: config.publicApiKey!,
       Authorization: `Bearer ${config.signingKey}`,
       'Content-Type': 'application/json',
     },
@@ -230,6 +275,7 @@ export function downloadFinalResult(
         !config.accessKeyId ||
         !config.secretAccessKey ||
         config.signingKey ||
+        config.publicApiKey ||
         (target.endpoint?.endsWith('/storage/v1/s3') && config.sessionToken)
       )
         throw new Error('Invalid S3 ZIP credentials');
