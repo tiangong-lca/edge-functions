@@ -104,6 +104,7 @@ function setup(
     reader?: typeof fetch;
     timeoutMs?: number;
     serviceUrl?: string;
+    downloadConfig?: typeof config;
   } = {},
 ) {
   const counts = { actor: 0, database: 0, reader: 0 };
@@ -140,7 +141,7 @@ function setup(
     get serviceSupabase(): never {
       throw new Error('v2 must never construct a service client');
     },
-    finalDownload: { config },
+    finalDownload: { config: options.downloadConfig ?? config },
     resultQuery: {
       serviceUrl: options.serviceUrl ?? 'https://query.example.invalid',
       secret,
@@ -503,6 +504,58 @@ function downloadRequest(format = 'tidas') {
     body: JSON.stringify({ mode: 'final_download', publicationId, format }),
   });
 }
+Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signing', async () => {
+  const endpoint = 'https://abcdefghijklmnopqrst.storage.supabase.co/storage/v1/s3';
+  const downloadConfig = { ...config, endpoint, bucket: 'lca_results' };
+  const { target, targetHash } = await finalDownloadTarget({ ...config, endpoint });
+  const supabaseTargetHash = (await finalDownloadTarget(downloadConfig)).targetHash;
+  assertEquals(
+    supabaseTargetHash,
+    'f76a8f2ce1f462bba6f446b7a02a1871c182bbbdc03cabd67ac1961f62487c35',
+  );
+  await assertRejects(() => finalDownloadTarget({ ...config, bucket: 'lca_results' }));
+  for (const bucket of ['../bucket', 'bucket/child', 'bucket?key', 'bucket%2Fkey', 'a'.repeat(64)])
+    await assertRejects(() => finalDownloadTarget({ ...downloadConfig, bucket }));
+  assertEquals(target.endpoint, endpoint);
+  // Independent Python SHA-256 over sorted compact JSON; shared with Release.
+  assertEquals(targetHash, '5a28a7316cbdf68e3169f93f35527b0da247b40949954fa2d3c303ef02b3da23');
+  for (const bad of [
+    endpoint + '/',
+    endpoint + '?key=value',
+    endpoint + '#fragment',
+    endpoint.replace('https:', 'http:'),
+    endpoint.replace('.supabase.co', '.supabase.co.evil.invalid'),
+    endpoint.replace('/storage/v1/s3', '/storage/v1/other'),
+    endpoint.replace('https://', 'https://user:password@'),
+  ])
+    await assertRejects(() => finalDownloadTarget({ ...config, endpoint: bad }));
+  for (const format of ['tidas', 'ilcd']) {
+    const file = { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 };
+    const { handler, counts } = setup({
+      downloadConfig,
+      database: () => ({
+        ok: true,
+        data: {
+          publicationId,
+          candidateHash: 'c'.repeat(64),
+          targetHash: supabaseTargetHash,
+          file,
+        },
+      }),
+    });
+    const response = await handler(downloadRequest(format));
+    assertEquals(response.status, 200);
+    const url = new URL((await response.json()).data.url);
+    assertEquals(url.origin, new URL(endpoint).origin);
+    assertEquals(
+      url.pathname,
+      `/storage/v1/s3/lca_results/test-owned/release-candidates/${'c'.repeat(64)}/${file.name}`,
+    );
+    assertEquals(url.searchParams.get('X-Amz-Expires'), '60');
+    assertMatch(url.searchParams.get('X-Amz-Signature')!, /^[0-9a-f]{64}$/);
+    assertEquals(counts, { actor: 1, database: 2, reader: 0 });
+  }
+});
 Deno.test(
   'ZIP signing uses the immutable target and file name, short TTL and independent actor recheck',
   async () => {

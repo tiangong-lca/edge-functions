@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: fcf848e83edea0f89402475d7a40f92b45897967
-lastReviewedNote: 'Edge #517: reviewed actor-only final Result query/source/download routing, exact reader and storage bindings, v1 compatibility and synthetic cross-repository qualification; deployment remains separate.'
+lastReviewedAt: 2026-11-02
+lastReviewedCommit: e88449593f8cbd57c3a08b35ca4368789371673f
+lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -662,3 +662,7 @@ Authenticated `POST lca_release_results` also has three explicit v2 modes. They 
 V2 query responses contain `publicationId`, `releaseVersion`, `runtimeRevision`, exact `result` and `data`. Ready `data.result` includes the frozen quantitative reference and `relationKind`. LCI item keys preserve flow ID/version, direction, location, function type and full flow-property/unit-group/internal-unit identity; values retain their sign. LCIA retains frozen method ID/version/name/unit and zero amounts. Missing LCIA returns `RESULT_LCIA_NOT_AVAILABLE` (404), never synthetic zeros. Internal ordinals, content hashes, ancestor identities, file locators and reader hashes are omitted. Cold 202 contains `data.status: "preparing"` with `Retry-After: 2`; repeat the same pinned lookup. Runtime rotation is 409; invalid/replayed cursors may be 422. Restart a page sequence after either event. Withdrawal or an unselected Result is 404. Replies use `no-store`; live lookups and private reader I/O share the eight-second/eight-request budget.
 
 V2 uses existing `RESULT_QUERY_SERVICE_*` configuration. ZIP signing uses explicit `FINAL_RESULT_S3_*` variables in `supabase/.env.example`: the same database target hash, bucket, region, optional endpoint and prefix as Release. Edge recomputes the canonical `storage-target.v1` hash and checks the Database descriptor. Use dedicated read-only credentials and optional session token; no ambient provider chain or legacy storage fallback applies. Custom endpoints require HTTPS except literal loopback HTTP for fixtures. Signed GET URLs cover exactly `release-candidates/<candidate hash>/result.<format>.zip` under that prefix, expire after 60 seconds, and return stored SHA-256/size alongside the URL. Authorization is rechecked after signing. Issued URLs remain bearer capabilities until expiry; browsers must not persist them as stable dataset links.
+
+Supabase project storage endpoints retain their exact `/storage/v1/s3` base path in both the target hash and signed SDK URL; literal loopback fixtures support the same path. Existing origin-only target hashes are unchanged. Credentials, query strings, fragments and other non-root paths remain rejected. Match Release's explicit database target identity and storage prefix before registering a reader runtime; the Worker queue connection is not an interchangeable target identity.
+
+Only the accepted Supabase base path permits underscores in bucket names (such as the existing `lca_results`); length and safe-character restrictions still reject path, escape and query delimiters. Origin-only endpoints keep their existing bucket rules.
