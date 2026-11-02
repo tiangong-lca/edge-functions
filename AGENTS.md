@@ -41,7 +41,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: f334fa9494d3f0b9a290445b51c18953137a8d79
+lastReviewedCommit: a92a44ba0fe1d49b8a96d378f512ab54c69f7661
 lastReviewedNote: 'Edge #521: reviewed pure Study API v1 schemas, offline fixtures and routing; existing Function, auth, database, numerical and deployment behavior is unchanged.'
 related:
   - .docpact/config.yaml

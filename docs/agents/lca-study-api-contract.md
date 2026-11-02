@@ -19,7 +19,7 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-02
-lastReviewedCommit: f334fa9494d3f0b9a290445b51c18953137a8d79
+lastReviewedCommit: a92a44ba0fe1d49b8a96d378f512ab54c69f7661
 lastReviewedNote: 'Edge #521 P0: versioned wire definitions and offline relationship fixtures only; no Study endpoint, migration, deployment, signer, runtime authorization or numerical capability is enabled.'
 related:
   - ../../AGENTS.md
@@ -69,7 +69,7 @@ The actual declared operation list is exported as `OPERATIONS` and each operatio
 | `export.request/read` | Current export capability, source license and complete serialized disclosure policy, exact report/facts/renderer/resource bindings and current grant epoch |
 | `share.create/read/revoke` | Current share/recipient capability, exact allowed export/projection, epoch, expiry and revocation; resource reads reauthorize on every access |
 
-Future endpoints must authenticate before paid or domain work using the existing JWT boundary, even though deployment tooling uses `--no-verify-jwt`. A remote MCP bearer is independently verified by Edge. Service credentials, a local schema pass, an Agent-written approval sentence or an arbitrary `authorizationEvidenceRef` do not grant a Study role. If independent review or another operation is unimplemented/unqualified, return `CAPABILITY_UNAVAILABLE`; never downgrade it to another class.
+Future endpoints must authenticate before paid or domain work using the existing JWT boundary, even though deployment tooling uses `--no-verify-jwt`. The current MCP server is a stateless Supabase OAuth resource server; it forwards the same Supabase actor access token, which Edge independently verifies. Service credentials, a local schema pass, an Agent-written approval sentence or an arbitrary `authorizationEvidenceRef` do not grant a Study role. If independent review or another operation is unimplemented/unqualified, return `CAPABILITY_UNAVAILABLE`; never downgrade it to another class.
 
 Database remains authoritative through `api` façades. No new direct table writes, service-client permission bypass, dataset-review reuse or separate task queue is defined here. Idempotency is bound to actor, operation, Study and exact intent. Repeating the same key/content reads the same outcome; differing content returns `IDEMPOTENCY_CONFLICT`. CAS failure returns `REVISION_CONFLICT`, never overwrite/retry. Frozen content updates return `FROZEN_REVISION`. These atomic/live guarantees require Database implementation; the Edge fixture precondition helper is not a substitute.
 
