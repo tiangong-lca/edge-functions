@@ -18,9 +18,9 @@ checkPaths:
   - test/fixtures/lca-study-api/v1/**
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
-lastReviewedAt: 2026-11-02
-lastReviewedCommit: 709fa81398b9dbaa73d075b25c06da4c090d3142
-lastReviewedNote: 'Edge #521 P0: versioned wire definitions and offline relationship fixtures only; no Study endpoint, migration, deployment, signer, runtime authorization or numerical capability is enabled.'
+lastReviewedAt: '2026-11-03'
+lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
+lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md
@@ -29,6 +29,8 @@ related:
 ---
 
 # LCA Study API v1
+
+Runtime W04 uses the explicit [Study v2 runtime contract](lca-study-runtime-contract.md). This P0 v1 contract and its fixtures remain offline and unchanged.
 
 ## Delivery and ownership
 

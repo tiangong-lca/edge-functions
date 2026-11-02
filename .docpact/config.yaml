@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-11-02'
-lastReviewedCommit: 'd4a977144933905d468d98eabb5d5387cb6622d5'
-lastReviewedNote: 'Edge #527: reuse existing server credentials for native ZIP links; remove custom JWT configuration while preserving actor and object boundaries.'
+lastReviewedAt: '2026-11-03'
+lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
+lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -17,6 +17,7 @@ catalog:
         - docs/agents/repo-validation.md
         - docs/agents/repo-architecture.md
         - docs/agents/lca-study-api-contract.md
+        - docs/agents/lca-study-runtime-contract.md
       workspaceIntegrationRequired: true
 
 ownership:
@@ -84,6 +85,7 @@ coverage:
     - docs/agents/repo-validation.md
     - docs/agents/repo-architecture.md
     - docs/agents/lca-study-api-contract.md
+    - docs/agents/lca-study-runtime-contract.md
     - .github/PULL_REQUEST_TEMPLATE/*.md
     - .github/workflows/ai-doc-lint.yml
     - .github/workflows/ci.yml
@@ -120,6 +122,13 @@ routing:
         - docs/agents/lca-study-api-contract.md
         - test/lca_study_api_v1_contract_test.ts
         - test/fixtures/lca-study-api/**
+    lca-study-runtime:
+      paths:
+        - contracts/lca-study/v2/**
+        - supabase/functions/app_lca_study/**
+        - supabase/functions/_shared/study/**
+        - test/study_runtime_test.ts
+        - docs/agents/lca-study-runtime-contract.md
     local-docpact-gate:
       paths:
         - .githooks/pre-push
@@ -374,6 +383,30 @@ rules:
       - path: docs/agents/repo-validation.md
         mode: review_or_update
     reason: Study wire definitions, compatibility, offline relationship evidence and later runtime enforcement must remain distinct and owned without enabling endpoints or deployment.
+  - id: edge-functions-lca-study-runtime
+    scope: repo
+    repo: edge-functions
+    triggers:
+      - path: contracts/lca-study/v2/**
+        kind: runtime-wire
+      - path: supabase/functions/app_lca_study/**
+        kind: runtime-entrypoint
+      - path: supabase/functions/_shared/study/**
+        kind: runtime-shared
+      - path: test/study_runtime_test.ts
+        kind: runtime-proof
+      - path: docs/agents/lca-study-runtime-contract.md
+        kind: runtime-contract
+    requiredDocs:
+      - path: docs/agents/lca-study-runtime-contract.md
+        mode: review_or_update
+      - path: docs/agents/repo-validation.md
+        mode: review_or_update
+      - path: docs/agents/repo-architecture.md
+        mode: review_or_update
+      - path: AGENTS.md
+        mode: review_or_update
+    reason: Versioned Study runtime admission, actor and service authority, producer identity and real versus synthetic proof remain explicit.
   - id: edge-functions-bootstrap-contract
     scope: repo
     repo: edge-functions

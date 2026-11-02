@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-02
-lastReviewedCommit: d4a977144933905d468d98eabb5d5387cb6622d5
-lastReviewedNote: 'Edge #527: reuse existing server credentials for native ZIP links; remove custom JWT configuration while preserving actor and object boundaries.'
+lastReviewedAt: '2026-11-03'
+lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
+lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -48,7 +48,13 @@ related:
 
 # edge-functions Validation Guide
 
+## Study runtime entrypoint
+
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+
 ## Default Baseline
+
+For W04 run `deno test --config supabase/functions/deno.json --allow-read --allow-env test/study_runtime_test.ts`, followed by the canonical baseline. Preserve actual handler/SDK actor-api headers, strict v2 schema, fixed redacted errors, byte/time/cancellation bounds, source exact-version recovery, profile gates, server-only freeze consumption and artifact integrity plus authorization recheck. Real SQL concurrent CAS/idempotency/team revocation, lease-fenced Worker completion and exporter qualification remain independent integration gates; mocked RPCs do not establish them.
 
 The Study P0 contract adds `test/lca_study_api_v1_contract_test.ts`, importing only the pure `contracts/lca-study/v1/` definitions and synthetic fixtures. Run `deno test --config supabase/functions/deno.json --allow-read test/lca_study_api_v1_contract_test.ts` for focused validation, followed by the canonical baseline below. The existing top-level test inventory includes its whole dependency graph without a deployed Function. Strict wire checks, static exact-reference/CAS/review/export/share relationships and real runtime authorization are distinct proof levels; see [the authoritative Study contract](lca-study-api-contract.md). No database, signer, provider, deployment or hosted auth proof is claimed by these offline tests.
 
