@@ -1,0 +1,249 @@
+{
+  "page": {
+    "ok": true,
+    "data": {
+      "kind": "studyRevision",
+      "type": "resourcePage",
+      "items": [
+        {
+          "type": "studyRevision",
+          "value": {
+            "status": "draft",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "modelRef": {
+              "type": "modelRevision",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "worker_prepared_model",
+              "modelRevisionId": "model-894"
+            },
+            "revision": 2,
+            "definition": {
+              "goal": "same",
+              "methodRefs": [
+                {
+                  "id": "method-1",
+                  "type": "datasetRevision",
+                  "version": "01.00.000",
+                  "datasetType": "lciamethod"
+                }
+              ],
+              "assumptions": [],
+              "functionalUnit": {
+                "unit": "kg",
+                "amount": "1",
+                "referenceFlowId": "flow-1"
+              },
+              "systemBoundary": "explicit tested links only"
+            },
+            "revisionId": "79681e9c-68e2-4511-95d4-da88469c41fc",
+            "validation": "not_checked",
+            "contentHash": "f1533329e8fb4c14d64f60d83634074c17b9159b3fec6bdd4a5e92a76b61c381",
+            "parentRevisionId": "8aeac46b-dcce-48d2-b092-070d4235270c",
+            "modelPreparationId": "89400000-0000-4000-8000-000000000021"
+          }
+        }
+      ],
+      "studyId": "89400000-0000-4000-8000-000000000010",
+      "nextCursor": "a6681ddc4fb741a09df4023435bcd08e"
+    }
+  },
+  "study": {
+    "ok": true,
+    "data": {
+      "type": "study",
+      "value": {
+        "scope": {
+          "id": "89400000-0000-4000-8000-000000000001",
+          "kind": "user"
+        },
+        "title": "Fixture personal Study",
+        "status": "active",
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "revision": 1,
+        "currentRevisionId": null
+      }
+    }
+  },
+  "revision": {
+    "ok": true,
+    "data": {
+      "type": "studyRevision",
+      "value": {
+        "status": "frozen",
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "modelRef": {
+          "type": "modelRevision",
+          "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "digestScope": "worker_prepared_model",
+          "modelRevisionId": "model-894"
+        },
+        "revision": 3,
+        "definition": {
+          "goal": "writer-a",
+          "methodRefs": [
+            {
+              "id": "method-1",
+              "type": "datasetRevision",
+              "version": "01.00.000",
+              "datasetType": "lciamethod"
+            }
+          ],
+          "assumptions": [],
+          "functionalUnit": {
+            "unit": "kg",
+            "amount": "1",
+            "referenceFlowId": "flow-1"
+          },
+          "systemBoundary": "explicit tested links only"
+        },
+        "revisionId": "8aeac46b-dcce-48d2-b092-070d4235270c",
+        "validation": "passed",
+        "contentHash": "5d0dead6a983c024ed3c336d48b504c45ed78377ba804a68fe3aa8b87b5ac9a4",
+        "parentRevisionId": null,
+        "modelPreparationId": "89400000-0000-4000-8000-000000000021"
+      }
+    }
+  },
+  "scenario": {
+    "ok": true,
+    "data": {
+      "type": "scenarioRevision",
+      "value": {
+        "status": "draft",
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "revision": 1,
+        "overrides": [],
+        "scenarioId": "fbd2c5f4-d33a-469c-b136-8a7b5680e597",
+        "contentHash": "8c9ef04b3c85b7535470f2101d6dd4d808b83abcf58667aaee723f1f0b4115cc",
+        "studyRevisionId": "8aeac46b-dcce-48d2-b092-070d4235270c",
+        "effectiveModelRef": null,
+        "modelPreparationId": null,
+        "scenarioRevisionId": "80779e09-daeb-4c76-ac89-f2490641a3ef",
+        "parentScenarioRevisionId": null
+      }
+    }
+  },
+  "acquisition": {
+    "ok": true,
+    "data": {
+      "type": "modelSourceAcquisition",
+      "value": {
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "snapshot": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "issuerId": "test-only-exporter",
+          "originRef": {
+            "id": "source-model",
+            "type": "datasetRevision",
+            "version": "01.00.000",
+            "datasetType": "lifecyclemodel"
+          },
+          "licenseRef": "test-only-license",
+          "observedAt": "2026-11-03T00:00:00+00:00",
+          "snapshotId": "89400000-0000-4000-8000-000000000050",
+          "digestScope": "artifact_bytes_sha256",
+          "sourceArtifactRef": {
+            "id": "89400000-0000-4000-8000-000000000060",
+            "type": "modelSource",
+            "byteSize": 2,
+            "mediaType": "application/zip",
+            "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "tidas-package.v1"
+          }
+        },
+        "execution": {
+          "jobId": "89400000-0000-4000-8000-000000000030",
+          "status": "completed"
+        },
+        "originRef": {
+          "id": "source-model",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lifecyclemodel"
+        },
+        "acquisitionId": "89400000-0000-4000-8000-000000000020"
+      }
+    }
+  },
+  "preparation": {
+    "ok": true,
+    "data": {
+      "type": "modelPreparation",
+      "value": {
+        "source": {
+          "type": "modelSourceSnapshot",
+          "snapshotId": "89400000-0000-4000-8000-000000000050",
+          "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "digestScope": "artifact_bytes_sha256"
+        },
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "modelRef": {
+          "type": "modelRevision",
+          "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "digestScope": "worker_prepared_model",
+          "modelRevisionId": "model-894"
+        },
+        "execution": {
+          "jobId": "89400000-0000-4000-8000-000000000031",
+          "status": "completed"
+        },
+        "inputHash": null,
+        "profileId": "lca.study-explicit-v1",
+        "methodRefs": [
+          {
+            "id": "method-1",
+            "type": "datasetRevision",
+            "version": "01.00.000",
+            "datasetType": "lciamethod"
+          }
+        ],
+        "preparationId": "89400000-0000-4000-8000-000000000021",
+        "inputArtifactRef": {
+          "id": "89400000-0000-4000-8000-000000000061",
+          "type": "modelInput",
+          "byteSize": 2,
+          "mediaType": "application/json",
+          "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "digestScope": "artifact_bytes_sha256",
+          "schemaVersion": "lca.study-prepared-input.v1"
+        },
+        "calculationContractRef": {
+          "kind": "calculation_contract",
+          "schema": "lca.calculation-contract.v1",
+          "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+        }
+      }
+    }
+  },
+  "capabilities": {
+    "ok": true,
+    "data": {
+      "type": "capabilities",
+      "profiles": [],
+      "operations": [
+        "capability.read",
+        "study.read",
+        "study.list",
+        "study.resources.list",
+        "revision.read",
+        "scenario.read",
+        "model.read",
+        "model.source.read",
+        "run.read",
+        "study.create",
+        "study.archive",
+        "study.select_revision",
+        "member.set",
+        "revision.create",
+        "revision.save",
+        "revision.freeze",
+        "scenario.create",
+        "scenario.save",
+        "scenario.freeze"
+      ],
+      "runtimeEnabled": true,
+      "contractVersion": "2.0.0"
+    }
+  }
+}

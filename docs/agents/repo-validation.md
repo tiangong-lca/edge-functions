@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-02
-lastReviewedCommit: d4a977144933905d468d98eabb5d5387cb6622d5
-lastReviewedNote: 'Edge #527: reuse existing server credentials for native ZIP links; remove custom JWT configuration while preserving actor and object boundaries.'
+lastReviewedAt: 2026-11-03
+lastReviewedCommit: 16ede69c654c6c07085a59d09d2286dc98ea1428
+lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -48,7 +48,15 @@ related:
 
 # edge-functions Validation Guide
 
+## Study runtime entrypoint
+
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+
 ## Default Baseline
+
+For W04 run `deno test --config supabase/functions/deno.json --allow-read --allow-env test/study_runtime_test.ts`, followed by the canonical baseline. Preserve actual handler/SDK actor-api headers, strict v2 schema, fixed redacted errors, byte/time/cancellation bounds, source exact-version recovery, profile gates, server-only freeze consumption and artifact integrity plus authorization recheck. Real SQL concurrent CAS/idempotency/team revocation, lease-fenced Worker completion and exporter qualification remain independent integration gates; mocked RPCs do not establish them.
+
+The opt-in `scripts/qualify-study-core.ts` harness adds actual local GoTrue → handler → SDK → PostgREST core proof on the explicitly owned study894 stack. Follow the [runtime contract](lca-study-runtime-contract.md) for mode-0600 configuration, namespace seeding, stability coordination and retained-fixture/reset ownership. Run a targeted `deno check --config supabase/functions/deno.json scripts/qualify-study-core.ts`; it is imported by the default safety-guard regression but never provisions users or starts a server during `pnpm check`. Its core result is separate from W06 producer, hosted and report qualification.
 
 The Study P0 contract adds `test/lca_study_api_v1_contract_test.ts`, importing only the pure `contracts/lca-study/v1/` definitions and synthetic fixtures. Run `deno test --config supabase/functions/deno.json --allow-read test/lca_study_api_v1_contract_test.ts` for focused validation, followed by the canonical baseline below. The existing top-level test inventory includes its whole dependency graph without a deployed Function. Strict wire checks, static exact-reference/CAS/review/export/share relationships and real runtime authorization are distinct proof levels; see [the authoritative Study contract](lca-study-api-contract.md). No database, signer, provider, deployment or hosted auth proof is claimed by these offline tests.
 
@@ -84,6 +92,8 @@ In addition to the canonical gates, use actual installed SDKs with in-process fa
 ### Browser preflight regression
 
 For shared CORS changes, exercise actual cross-origin requests in both Firefox and Chromium with the complete Functions JS header set: Authorization, apikey, Content-Type, x-client-info, and x-region when a function region is selected. Isolated Firefox 140.0.2 and 153.0 regressions showed that wildcard header permission allowed POST but did not reuse its preflight cache; explicitly naming the SDK headers restored reuse. Keeping `*` alongside those names preserves other callers' header permission. Compare the old and new header policy across more than the browser's default cache lifetime, and prove that a changed/expired bearer still reaches authentication and receives 401 rather than reusing success. Include an additional caller header to verify wildcard compatibility. `test/command_runtime_test.ts` separately proves explicit SDK header coverage, preflight bypassing actor/business work, POST resolving its actor on every call, and unsupported methods remaining rejected. No response-cache directive or credential wildcard is introduced.
+
+Freeze regression must cover the Database clock as expiry authority, a host wall clock ahead of a fresh database intent, same-key actor recovery after committed-result response loss and intent TTL, and expired-unconsumed/revoked rejections. SDK/handler tests consume captured actual SQL outcomes without pretending their synthetic transport is a live numerical producer.
 
 ## Dependency proposals and scoped CI
 

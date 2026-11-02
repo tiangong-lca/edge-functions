@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-02
-lastReviewedCommit: d4a977144933905d468d98eabb5d5387cb6622d5
-lastReviewedNote: 'Edge #523: reviewed Supabase S3 base-path hashing and ZIP signing with the paired Release fixture; actor authorization and publication boundaries are unchanged.'
+lastReviewedAt: '2026-11-03'
+lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
+lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -78,6 +78,8 @@ pnpm install --frozen-lockfile
 ```
 
 ## Environment Setup
+
+The Study runtime uses the separately versioned authenticated `app_lca_study` endpoint and `lca.study-api.v2` JSON envelope. `STUDY_RUNTIME_CONFIG` defaults to capability-read only; a deployed endpoint does not qualify its producer or enable domain operations. Follow the [Study runtime contract](docs/agents/lca-study-runtime-contract.md) for exact Database/Worker qualification, operation/profile allowlists, resumable source acquisition, team resource grants and verified artifact retrieval. P0 v1 stays offline. Report/review/share production remains unavailable in W04.
 
 ### 1. Function runtime env (`supabase/.env.local`)
 
