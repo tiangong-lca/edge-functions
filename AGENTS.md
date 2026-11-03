@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c8784576377b4ab156e89dc4eac81014a87880f6
-lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
+lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
+lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
