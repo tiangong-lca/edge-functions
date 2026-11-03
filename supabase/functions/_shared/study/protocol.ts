@@ -16,6 +16,8 @@ import { modelPreparationSchema } from '../../../../contracts/lca-study/v2/recor
 /** A deployment allowlist, never inferred from the presence of an implementation. */
 export const P1_OPERATIONS = [
   'capability.read',
+  'task.read',
+  'task.cancel',
   'study.create',
   'study.read',
   'study.list',

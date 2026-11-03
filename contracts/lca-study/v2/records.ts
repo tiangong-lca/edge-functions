@@ -46,6 +46,74 @@ export const acquisitionSchema = z
 
 const resourceKindSchema = z.enum([...v1ResourceKind.options, 'modelSourceAcquisition']);
 export const modelPreparationSchema = v1Preparation.extend({ methodRefs: methodRefsSchema });
+export const taskResourceSchema = z
+  .object({ type: z.enum(['modelSourceAcquisition', 'modelPreparation', 'run']), id: idSchema })
+  .strict();
+export const TASK_ERROR_CODES = [
+  'source_invalid',
+  'boundary_undeclared',
+  'normalization_underflow',
+  'normalization_overflow',
+  'numeric_invalid',
+  'resource_limit',
+  'model_not_solvable',
+  'native_execution_failed',
+  'job_timeout',
+  'job_lease_lost',
+  'runtime_unavailable',
+  'runtime_failed',
+] as const;
+export const taskSchema = z
+  .object({
+    studyId: idSchema,
+    resource: taskResourceSchema,
+    execution: z
+      .object({
+        jobId: idSchema,
+        status: workerJobStatusSchema,
+        phase: z
+          .enum([
+            'queued',
+            'source_capture',
+            'model_prepare',
+            'solve',
+            'complete',
+            'cancelled',
+            'study_start',
+            'study_native',
+            'study_artifact',
+            'study_publish',
+          ])
+          .nullable(),
+        progress: z.number().finite().min(0).max(1).nullable(),
+      })
+      .strict(),
+    errorCode: z.enum(TASK_ERROR_CODES).nullable(),
+  })
+  .strict();
+const cutoffPortId = text(128).regex(/^[A-Za-z0-9_-]+$/u);
+export const cutoffSchema = z
+  .object({
+    port: z.object({ instanceId: cutoffPortId, exchangeId: cutoffPortId }).strict(),
+    reason: text(1024),
+  })
+  .strict();
+export const cutoffsSchema = z
+  .array(cutoffSchema)
+  .max(256)
+  .superRefine((values, context) => {
+    const ports = new Set<string>();
+    values.forEach((value, index) => {
+      const key = JSON.stringify([value.port.instanceId, value.port.exchangeId]);
+      if (ports.has(key))
+        context.addIssue({
+          code: 'custom',
+          path: [index, 'port'],
+          message: 'cutoff ports must be unique',
+        });
+      ports.add(key);
+    });
+  });
 export const overrideSchema = z
   .object({
     path: text(256).regex(/^\/instances\/[A-Za-z0-9_-]+\/exchanges\/[A-Za-z0-9_-]+\/amount$/u),

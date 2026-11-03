@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 16ede69c654c6c07085a59d09d2286dc98ea1428
-lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
+lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
+lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -51,6 +51,8 @@ related:
 ## Study runtime entrypoint
 
 W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+
+The W06 adapter uses typed Study `task.read`/`task.cancel` resource references rather than generic requester-only job routes. Artifact RPCs expose opaque short-lived intents to actors; only service resolution yields a locator, and the shared bounded reader resolves current authority again after byte/hash verification. The opt-in owned runtime qualifier composes actual handlers with the separately owned Database/Worker processes and keeps hosted admission separate; details stay in the runtime contract.
 
 ## Repo Shape
 

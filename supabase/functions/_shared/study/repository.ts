@@ -1,13 +1,18 @@
 import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
 import { z } from 'zod';
-import { artifactRefSchema, idSchema, text } from '../../../../contracts/lca-study/v1/common.ts';
+import {
+  artifactRefSchema,
+  idSchema,
+  text,
+  timestampSchema,
+} from '../../../../contracts/lca-study/v1/common.ts';
 import type { StudyApiRequest } from '../../../../contracts/lca-study/v2/index.ts';
 import {
   getSupabaseServiceRoleKey,
   getSupabaseUrl,
   getSupabasePublishableKey,
 } from '../supabase_client.ts';
-import { isQuery, StudyFailure, type ValidationDecision } from './protocol.ts';
+import { isQuery, StudyFailure, failureSchema, type ValidationDecision } from './protocol.ts';
 
 export const MAX_ARTIFACT_BYTES = 4 * 1024 * 1024;
 const segment = text(255)
@@ -25,6 +30,15 @@ export const artifactCapabilitySchema = z
   })
   .strict();
 export type ArtifactCapability = z.infer<typeof artifactCapabilitySchema>;
+export const artifactReadIntentSchema = z
+  .object({
+    kind: z.literal('artifactReadIntent'),
+    intentId: idSchema,
+    expiresAt: timestampSchema,
+    studyId: idSchema,
+    artifactRef: artifactRefSchema,
+  })
+  .strict();
 function rpcFailure(error: { code?: string }): StudyFailure {
   if (error.code === '42501') return new StudyFailure('FORBIDDEN', 403, 'rpc.permission');
   if (['28000', '28P01', 'PGRST301', 'PGRST302'].includes(error.code ?? ''))
@@ -36,7 +50,90 @@ function rpcFailure(error: { code?: string }): StudyFailure {
 export interface StudyRepository {
   dispatch(request: StudyApiRequest, signal: AbortSignal): Promise<unknown>;
   consume(intentId: string, decision: ValidationDecision, signal: AbortSignal): Promise<unknown>;
+  resolveArtifact(intentId: string, signal: AbortSignal): Promise<unknown>;
   download(capability: ArtifactCapability, signal: AbortSignal): Promise<Uint8Array>;
+}
+
+const statusFor = (code: string) =>
+  code === 'AUTH_REQUIRED'
+    ? 401
+    : code === 'FORBIDDEN' || code === 'DISCLOSURE_DENIED'
+      ? 403
+      : code === 'NOT_FOUND'
+        ? 404
+        : ['REVISION_CONFLICT', 'IDEMPOTENCY_CONFLICT', 'FROZEN_REVISION'].includes(code)
+          ? 409
+          : code === 'CAPABILITY_UNAVAILABLE'
+            ? 503
+            : code === 'UPSTREAM_UNAVAILABLE'
+              ? 502
+              : code === 'DEADLINE_EXCEEDED'
+                ? 504
+                : 400;
+export function unpack(raw: unknown): unknown {
+  const failure = failureSchema.safeParse(raw);
+  if (failure.success)
+    throw new StudyFailure(failure.data.code, statusFor(failure.data.code), 'rpc.domain');
+  if (
+    !raw ||
+    typeof raw !== 'object' ||
+    Array.isArray(raw) ||
+    Object.keys(raw).sort().join(',') !== 'data,ok' ||
+    (raw as { ok: unknown }).ok !== true
+  )
+    throw new StudyFailure('UPSTREAM_UNAVAILABLE', 502, 'rpc.response');
+  return (raw as { data: unknown }).data;
+}
+export async function sha256(bytes: Uint8Array): Promise<string> {
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+export async function readAuthorizedArtifact(
+  repository: StudyRepository,
+  request: Extract<StudyApiRequest, { operation: 'artifact.read' }>,
+  signal: AbortSignal,
+  check: () => void = () => signal.throwIfAborted(),
+  initial?: { data: unknown },
+): Promise<Uint8Array> {
+  check();
+  const intent = artifactReadIntentSchema.parse(
+    initial ? initial.data : unpack(await repository.dispatch(request, signal)),
+  );
+  if (
+    intent.studyId !== request.studyId ||
+    JSON.stringify(intent.artifactRef) !== JSON.stringify(request.artifactRef)
+  )
+    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'artifact.intent_binding');
+  check();
+  const capability = artifactCapabilitySchema.parse(
+    unpack(await repository.resolveArtifact(intent.intentId, signal)),
+  );
+  if (
+    capability.studyId !== intent.studyId ||
+    JSON.stringify(capability.artifactRef) !== JSON.stringify(intent.artifactRef)
+  )
+    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'artifact.binding');
+  if (capability.artifactRef.byteSize > MAX_ARTIFACT_BYTES)
+    throw new StudyFailure('PAYLOAD_TOO_LARGE', 413, 'artifact.byte_limit');
+  check();
+  const bytes = await repository.download(capability, signal);
+  check();
+  if (bytes.byteLength > MAX_ARTIFACT_BYTES)
+    throw new StudyFailure('PAYLOAD_TOO_LARGE', 413, 'artifact.byte_limit');
+  if (
+    bytes.length !== capability.artifactRef.byteSize ||
+    (await sha256(bytes)) !== capability.artifactRef.contentHash
+  )
+    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'artifact.integrity');
+  check();
+  const current = artifactCapabilitySchema.parse(
+    unpack(await repository.resolveArtifact(intent.intentId, signal)),
+  );
+  check();
+  if (JSON.stringify(current) !== JSON.stringify(capability))
+    throw new StudyFailure('FORBIDDEN', 403, 'artifact.authorization_changed');
+  return bytes;
 }
 
 /** Keep the shared JWT resolver while binding JWKS/Auth and later RPC I/O to one deadline. */
@@ -126,6 +223,13 @@ export function createStudyRepository(
           p_outcome: decision.outcome,
           p_error_code: decision.outcome === 'failed' ? decision.code : null,
         })
+        .abortSignal(signal);
+      if (error) throw rpcFailure(error);
+      return data;
+    },
+    async resolveArtifact(intentId, signal) {
+      const { data, error } = await service(signal)
+        .rpc('svc_study_artifact_read_resolve_v1', { p_intent_id: intentId })
         .abortSignal(signal);
       if (error) throw rpcFailure(error);
       return data;

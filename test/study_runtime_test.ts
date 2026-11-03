@@ -50,6 +50,25 @@ const actor: ActorContext = {
   supabase: {} as SupabaseClient,
 };
 const actorResult = async () => ({ ok: true as const, value: actor });
+function readIntent(cap: { studyId: unknown; artifactRef: unknown }) {
+  return {
+    kind: 'artifactReadIntent',
+    intentId: 'read-intent',
+    expiresAt: '2099-01-01T00:00:00Z',
+    studyId: cap.studyId,
+    artifactRef: cap.artifactRef,
+  };
+}
+function artifactRepo<T extends { studyId: unknown; artifactRef: unknown }>(
+  cap: T,
+  bytes: () => Uint8Array,
+): Pick<StudyRepository, 'dispatch' | 'resolveArtifact' | 'download'> {
+  return {
+    dispatch: async () => ({ ok: true, data: readIntent(cap) }),
+    resolveArtifact: async () => ({ ok: true, data: cap }),
+    download: async () => bytes(),
+  };
+}
 function fixture(overrides: Partial<StudyRepository> = {}, options: HandlerOptions = {}) {
   let calls = 0;
   const repository: StudyRepository = {
@@ -59,6 +78,9 @@ function fixture(overrides: Partial<StudyRepository> = {}, options: HandlerOptio
     },
     consume: async () => {
       throw new Error('unexpected consume');
+    },
+    resolveArtifact: async () => {
+      throw new Error('unexpected artifact resolve');
     },
     download: async () => {
       throw new Error('unexpected download');
@@ -378,10 +400,7 @@ Deno.test(
       storageObjectPath: 'study-1/result.json',
     };
     const request = { ...base, operation: 'artifact.read', studyId: 'study-1', artifactRef };
-    const f = fixture({
-      dispatch: async () => ({ ok: true, data: cap }),
-      download: async () => bytes,
-    });
+    const f = fixture(artifactRepo(cap, () => bytes));
     const r = await f.send(request);
     assertEquals(r.status, 200);
     const body = await r.json();
@@ -390,7 +409,7 @@ Deno.test(
     assertEquals(
       await code(
         await fixture({
-          dispatch: async () => ({ ok: true, data: { ...cap, studyId: 'foreign' } }),
+          ...artifactRepo({ ...cap, studyId: 'foreign' }, () => bytes),
         }).send(request),
       ),
       'REFERENCE_MISMATCH',
@@ -398,7 +417,7 @@ Deno.test(
     assertEquals(
       await code(
         await fixture({
-          dispatch: async () => ({ ok: true, data: { ...cap, storageObjectPath: '../secret' } }),
+          ...artifactRepo({ ...cap, storageObjectPath: '../secret' }, () => bytes),
         }).send(request),
       ),
       'UPSTREAM_UNAVAILABLE',
@@ -406,17 +425,16 @@ Deno.test(
     assertEquals(
       await code(
         await fixture({
-          dispatch: async () => ({ ok: true, data: cap }),
-          download: async () => new Uint8Array([1]),
+          ...artifactRepo(cap, () => new Uint8Array([1])),
         }).send(request),
       ),
       'REFERENCE_MISMATCH',
     );
     let calls = 0;
     const withdrawn = fixture({
-      dispatch: async () =>
+      ...artifactRepo(cap, () => bytes),
+      resolveArtifact: async () =>
         ++calls === 1 ? { ok: true, data: cap } : { ok: false, code: 'FORBIDDEN' },
-      download: async () => bytes,
     });
     assertEquals(await code(await withdrawn.send(request)), 'FORBIDDEN');
     assertEquals(calls, 2);
@@ -671,17 +689,16 @@ Deno.test(
       preparation: prep,
     };
     const repository: StudyRepository = {
-      dispatch: async () => ({
-        ok: true,
-        data: {
+      ...artifactRepo(
+        {
           kind: 'artifactCapability',
           studyId: 'study-1',
           artifactRef,
           storageBucket: 'private',
           storageObjectPath: 'prepared/input.json',
         },
-      }),
-      download: async () => bytes,
+        () => bytes,
+      ),
       consume: async () => {
         throw new Error('validator cannot mutate');
       },
@@ -750,17 +767,16 @@ Deno.test(
       validation: 'not_checked',
     };
     const repository: StudyRepository = {
-      dispatch: async () => ({
-        ok: true,
-        data: {
+      ...artifactRepo(
+        {
           kind: 'artifactCapability',
           studyId: revision.studyId,
           artifactRef,
           storageBucket: 'study-input',
           storageObjectPath: 'compiler/manifest.json',
         },
-      }),
-      download: async () => bytes,
+        () => bytes,
+      ),
       consume: async () => {
         throw new Error('must not write');
       },
@@ -821,7 +837,7 @@ Deno.test(
     };
     let downloads = 0;
     const f = fixture({
-      dispatch: async () => ({ ok: true, data: cap }),
+      ...artifactRepo(cap, () => bytes),
       download: async () => {
         downloads++;
         return bytes;
@@ -840,7 +856,7 @@ Deno.test(
     assertEquals(atob(body.data.bytes).length, bytes.length);
     const large = { ...artifactRef, byteSize: bytes.length + 1 };
     const rejected = fixture({
-      dispatch: async () => ({ ok: true, data: { ...cap, artifactRef: large } }),
+      ...artifactRepo({ ...cap, artifactRef: large }, () => bytes),
       download: async () => {
         downloads++;
         return bytes;
@@ -1271,5 +1287,267 @@ Deno.test(
     }
     assertEquals(validations, 0);
     assertEquals(consumes, 0);
+  },
+);
+
+Deno.test(
+  'Study base cutoffs are explicit bounded unique ports; Scenario derives the frozen base layer',
+  async () => {
+    const p = graph.modelPreparations[0];
+    const request = {
+      ...write,
+      operation: 'model.prepare',
+      studyId: p.studyId,
+      source: p.source,
+      profileId: p.profileId,
+      calculationContractRef: p.calculationContractRef,
+      methodRefs: p.methodRefs,
+    };
+    assert(requestSchema.safeParse(request).success);
+    assert(requestSchema.safeParse({ ...request, cutoffs: [] }).success);
+    const cutoff = {
+      port: { instanceId: 'foreground-1', exchangeId: 'input_7' },
+      reason: 'Declared excluded upstream input',
+    };
+    assert(requestSchema.safeParse({ ...request, cutoffs: [cutoff] }).success);
+    assert(
+      requestSchema.safeParse({ ...request, cutoffs: [{ ...cutoff, reason: 'x'.repeat(1024) }] })
+        .success,
+    );
+    for (const cutoffs of [
+      [{ ...cutoff, reason: ' ' }],
+      [{ ...cutoff, reason: 'x'.repeat(1025) }],
+      [cutoff, { ...cutoff, reason: 'Different reason for same port' }],
+      [{ ...cutoff, port: { instanceId: 'bad/path', exchangeId: 'input' } }],
+      [{ ...cutoff, port: { instanceId: 'a'.repeat(129), exchangeId: 'input' } }],
+      [{ ...cutoff, port: { ...cutoff.port, sourceAuthority: true } }],
+      Array.from({ length: 257 }, (_, i) => ({
+        ...cutoff,
+        port: { instanceId: 'one', exchangeId: String(i) },
+      })),
+    ])
+      assertEquals(requestSchema.safeParse({ ...request, cutoffs }).success, false);
+    const scenario = { ...request, source: graph.modelPreparations[1].source };
+    delete (scenario as Partial<typeof scenario>).methodRefs;
+    assert(requestSchema.safeParse(scenario).success);
+    assertEquals(requestSchema.safeParse({ ...scenario, cutoffs: [] }).success, false);
+    const model = JSON.parse(
+      await Deno.readTextFile(
+        new URL('./fixtures/lca-study-api/v2/worker-cement-prepared.artifact', import.meta.url),
+      ),
+    );
+    model.model.cutoffs = [{ ...cutoff, reason: 'x'.repeat(1024) }];
+    assert(preparedInputSchema.safeParse(model).success);
+  },
+);
+
+Deno.test(
+  'Study raw source authorization packets cannot be disclosed through an artifact grant',
+  async () => {
+    const f = fixture();
+    const artifactRef = graph.modelSourceSnapshots[0].sourceArtifactRef;
+    const response = await f.send({
+      ...base,
+      operation: 'artifact.read',
+      studyId: 'study-1',
+      artifactRef,
+    });
+    assertEquals(await code(response), 'DISCLOSURE_DENIED');
+    assertEquals(f.calls(), 0);
+  },
+);
+
+Deno.test(
+  'Study scoped task APIs derive jobs from exact Study resources and redact diagnostics',
+  async () => {
+    const resource = { type: 'modelPreparation', id: 'preparation-base' };
+    const task = {
+      studyId: 'study-1',
+      resource,
+      execution: { jobId: 'job-prepare', status: 'running', phase: 'study_native', progress: 0.35 },
+      errorCode: null,
+    };
+    const f = fixture({
+      dispatch: async () => ({ ok: true, data: { type: 'task', value: task } }),
+    });
+    assertEquals(
+      (await f.send({ ...base, operation: 'task.read', studyId: 'study-1', resource })).status,
+      200,
+    );
+    assertEquals(
+      (
+        await f.send({
+          ...write,
+          operation: 'task.cancel',
+          studyId: 'study-1',
+          resource,
+          reason: 'Stop this owned task',
+        })
+      ).status,
+      200,
+    );
+    for (const patch of [
+      { studyId: 'other-study' },
+      { resource: { type: 'run', id: resource.id } },
+      { resource: { ...resource, id: 'other-resource' } },
+    ]) {
+      const r = fixture({
+        dispatch: async () => ({ ok: true, data: { type: 'task', value: { ...task, ...patch } } }),
+      });
+      assertEquals(
+        await code(await r.send({ ...base, operation: 'task.read', studyId: 'study-1', resource })),
+        'REFERENCE_MISMATCH',
+      );
+    }
+    for (const changed of [
+      { ...task, errorCode: 'PRIVATE/provider/error' },
+      { ...task, execution: { ...task.execution, phase: 'private-source-key' } },
+      { ...task, execution: { ...task.execution, progress: 99 } },
+      { ...task, rawDetails: { locator: 'private' } },
+    ])
+      assertEquals(
+        responseSchema.safeParse({
+          schemaVersion: API_SCHEMA,
+          requestId: 'task-shape',
+          ok: true,
+          data: { type: 'task', value: changed },
+        }).success,
+        false,
+      );
+    assertEquals(
+      requestSchema.safeParse({
+        ...base,
+        operation: 'task.read',
+        studyId: 'study-1',
+        resource,
+        jobId: 'arbitrary-job',
+      }).success,
+      false,
+    );
+    assertEquals(
+      requestSchema.safeParse({
+        ...write,
+        operation: 'task.cancel',
+        studyId: 'study-1',
+        resource: { ...resource, jobId: 'arbitrary-job' },
+        reason: 'Stop',
+      }).success,
+      false,
+    );
+  },
+);
+
+Deno.test(
+  'Study artifact actor replies contain only opaque intents; service resolves before and after bytes',
+  async () => {
+    const bytes = new TextEncoder().encode('opaque read fixture');
+    const cap = {
+      kind: 'artifactCapability',
+      studyId: 'study-1',
+      artifactRef: {
+        ...graph.runs[0].resultRef,
+        byteSize: bytes.length,
+        contentHash: await sha256(bytes),
+      },
+      storageBucket: 'study-artifacts',
+      storageObjectPath: 'study-1/fixture.json',
+    };
+    const calls: Array<{ url: string; authorization: string | null; body: unknown }> = [];
+    const transport: typeof fetch = async (input, init) => {
+      const r = new Request(input, init);
+      if (r.url.includes('/storage/v1/object/')) return new Response(bytes);
+      const body = await r.json();
+      calls.push({ url: r.url, authorization: r.headers.get('authorization'), body });
+      if (r.url.endsWith('/rpc/qry_study_v1'))
+        return Response.json({ ok: true, data: readIntent(cap) });
+      assert(r.url.endsWith('/rpc/svc_study_artifact_read_resolve_v1'));
+      assertEquals(body, { p_intent_id: 'read-intent' });
+      return Response.json({ ok: true, data: cap });
+    };
+    const client = (key: string, bearer?: string) =>
+      createClient('https://opaque-artifact.invalid', key, {
+        db: { schema: 'api' },
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: {
+          fetch: transport,
+          ...(bearer ? { headers: { Authorization: `Bearer ${bearer}` } } : {}),
+        },
+      }) as unknown as SupabaseClient;
+    const repository = createStudyRepository(client('publishable', 'actor-token'), () =>
+      client('service-secret'),
+    );
+    const f = fixture(repository);
+    const r = await f.send({
+      ...base,
+      operation: 'artifact.read',
+      studyId: cap.studyId,
+      artifactRef: cap.artifactRef,
+    });
+    assertEquals(r.status, 200);
+    const body = await r.json();
+    assertEquals(atob(body.data.bytes), 'opaque read fixture');
+    assert(!JSON.stringify(body).includes('study-artifacts'));
+    assertEquals(calls.length, 3);
+    assertEquals(
+      calls.map((c) => c.authorization),
+      ['Bearer actor-token', 'Bearer service-secret', 'Bearer service-secret'],
+    );
+    const malformed = fixture({
+      ...artifactRepo(cap, () => bytes),
+      dispatch: async () => ({ ok: true, data: cap }),
+    });
+    assertEquals(
+      await code(
+        await malformed.send({
+          ...base,
+          operation: 'artifact.read',
+          studyId: cap.studyId,
+          artifactRef: cap.artifactRef,
+        }),
+      ),
+      'UPSTREAM_UNAVAILABLE',
+    );
+    let downloads = 0;
+    const expired = fixture({
+      ...artifactRepo(cap, () => bytes),
+      resolveArtifact: async () => ({ ok: false, code: 'CAPABILITY_UNAVAILABLE' }),
+      download: async () => {
+        downloads++;
+        return bytes;
+      },
+    });
+    assertEquals(
+      await code(
+        await expired.send({
+          ...base,
+          operation: 'artifact.read',
+          studyId: cap.studyId,
+          artifactRef: cap.artifactRef,
+        }),
+      ),
+      'CAPABILITY_UNAVAILABLE',
+    );
+    assertEquals(downloads, 0);
+  },
+);
+
+Deno.test(
+  'Study runtime qualifier binds its owned config and imports without runtime side effects',
+  async () => {
+    const { localRuntimeConfigSchema } = await import('../scripts/qualify-study-runtime.ts');
+    const root = '/tmp/lca-study-p1-p4-20261103/';
+    const config = {
+      schemaVersion: 'lca.study-local-runtime-config.v1',
+      transportEnvPath: root + 'study894-private-transport-env.json',
+      fixturePath: root + 'edge537-private-actors.json',
+    };
+    assert(localRuntimeConfigSchema.safeParse(config).success);
+    for (const patch of [
+      { transportEnvPath: '/tmp/foreign-env.json' },
+      { fixturePath: '/tmp/foreign-fixture.json' },
+      { supabaseUrl: 'https://production.invalid' },
+      { projectId: 'other' },
+    ])
+      assertEquals(localRuntimeConfigSchema.safeParse({ ...config, ...patch }).success, false);
   },
 );

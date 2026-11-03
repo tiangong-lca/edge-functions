@@ -1,8 +1,8 @@
 version: 1
 layout: repo
 lastReviewedAt: '2026-11-03'
-lastReviewedCommit: '16ede69c654c6c07085a59d09d2286dc98ea1428'
-lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
+lastReviewedCommit: '79ef203048a23fec5b713cbea8935a49b068eafb'
+lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -129,6 +129,7 @@ routing:
         - supabase/functions/_shared/study/**
         - test/study_runtime_test.ts
         - scripts/qualify-study-core.ts
+        - scripts/qualify-study-runtime.ts
         - docs/agents/lca-study-runtime-contract.md
     local-docpact-gate:
       paths:
@@ -397,6 +398,8 @@ rules:
       - path: test/study_runtime_test.ts
         kind: runtime-proof
       - path: scripts/qualify-study-core.ts
+        kind: local-runtime-qualification
+      - path: scripts/qualify-study-runtime.ts
         kind: local-runtime-qualification
       - path: docs/agents/lca-study-runtime-contract.md
         kind: runtime-contract

@@ -7,7 +7,8 @@ import {
 } from '../../../../contracts/lca-study/v1/common.ts';
 import { definitionSchema } from '../../../../contracts/lca-study/v1/records.ts';
 import { overrideSchema } from '../../../../contracts/lca-study/v2/records.ts';
-import { artifactCapabilitySchema, type StudyRepository } from './repository.ts';
+import { readAuthorizedArtifact, type StudyRepository } from './repository.ts';
+export { sha256 } from './repository.ts';
 import { StudyFailure, type ServerValidator } from './protocol.ts';
 
 // Projection of Worker crates/solver-worker/src/study/contracts.rs, INPUT_SCHEMA v1.
@@ -16,7 +17,7 @@ const str = text(512),
   num = z.number().finite(),
   ref = z.object({ id: str, version: z.string().regex(/^\d{2}\.\d{2}\.\d{3}$/u) }).strict();
 const port = z.object({ instanceId: str, exchangeId: str }).strict();
-const cutoff = z.object({ port, reason: str }).strict();
+const cutoff = z.object({ port, reason: text(4096) }).strict();
 const view = z.object({ port, flow: ref, unit: str, pivot: num }).strict();
 const exchange = z
   .object({
@@ -122,13 +123,10 @@ export const preparedInputSchema = z
       .strict(),
   })
   .strict();
-export async function sha256(bytes: Uint8Array): Promise<string> {
-  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-export function createPreparedInputValidator(repository: StudyRepository): ServerValidator {
+export function createPreparedInputValidator(
+  repository: StudyRepository,
+  check?: () => void,
+): ServerValidator {
   return async (intent, signal) => {
     const r = intent.revision,
       p = intent.preparation,
@@ -140,25 +138,25 @@ export function createPreparedInputValidator(repository: StudyRepository): Serve
       p.profileId !== 'lca.study-explicit-v1'
     )
       throw new StudyFailure('CAPABILITY_UNAVAILABLE', 503, 'freeze.producer_schema');
-    const raw = await repository.dispatch(
-      {
-        schemaVersion: API_SCHEMA,
-        requestId: intent.intentId,
-        operation: 'artifact.read',
-        studyId: r.studyId,
-        artifactRef: artifact,
-      },
-      signal,
-    );
-    if (!raw || typeof raw !== 'object' || !('ok' in raw) || raw.ok !== true || !('data' in raw))
-      throw new StudyFailure('FORBIDDEN', 403, 'freeze.artifact_authorization');
-    const cap = artifactCapabilitySchema.parse(raw.data);
-    if (cap.studyId !== r.studyId || JSON.stringify(cap.artifactRef) !== JSON.stringify(artifact))
-      return { outcome: 'failed', code: 'REFERENCE_MISMATCH' };
-    const bytes = await repository.download(cap, signal);
-    signal.throwIfAborted();
-    if (bytes.length !== artifact.byteSize || (await sha256(bytes)) !== artifact.contentHash)
-      return { outcome: 'failed', code: 'REFERENCE_MISMATCH' };
+    let bytes: Uint8Array;
+    try {
+      bytes = await readAuthorizedArtifact(
+        repository,
+        {
+          schemaVersion: API_SCHEMA,
+          requestId: intent.intentId,
+          operation: 'artifact.read',
+          studyId: r.studyId,
+          artifactRef: artifact,
+        },
+        signal,
+        check,
+      );
+    } catch (error) {
+      if (error instanceof StudyFailure && error.code === 'REFERENCE_MISMATCH')
+        return { outcome: 'failed', code: 'REFERENCE_MISMATCH' };
+      throw error;
+    }
     let input: unknown;
     try {
       input = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
