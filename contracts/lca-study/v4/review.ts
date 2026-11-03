@@ -239,7 +239,11 @@ const variants = [
       predecessorReviewId: idSchema.nullable(),
       delegationId: idSchema.nullable(),
     })
-    .strict(),
+    .strict()
+    .refine((v) => v.decision !== 'withdraw' || v.predecessorReviewId !== null, {
+      path: ['predecessorReviewId'],
+      message: 'withdraw requires a predecessor review',
+    }),
   z.object({ ...envelope, operation: z.literal('review.list'), ...history }).strict(),
   z
     .object({
@@ -252,7 +256,11 @@ const variants = [
       predecessorReviewId: idSchema.nullable(),
       expiresAt: timestampSchema,
     })
-    .strict(),
+    .strict()
+    .refine((v) => v.decision !== 'withdraw' || v.predecessorReviewId !== null, {
+      path: ['predecessorReviewId'],
+      message: 'withdraw requires a predecessor review',
+    }),
   z
     .object({ ...write, operation: z.literal('review.delegation.revoke'), delegationId: idSchema })
     .strict(),

@@ -30,6 +30,19 @@ Deno.test(
     for (const response of f.responses) parseResponse(response);
     const review = f.requests.find((r: { operation: string }) => r.operation === 'review.record');
     validateResponseForRequest(parseRequest(review), parseResponse(f.responses[0]));
+    assertThrows(() =>
+      parseRequest({ ...review, decision: 'withdraw', predecessorReviewId: null }),
+    );
+    assertEquals(
+      parseRequest({ ...review, decision: 'withdraw', predecessorReviewId: 'previous-review' })
+        .operation,
+      'review.record',
+    );
+    for (const decision of ['approve', 'reject'])
+      assertEquals(
+        parseRequest({ ...review, decision, predecessorReviewId: null }).operation,
+        'review.record',
+      );
     for (const field of [
       'reportRevisionId',
       'expectedContentHash',
@@ -57,6 +70,22 @@ Deno.test(
       { comment: '<script>bad</script>' },
     ])
       assertThrows(() => parseRequest({ ...review, ...extra }));
+    const delegation = f.requests.find(
+      (r: { operation: string }) => r.operation === 'review.delegation.issue',
+    );
+    assertThrows(() =>
+      parseRequest({ ...delegation, decision: 'withdraw', predecessorReviewId: null }),
+    );
+    assertEquals(
+      parseRequest({ ...delegation, decision: 'withdraw', predecessorReviewId: 'previous-review' })
+        .operation,
+      'review.delegation.issue',
+    );
+    for (const decision of ['approve', 'reject'])
+      assertEquals(
+        parseRequest({ ...delegation, decision, predecessorReviewId: null }).operation,
+        'review.delegation.issue',
+      );
     const final = f.requests.find((r: { operation: string }) => r.operation === 'report.finalize');
     validateResponseForRequest(parseRequest(final), parseResponse(f.responses[1]));
     assertThrows(() => parseRequest({ ...final, acceptedReviewIds: [] }));

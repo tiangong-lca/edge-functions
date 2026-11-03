@@ -109,6 +109,34 @@ test('V4 portable owner codec retains strict review and versioned export API out
       ),
     );
     for (const request of fixtures.requests) assert.deepEqual(codec.parseRequest(request), request);
+    const review = fixtures.requests.find((request) => request.operation === 'review.record');
+    assert.throws(
+      () => codec.parseRequest({ ...review, decision: 'withdraw', predecessorReviewId: null }),
+      { code: 'INVALID_REQUEST', ruleId: 'request.structure' },
+    );
+    assert.equal(
+      codec.parseRequest({
+        ...review,
+        decision: 'withdraw',
+        predecessorReviewId: 'previous-review',
+      }).operation,
+      'review.record',
+    );
+    const delegation = fixtures.requests.find(
+      (request) => request.operation === 'review.delegation.issue',
+    );
+    assert.throws(
+      () => codec.parseRequest({ ...delegation, decision: 'withdraw', predecessorReviewId: null }),
+      { code: 'INVALID_REQUEST', ruleId: 'request.structure' },
+    );
+    assert.equal(
+      codec.parseRequest({
+        ...delegation,
+        decision: 'withdraw',
+        predecessorReviewId: 'previous-review',
+      }).operation,
+      'review.delegation.issue',
+    );
     assert.equal(typeof codec.verifyVersionedExport, 'function');
     assert.equal(typeof codec.validateExportViewBindings, 'function');
     assert.equal(codec.operationMetadata['share.download'].kind, 'query');

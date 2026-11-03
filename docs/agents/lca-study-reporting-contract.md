@@ -23,9 +23,9 @@ checkPaths:
   - scripts/study-contract-build.test.cjs
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: 10b50e791c33b3d513791df9ab973a179b7d76d8
-lastReviewedNote: 'Edge #550: reviewed owner export download, fresh replay state and server-provided personal reviewer/team role choices; legacy V2/V3 and export renderer bytes remain pinned. Actual integration and delivery remain separate.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: c49eeff06eb3349fda15c0964ca74773f36f487b
+lastReviewedNote: 'Edge #550: reviewed static nonnull predecessor requirement for withdrawal record/delegation requests; exact head authorization remains Database-owned. Existing evidence dates, V2/V3, replay and renderer/export bytes stay unchanged.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md
@@ -104,3 +104,5 @@ V4 `export.download` resolves an existing owner-authorized export by exact `expo
 Same-key mutation recovery retains original immutable IDs, decisions, finalization and export receipts. Fields named current are freshly hydrated: `review.record` returns the original review with current report state; `report.finalize` returns its original finalization with current state, whose latest finalization may differ; share/delegation records retain their original identity with live revocation/expiry/consumption metadata. Current authority precedes replay. A successful old receipt cannot claim current acceptance after withdrawal or an active share after revocation.
 
 Online pre-finalization report previews have no export identity. Platform owns an additive preview rendering entrypoint sharing the view/content presentation with online framing. It must not pass a report ID as an export ID or claim an export receipt. The pinned renderer 1.0.0 and historical signed export bytes stay unchanged; current status/actions remain application state outside that view.
+
+Withdrawal requests and withdrawal-delegation issue requests require a nonnull `predecessorReviewId`. This structural rule rejects a first withdrawal before Edge dispatch (`INVALID_REQUEST`). Database still owns exact current-head validation and returns `REVISION_CONFLICT` for missing/stale heads through its direct RPC surface. Initial approve/reject decisions retain nullable predecessor semantics; replay, actor and source authorization rules are unchanged.

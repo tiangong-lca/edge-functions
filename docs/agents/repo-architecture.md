@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: 10b50e791c33b3d513791df9ab973a179b7d76d8
-lastReviewedNote: 'Edge #550: reviewed owner export download, fresh replay state and server-provided personal reviewer/team role choices; legacy V2/V3 and export renderer bytes remain pinned. Actual integration and delivery remain separate.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: c49eeff06eb3349fda15c0964ca74773f36f487b
+lastReviewedNote: 'Edge #550: reviewed static nonnull predecessor requirement for withdrawal record/delegation requests; exact head authorization remains Database-owned. Existing evidence dates, V2/V3, replay and renderer/export bytes stay unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

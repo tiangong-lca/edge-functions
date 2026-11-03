@@ -596,3 +596,48 @@ Deno.test(
     );
   },
 );
+
+Deno.test(
+  'V4 rejects a first withdrawal before dispatch while preserving explicit predecessor requests',
+  async () => {
+    const f = await fixture();
+    f.flags.deny = true;
+    const request = {
+      schemaVersion: API_SCHEMA,
+      requestId: u(400),
+      idempotencyKey: u(401),
+      operation: 'review.record',
+      reportRevisionId: u(1),
+      expectedContentHash: f.producer.report.contentHash,
+      reviewClass: 'internal',
+      decision: 'withdraw',
+      comment: 'Withdraw the previous review.',
+      predecessorReviewId: null,
+      delegationId: null,
+    };
+    const response = await f.call(request);
+    assertEquals(response.status, 400);
+    assertEquals(response.body.code, 'INVALID_REQUEST');
+    assertEquals(response.body.issues[0].ruleId, 'request.structure');
+    const withHead = await f.call({ ...request, requestId: u(402), predecessorReviewId: u(111) });
+    assertEquals(withHead.status, 403);
+    const { comment: _comment, delegationId: _delegation, ...base } = request;
+    const issue = {
+      ...base,
+      operation: 'review.delegation.issue',
+      clientId: u(403),
+      expiresAt: '2026-11-04T00:10:00Z',
+    };
+    const issued = await f.call(issue);
+    assertEquals(issued.status, 400);
+    assertEquals(issued.body.code, 'INVALID_REQUEST');
+    assertEquals(issued.body.issues[0].ruleId, 'request.structure');
+    assertEquals(
+      (await f.call({ ...issue, requestId: u(404), predecessorReviewId: u(111) })).status,
+      403,
+    );
+    assertEquals(f.flags.downloads, 0);
+    assertEquals(f.flags.uploads, 0);
+    assertEquals(f.flags.consumes, 0);
+  },
+);
