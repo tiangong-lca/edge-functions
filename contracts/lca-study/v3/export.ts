@@ -8,6 +8,7 @@ import {
   parseCanonicalBytes,
   sha256,
 } from './canonical.ts';
+import { isCanonicalBase64 } from '../v2/responses.ts';
 
 export const EXPORT_MANIFEST_SCHEMA = 'lca.study-export-manifest.v1' as const;
 export const EXPORT_RECEIPT_SCHEMA = 'lca.study-export-receipt.v2' as const;
@@ -89,6 +90,84 @@ export type ExportManifest = z.infer<typeof exportManifestSchema>;
 export type ExportReceipt = z.infer<typeof exportReceiptSchema>;
 export type ExportTrustAnchor = z.infer<typeof exportTrustAnchorSchema>;
 export type ExportFile = { path: 'report.html' | 'projection.json'; bytes: Uint8Array };
+/** Call after the trusted renderer's full view validation and signature/file verification. */
+export function validateExportViewBindings(viewInput: unknown, manifest: ExportManifest): void {
+  const view = z
+    .object({
+      schemaVersion: z.literal('lca.study-report-view.v1'),
+      rendererVersion: z.literal('1.0.0'),
+      report: z
+        .object({
+          studyId: idSchema,
+          reportRevisionId: idSchema,
+          contentHash: hashSchema,
+          generatedAt: timestampSchema,
+        })
+        .passthrough(),
+      snapshot: z
+        .object({
+          validity: z.enum(['current', 'superseded', 'withdrawn', 'unknown']),
+          checkedAt: timestampSchema,
+          review: z.literal('unreviewed'),
+          reviewIds: z.array(idSchema).max(0),
+          finalization: z.literal('not_finalized'),
+        })
+        .passthrough(),
+    })
+    .passthrough()
+    .parse(viewInput);
+  if (
+    view.schemaVersion !== manifest.renderer.viewModelVersion ||
+    view.rendererVersion !== manifest.renderer.version ||
+    view.report.studyId !== manifest.studyId ||
+    view.report.reportRevisionId !== manifest.reportRevisionId ||
+    view.report.contentHash !== manifest.reportContentHash ||
+    view.report.generatedAt !== manifest.generatedAt ||
+    view.snapshot.validity !== manifest.validitySnapshot.status ||
+    view.snapshot.checkedAt !== manifest.validitySnapshot.checkedAt ||
+    manifest.reviewIds.length !== 0
+  )
+    throw new Error('export_view_binding');
+}
+export function canonicalReceiptBytes(input: unknown): Uint8Array {
+  return canonicalBytes(exportReceiptSchema.parse(input));
+}
+export const exportBundleSchema = z
+  .object({
+    schemaVersion: z.literal('lca.study-export-bundle.v1'),
+    manifestBase64: z.string().max(262144).refine(isCanonicalBase64),
+    receipt: exportReceiptSchema,
+    files: z
+      .array(
+        z
+          .object({
+            path: z.enum(['report.html', 'projection.json']),
+            encoding: z.literal('base64'),
+            bytes: z.string().max(5592408).refine(isCanonicalBase64),
+          })
+          .strict(),
+      )
+      .length(2),
+  })
+  .strict();
+
+function decodeBase64(value: string): Uint8Array {
+  if (!isCanonicalBase64(value)) throw new Error('export_base64_invalid');
+  return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
+}
+
+export function parseExportBundle(bytes: Uint8Array): {
+  manifestBytes: Uint8Array;
+  receipt: ExportReceipt;
+  files: ExportFile[];
+} {
+  const bundle = exportBundleSchema.parse(parseCanonicalBytes(bytes));
+  return {
+    manifestBytes: decodeBase64(bundle.manifestBase64),
+    receipt: bundle.receipt,
+    files: bundle.files.map((f) => ({ path: f.path, bytes: decodeBase64(f.bytes) })),
+  };
+}
 
 export async function signExportManifest(
   input: unknown,

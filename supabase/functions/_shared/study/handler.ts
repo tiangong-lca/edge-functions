@@ -36,6 +36,8 @@ import {
   type ServerValidator,
 } from './protocol.ts';
 import { createPreparedInputValidator } from './validator.ts';
+import { executeReporting, type ReportingOptions } from './reporting_executor.ts';
+import { API_SCHEMA as REPORTING_SCHEMA } from '../../../../contracts/lca-study/v3/report.ts';
 
 export type HandlerOptions = {
   resolveActor?: (req: Request) => Promise<ActorContextResult>;
@@ -43,6 +45,7 @@ export type HandlerOptions = {
   config?: () => RuntimeConfig;
   validateRevision?: ServerValidator | null;
   timeoutMs?: number;
+  reporting?: ReportingOptions;
 };
 const MAX_BODY_BYTES = 256 * 1024;
 function response(requestId: string, data: unknown): StudyApiResponse {
@@ -53,6 +56,8 @@ export function createStudyHandler(options: HandlerOptions = {}) {
   return async (req: Request): Promise<Response> => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
     let requestId = crypto.randomUUID() as string;
+    const wireHeader = req.headers.get('x-study-schema');
+    let responseVersion: string = wireHeader === REPORTING_SCHEMA ? REPORTING_SCHEMA : API_SCHEMA;
     const controller = new AbortController();
     const abort = () => controller.abort(req.signal.reason);
     req.signal.addEventListener('abort', abort, { once: true });
@@ -108,6 +113,29 @@ export function createStudyHandler(options: HandlerOptions = {}) {
         idSchema.safeParse(input.requestId).success
       )
         requestId = input.requestId as string;
+      if (
+        wireHeader !== null &&
+        (!input ||
+          typeof input !== 'object' ||
+          !('schemaVersion' in input) ||
+          input.schemaVersion !== wireHeader)
+      )
+        throw new StudyFailure('INVALID_REQUEST', 400, 'schema.header_binding');
+      if (
+        input &&
+        typeof input === 'object' &&
+        'schemaVersion' in input &&
+        input.schemaVersion === REPORTING_SCHEMA
+      ) {
+        responseVersion = REPORTING_SCHEMA;
+        return await executeReporting(
+          input,
+          actor.value,
+          controller.signal,
+          assertActive,
+          options.reporting,
+        );
+      }
       if (
         input &&
         typeof input === 'object' &&
@@ -236,13 +264,17 @@ export function createStudyHandler(options: HandlerOptions = {}) {
     } catch (error) {
       const failure =
         error instanceof StudyCodecError
-          ? new StudyFailure(error.code, 502, error.ruleId)
+          ? new StudyFailure(
+              error.code,
+              error.code === 'REFERENCE_MISMATCH' ? 502 : 400,
+              error.ruleId,
+            )
           : error instanceof StudyFailure
             ? error
             : new StudyFailure('UPSTREAM_UNAVAILABLE', 502, 'runtime.invalid_response');
       return new Response(
         JSON.stringify({
-          schemaVersion: API_SCHEMA,
+          schemaVersion: responseVersion,
           requestId,
           ok: false,
           code: failure.code,

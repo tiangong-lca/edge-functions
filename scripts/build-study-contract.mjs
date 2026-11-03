@@ -59,7 +59,11 @@ export function declaration(schema, document = schema, depth = 0) {
   }
 }
 
-export async function buildStudyContract(outputDirectory, { allowDirty = false } = {}) {
+export async function buildStudyContract(
+  outputDirectory,
+  { allowDirty = false, apiVersion = 'v2' } = {},
+) {
+  if (!['v2', 'v3'].includes(apiVersion)) throw new Error('study_api_version');
   const output = path.resolve(outputDirectory);
   if (output === root || !path.isAbsolute(outputDirectory))
     throw new Error('study_output_absolute_directory_required');
@@ -86,11 +90,14 @@ export async function buildStudyContract(outputDirectory, { allowDirty = false }
     metafile: true,
     logLevel: 'silent',
   };
-  const result = await build({ ...options, entryPoints: ['contracts/lca-study/v2/codec.ts'] });
+  const result = await build({
+    ...options,
+    entryPoints: [`contracts/lca-study/${apiVersion}/codec.ts`],
+  });
   const schemaResult = await build({
     ...options,
     stdin: {
-      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/v2/requests.ts'; import { responseSchema } from './contracts/lca-study/v2/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' });`,
+      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/${apiVersion}/${apiVersion === 'v2' ? 'requests' : 'report'}.ts'; import { responseSchema } from './contracts/lca-study/${apiVersion}/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' }); ${apiVersion === 'v3' ? "import {exportManifestSchema,exportReceiptSchema,exportTrustAnchorSchema} from './contracts/lca-study/v3/export.ts'; export const manifest=z.toJSONSchema(exportManifestSchema); export const receipt=z.toJSONSchema(exportReceiptSchema); export const anchor=z.toJSONSchema(exportTrustAnchorSchema);" : ''}`,
       resolveDir: root,
       sourcefile: 'study-schema-build.ts',
       loader: 'ts',
@@ -102,7 +109,9 @@ export async function buildStudyContract(outputDirectory, { allowDirty = false }
   const codec = await import(
     `data:text/javascript;base64,${Buffer.from(result.outputFiles[0].contents).toString('base64')}`
   );
-  const declarations = `// Generated from exact Edge-owned schemas. Refinements are enforced by the codec.\nexport declare const API_SCHEMA: ${JSON.stringify(codec.API_SCHEMA)};\nexport declare const CONTRACT_VERSION: ${JSON.stringify(codec.CONTRACT_VERSION)};\nexport type StudyApiRequest = ${declaration(schema.request)};\nexport type StudyApiResponse = ${declaration(schema.response)};\nexport declare class StudyCodecError extends Error { readonly code: 'INVALID_REQUEST'|'UNSUPPORTED_SCHEMA'|'REFERENCE_MISMATCH'; readonly ruleId: string; }\nexport declare function parseRequest(input: unknown): StudyApiRequest;\nexport declare function parseResponse(input: unknown): StudyApiResponse;\nexport declare function validateResponseForRequest(request: StudyApiRequest, response: StudyApiResponse): void;\nexport declare const OPERATIONS: ReadonlyArray<StudyApiRequest['operation']>;\nexport declare const operationMetadata: Readonly<Record<StudyApiRequest['operation'], Readonly<{operation: StudyApiRequest['operation']; kind:'query'|'mutation'}>>>;\n`;
+  let declarations = `// Generated from exact Edge-owned schemas. Refinements are enforced by the codec.\nexport declare const API_SCHEMA: ${JSON.stringify(codec.API_SCHEMA)};\nexport declare const CONTRACT_VERSION: ${JSON.stringify(codec.CONTRACT_VERSION)};\nexport type StudyApiRequest = ${declaration(schema.request)};\nexport type StudyApiResponse = ${declaration(schema.response)};\nexport declare class StudyCodecError extends Error { readonly code: 'INVALID_REQUEST'|'UNSUPPORTED_SCHEMA'|'REFERENCE_MISMATCH'; readonly ruleId: string; }\nexport declare function parseRequest(input: unknown): StudyApiRequest;\nexport declare function parseResponse(input: unknown): StudyApiResponse;\nexport declare function validateResponseForRequest(request: StudyApiRequest, response: StudyApiResponse): void;\nexport declare const OPERATIONS: ReadonlyArray<StudyApiRequest['operation']>;\nexport declare const operationMetadata: Readonly<Record<StudyApiRequest['operation'], Readonly<{operation: StudyApiRequest['operation']; kind:'query'|'mutation'}>>>;\n`;
+  if (apiVersion === 'v3')
+    declarations += `export type ExportManifest = ${declaration(schema.manifest)};\nexport type ExportReceipt = ${declaration(schema.receipt)};\nexport type ExportTrustAnchor = ${declaration(schema.anchor)};\nexport declare function analysisConfigHash(input: unknown): Promise<string>;\nexport declare function canonicalReceiptBytes(input:unknown):Uint8Array;\nexport declare function validateExportViewBindings(view:unknown,manifest:ExportManifest):void;\nexport declare function parseExportBundle(bytes:Uint8Array):{manifestBytes:Uint8Array;receipt:ExportReceipt;files:Array<{path:'report.html'|'projection.json';bytes:Uint8Array}>};\nexport declare function verifyExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest>;\n`;
   const metadata = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
   const importMap = JSON.parse(
     await readFile(path.join(root, 'supabase/functions/deno.json'), 'utf8'),
@@ -167,15 +176,20 @@ export async function buildStudyContract(outputDirectory, { allowDirty = false }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const args = process.argv.slice(2);
-  if (
-    args.length < 2 ||
-    args[0] !== '--out' ||
-    args.some((value, index) => index > 1 && value !== '--allow-dirty')
-  )
-    throw new Error('usage: build-study-contract --out <new-absolute-directory> [--allow-dirty]');
-  const manifest = await buildStudyContract(args[1], {
-    allowDirty: args.includes('--allow-dirty'),
-  });
+  let output,
+    allowDirty = false,
+    apiVersion = 'v2';
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--out' && output === undefined && args[i + 1]) output = args[++i];
+    else if (args[i] === '--api-version' && args[i + 1]) apiVersion = args[++i];
+    else if (args[i] === '--allow-dirty' && !allowDirty) allowDirty = true;
+    else
+      throw new Error(
+        'usage: build-study-contract --out <new-absolute-directory> [--api-version v2|v3] [--allow-dirty]',
+      );
+  }
+  if (!output) throw new Error('study_output_required');
+  const manifest = await buildStudyContract(output, { allowDirty, apiVersion });
   console.log(
     JSON.stringify({
       sourceCommit: manifest.sourceCommit,

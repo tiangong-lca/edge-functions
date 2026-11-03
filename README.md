@@ -24,7 +24,7 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
 lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 ---
 
@@ -677,4 +677,4 @@ Verify both formats using disposable synthetic objects, unchanged actor/current/
 
 ## P2 reporting contract preparation
 
-The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. The default-off V3 producer now validates exact Worker facts, produces bounded report views and signs detached exports through Database-owned intents. Actual installed consumer qualification and immutable artifact publication remain in progress; source and component tests enable no hosted operation, grant or signing key.

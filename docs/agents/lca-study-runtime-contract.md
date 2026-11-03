@@ -18,7 +18,7 @@ checkPaths:
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
 lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - lca-study-api-contract.md
@@ -104,4 +104,4 @@ Run each phase with exact Deno and `--config supabase/functions/deno.json`, loop
 
 ## P2 reporting contract preparation
 
-The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.

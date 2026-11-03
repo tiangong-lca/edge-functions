@@ -27,13 +27,11 @@ export const reportingArtifactRefSchema = artifactRefSchema.extend({
     'reportExportBundle',
   ]),
 });
-const factsRef = reportingArtifactRefSchema.refine(
-  (v) =>
-    v.type === 'analysisFacts' &&
-    v.schemaVersion === 'lca.study-analysis-facts.v1' &&
-    v.mediaType === 'application/json',
-  'analysis facts required',
-);
+const factsRef = reportingArtifactRefSchema.extend({
+  type: z.literal('analysisFacts'),
+  schemaVersion: z.literal('lca.study-analysis-facts.v1'),
+  mediaType: z.literal('application/json'),
+});
 export const analysisConfigSchema = z
   .object({
     schemaVersion: z.literal('lca.study-analysis-config.v1'),

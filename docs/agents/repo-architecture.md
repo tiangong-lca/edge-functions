@@ -37,7 +37,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
 lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
@@ -50,7 +50,7 @@ related:
 
 ## Study runtime entrypoint
 
-W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); review/share remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 The W06 adapter uses typed Study `task.read`/`task.cancel` resource references rather than generic requester-only job routes. Artifact RPCs expose opaque short-lived intents to actors; only service resolution yields a locator, and the shared bounded reader resolves current authority again after byte/hash verification. The opt-in owned runtime qualifier composes actual handlers with the separately owned Database/Worker processes and keeps hosted admission separate; details stay in the runtime contract.
 
@@ -422,4 +422,4 @@ Release-owned final Results use separate `_shared/result_query_v2.ts` modes `sou
 
 ## P2 reporting contract preparation
 
-The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.

@@ -20,7 +20,7 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
 lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
@@ -31,7 +31,7 @@ related:
 
 # Study reporting and portable consumers
 
-P1 core remains `lca.study-api.v2` / bundle `2.0.0`. P2 has separately negotiated `lca.study-api.v3` / bundle `3.0.0` reporting operations at the same authenticated endpoint. Its concrete source schemas do not enable a producer. Until the actual Database, Worker, Edge, renderer and installed consumer are qualified together, the new runtime remains unavailable. V2 reserved P2 shapes are not silently translated into V3, and saved mutation identities retain their original version.
+P1 core remains `lca.study-api.v2` / bundle `2.0.0`. P2 has separately negotiated `lca.study-api.v3` / bundle `3.0.0` reporting operations at the same authenticated endpoint. Its producer is explicitly default-off. `STUDY_REPORTING_CONFIG` selects the bounded runtime operation/profile/template allowlists and intersects them with Database admission. `STUDY_EXPORT_SIGNING_KEY` supplies only the configured issuer/key-bound private signing material. Until the actual Database, Worker, Edge, renderer and installed consumer are qualified together, hosted admission remains unavailable. V2 reserved P2 shapes are not silently translated into V3, and saved mutation identities retain their original version.
 
 ## Portable V2 codec
 
@@ -66,3 +66,11 @@ The installed CLI verifies the complete detached package with independently trus
 ## Qualification
 
 Run portable Node/Deno outside-source tests, strict request/selection tests and `study_export_signature_test.ts` before the canonical full Edge gate. Signature tests also use Node crypto to verify WebCrypto output and exercise modified visible HTML, data, identities, keys and canonical encoding. Actual SQL/RLS/queue/producer, revocation, installed consumer, offline browser and cleanup evidence are required separately before P2 delivery. Pure schema, crypto and fixture tests do not prove those integrations.
+
+## Owned local P2 qualification
+
+`scripts/qualify-study-reporting.ts` prepares actual local OAuth/PKCE and serves the production Study handler on the receipt-owned `study894` loopback stack. Its fixed mode-0600 configuration supports `readiness`, `provision`, `oauth` and `gateway`; importing it performs no I/O. Only task-owned synthetic accounts and a real local public OAuth client participate. Database source seeding, client admission, CAS configuration and native Worker launch remain separately owned and receipt-bound. No actor/service authentication stub substitutes for GoTrue or the normal RPC adapters.
+
+Run its explicit Deno check and the ordinary canonical gate. Installed CLI login, source acquisition, native preparation/run/analysis, report claim validation, signed export and offline browser verification require actual execution receipts. Successful OAuth alone does not prove those later steps. Retain exact process/resource ownership and private credentials only for the scoped qualification; close listeners and reconcile actual DB/Storage state before removing owned auth identities.
+
+Pending intent recovery ignores only transport `requestId` when comparing semantic requests; original idempotency, actor/client and content remain bound. Freeze validates and renders the bounded final view before committing, so unsupported view size cannot produce a frozen but unexportable report. Native Worker schema/golden fixture bytes and the renderer inventory are hash-bound producer artifacts; formatting must preserve those bytes.
