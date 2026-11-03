@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
-lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'edge-functions #545: reviewed exact TIDAS SDK 0.6.0 adoption and existing consumer tests; runtime, validation policy, delivery gates and deployment authority are unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
