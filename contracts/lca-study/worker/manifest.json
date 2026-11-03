@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "lca.study-worker-consumer-source.v1",
+  "sourceRepository": "tiangong-lca/worker",
+  "sourcePath": "docs/agents/contracts/study-analysis-facts.v1.schema.json",
+  "sourceStatus": "committed",
+  "sourceCommit": "9d86877a220b9f601b9e2f0d56d26b5cb5ab7e2a",
+  "schemaSha256": "fec3beeee4342f55fc0f598519d075cdd6912cbce9fe6e14b2c2986d58d8e45a"
+}

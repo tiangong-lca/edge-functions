@@ -39,7 +39,7 @@ export const artifactReadIntentSchema = z
     artifactRef: artifactRefSchema,
   })
   .strict();
-function rpcFailure(error: { code?: string }): StudyFailure {
+export function rpcFailure(error: { code?: string }): StudyFailure {
   if (error.code === '42501') return new StudyFailure('FORBIDDEN', 403, 'rpc.permission');
   if (['28000', '28P01', 'PGRST301', 'PGRST302'].includes(error.code ?? ''))
     return new StudyFailure('AUTH_REQUIRED', 401, 'rpc.authentication');
@@ -193,20 +193,7 @@ export function createStudyRepository(
 ): StudyRepository {
   function service(signal: AbortSignal): SupabaseClient {
     if (serviceFactory) return serviceFactory(signal);
-    const fetcher: typeof fetch = async (input, init) => {
-      const response = await fetch(input, { ...init, signal });
-      const bytes = await readBounded(response, MAX_ARTIFACT_BYTES, signal);
-      return new Response(bytes, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-      });
-    };
-    return createClient(getSupabaseUrl(), getSupabaseServiceRoleKey(), {
-      db: { schema: 'api' },
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-      global: { fetch: fetcher },
-    }) as unknown as SupabaseClient;
+    return createStudyServiceClient(signal);
   }
   return {
     async dispatch(request, signal) {
@@ -248,4 +235,21 @@ export function createStudyRepository(
       return bytes;
     },
   };
+}
+
+export function createStudyServiceClient(signal: AbortSignal): SupabaseClient {
+  const fetcher: typeof fetch = async (input, init) => {
+    const response = await fetch(input, { ...init, signal });
+    const bytes = await readBounded(response, MAX_ARTIFACT_BYTES, signal);
+    return new Response(bytes, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  };
+  return createClient(getSupabaseUrl(), getSupabaseServiceRoleKey(), {
+    db: { schema: 'api' },
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { fetch: fetcher },
+  }) as unknown as SupabaseClient;
 }

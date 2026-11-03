@@ -26,12 +26,15 @@
     "deploy:portal-r0": "node ./scripts/deploy-portal-r0-fixture.cjs",
     "cleanup:portal-r0": "node ./scripts/cleanup-portal-r0-fixture.cjs",
     "probe:auth": "node ./scripts/probe-functions-auth.cjs",
-    "format": "pnpm exec prettier --write \"**/*.{cjs,js,jsx,tsx,ts,less,md,json,yml,yaml}\"",
-    "lint": "pnpm exec prettier --check \"**/*.{cjs,js,jsx,tsx,ts,less,md,json,yml,yaml}\"",
-    "qualify:stack": "node scripts/qualify-local-stack.cjs"
+    "format": "pnpm exec prettier --write \"**/*.{cjs,mjs,js,jsx,tsx,ts,less,md,json,yml,yaml}\"",
+    "lint": "pnpm exec prettier --check \"**/*.{cjs,mjs,js,jsx,tsx,ts,less,md,json,yml,yaml}\"",
+    "qualify:stack": "node scripts/qualify-local-stack.cjs",
+    "build:study-contract": "node scripts/build-study-contract.mjs"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "prettier": "3.9.10",
-    "supabase": "2.121.0"
+    "supabase": "2.121.0",
+    "zod": "4.6.7"
   }
 }

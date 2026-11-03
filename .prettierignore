@@ -11,3 +11,9 @@ Dockerfile*
 LICENSE
 .eslintcache
 *.lock
+
+# Exact independently produced renderer bytes; verify manifest instead of formatting.
+supabase/functions/_shared/study/vendor/renderer/
+# Byte-bound Worker schema and native golden artifacts retain producer hashes.
+contracts/lca-study/worker/analysis-facts.v1.schema.json
+test/fixtures/lca-study-api/v3/native/
