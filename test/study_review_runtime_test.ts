@@ -97,6 +97,7 @@ async function fixture() {
           type: 'actions',
           resource: r.resource,
           actions: ['report.view', 'review.record', 'export.request'],
+          allowedMemberRoles: [],
         });
       if (r.operation === 'report.current') return success({ type: 'reportState', value: current });
       if (committed && r.operation === 'export.request') return success(committed);
@@ -112,7 +113,8 @@ async function fixture() {
         r.operation === 'report.view' ||
         r.operation === 'export.request' ||
         r.operation === 'share.view' ||
-        r.operation === 'share.download'
+        r.operation === 'share.download' ||
+        r.operation === 'export.download'
       ) {
         const inner = structuredClone(producer);
         if (r.operation === 'report.view') {
@@ -135,16 +137,27 @@ async function fixture() {
           producerContext:
             r.operation === 'report.view' || r.operation === 'export.request' ? inner : null,
           share: r.operation.startsWith('share.') ? share : null,
-          export: r.operation.startsWith('share.') ? exported : null,
-          artifact: r.operation.startsWith('share.')
-            ? {
-                kind: 'artifactCapability',
-                studyId: producer.studyId,
-                artifactRef: r.operation === 'share.view' ? share!.projectionRef : share!.bundleRef,
-                storageBucket: 'study-artifacts',
-                storageObjectPath: `study/${producer.studyId}/${r.operation === 'share.view' ? share!.projectionRef.id : share!.bundleRef.id}/${r.operation === 'share.view' ? 'projection' : 'bundle'}.json`,
-              }
-            : null,
+          export:
+            r.operation.startsWith('share.') || r.operation === 'export.download' ? exported : null,
+          artifact:
+            r.operation === 'export.download'
+              ? {
+                  kind: 'artifactCapability',
+                  studyId: producer.studyId,
+                  artifactRef: exported!.bundleRef,
+                  storageBucket: 'study-artifacts',
+                  storageObjectPath: `study/${producer.studyId}/${exported!.bundleRef.id}/bundle.json`,
+                }
+              : r.operation.startsWith('share.')
+                ? {
+                    kind: 'artifactCapability',
+                    studyId: producer.studyId,
+                    artifactRef:
+                      r.operation === 'share.view' ? share!.projectionRef : share!.bundleRef,
+                    storageBucket: 'study-artifacts',
+                    storageObjectPath: `study/${producer.studyId}/${r.operation === 'share.view' ? share!.projectionRef.id : share!.bundleRef.id}/${r.operation === 'share.view' ? 'projection' : 'bundle'}.json`,
+                  }
+                : null,
         };
         return success({
           kind: 'studyReviewIntent',
@@ -157,7 +170,7 @@ async function fixture() {
     },
     async resolveIntent() {
       if (flags.revoked) return { ok: false, code: 'FORBIDDEN' };
-      if (committed) return success(committed);
+      if (committed && context?.operation === 'export.request') return success(committed);
       const c = structuredClone(context!);
       if (flags.wrongActor) c.actorId = u(999);
       if (flags.wrongClient) c.clientId = u(998);
@@ -499,6 +512,12 @@ Deno.test(
       },
       {
         schemaVersion: API_SCHEMA,
+        requestId: u(204),
+        operation: 'export.download',
+        exportId: u(104),
+      },
+      {
+        schemaVersion: API_SCHEMA,
         requestId: u(202),
         idempotencyKey: u(203),
         operation: 'comment.append',
@@ -515,6 +534,7 @@ Deno.test(
       [
         'qry_study_review_v1',
         'qry_study_review_v1',
+        'qry_study_review_v1',
         'cmd_study_review_v1',
         'svc_study_review_intent_resolve_v1',
         'svc_study_review_intent_consume_v1',
@@ -526,18 +546,53 @@ Deno.test(
         'Bearer actor-jwt',
         'Bearer actor-jwt',
         'Bearer actor-jwt',
+        'Bearer actor-jwt',
         'Bearer service-secret',
         'Bearer service-secret',
       ],
     );
     assertEquals(
       calls.map((c) => c.profile),
-      ['api', 'api', 'api', 'api', 'api'],
+      ['api', 'api', 'api', 'api', 'api', 'api'],
     );
-    assertEquals(calls[3].body, { p_intent_id: 'intent' });
-    assertEquals(calls[4].body, {
+    assertEquals(calls[4].body, { p_intent_id: 'intent' });
+    assertEquals(calls[5].body, {
       p_intent_id: 'intent',
       p_completion: { kind: 'validatedReviewExport' },
     });
+  },
+);
+
+Deno.test(
+  'V4 owner export download resolves only the exact immutable bundle and rechecks around I/O',
+  async () => {
+    const f = await fixture();
+    assertEquals((await f.call(f.request)).status, 200);
+    const request = {
+      schemaVersion: API_SCHEMA,
+      requestId: u(300),
+      operation: 'export.download',
+      exportId: f.producer.exportId,
+    };
+    const response = await f.call(request);
+    assertEquals(response.status, 200);
+    assertEquals(response.body.data.type, 'exportDownload');
+    assertEquals(response.body.data.export.exportId, f.producer.exportId);
+    assertEquals('share' in response.body.data, false);
+    const bytes = Uint8Array.from(atob(response.body.data.bytes), (c: string) => c.charCodeAt(0));
+    assertEquals(await sha256(bytes), f.getExport().bundleRef.contentHash);
+    const reads = f.flags.downloads;
+    assertEquals((await f.call({ ...request, requestId: u(301), exportId: u(999) })).status, 502);
+    assertEquals(f.flags.downloads, reads);
+    f.flags.revokeDuringRead = true;
+    assertEquals((await f.call({ ...request, requestId: u(302) })).status, 403);
+    const changed = await fixture();
+    assertEquals((await changed.call(changed.request)).status, 200);
+    changed.flags.changeDuringRead = true;
+    assertEquals(
+      (await changed.call({ ...request, requestId: u(303), exportId: changed.producer.exportId }))
+        .status,
+      409,
+    );
   },
 );

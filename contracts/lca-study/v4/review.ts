@@ -168,12 +168,34 @@ export const exportSchema = z
     exportId: idSchema,
     finalization: finalizationSchema,
     generatedAt: timestampSchema,
-    projectionRef: reportingArtifactRefSchema,
-    resourcesRef: reportingArtifactRefSchema,
-    bundleRef: reportingArtifactRefSchema,
+    projectionRef: reportingArtifactRefSchema.refine(
+      (v) =>
+        v.type === 'reportProjection' &&
+        v.schemaVersion === 'lca.study-report-view.v1' &&
+        v.mediaType === 'application/json',
+    ),
+    resourcesRef: reportingArtifactRefSchema.refine(
+      (v) =>
+        v.type === 'renderResources' &&
+        v.schemaVersion === 'lca.study-export-manifest.v2' &&
+        v.mediaType === 'application/json',
+    ),
+    bundleRef: reportingArtifactRefSchema.refine(
+      (v) =>
+        v.type === 'reportExportBundle' &&
+        v.schemaVersion === 'lca.study-export-bundle.v2' &&
+        v.mediaType === 'application/json',
+    ),
     receipt: exportReceiptSchema,
   })
-  .strict();
+  .strict()
+  .refine(
+    (v) =>
+      v.finalization.studyId === v.studyId &&
+      v.finalization.reportRevisionId === v.reportRevisionId &&
+      v.finalization.reportContentHash === v.reportContentHash,
+    'exact export finalization binding required',
+  );
 const envelope = { schemaVersion: z.literal(API_SCHEMA), requestId: idSchema };
 const write = { ...envelope, idempotencyKey: idSchema };
 const report = { reportRevisionId: idSchema, expectedContentHash: hashSchema };
@@ -264,6 +286,7 @@ const variants = [
     })
     .strict(),
   z.object({ ...envelope, operation: z.literal('export.read'), exportId: idSchema }).strict(),
+  z.object({ ...envelope, operation: z.literal('export.download'), exportId: idSchema }).strict(),
   z
     .object({
       ...write,

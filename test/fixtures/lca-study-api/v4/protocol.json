@@ -190,6 +190,12 @@
       "requestId": "p3-request",
       "operation": "export.read",
       "exportId": "p3-export"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-download",
+      "operation": "export.download",
+      "exportId": "p3-export"
     }
   ],
   "responses": [
@@ -213,6 +219,34 @@
           "delegationId": null,
           "authorityKind": "first_party_actor",
           "createdAt": "2026-11-03T00:00:00Z"
+        },
+        "state": {
+          "studyId": "p3-study",
+          "reportRevisionId": "p3-report",
+          "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "reportRevision": 2,
+          "authorId": "10000000-0000-4000-8000-000000000001",
+          "reviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "currentReviewIds": ["p3-review"],
+          "acceptedReviewIds": ["p3-review"],
+          "finalization": {
+            "studyId": "p3-study",
+            "reportRevisionId": "p3-report",
+            "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "finalizationId": "p3-finalization",
+            "actorId": "10000000-0000-4000-8000-000000000001",
+            "profileId": "lca.study-report-internal-review.v1",
+            "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "acceptedReviewIds": ["p3-review"],
+            "finalizedAt": "2026-11-03T00:00:00Z"
+          },
+          "acceptance": "current",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T00:00:00Z",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T00:00:00Z"
         }
       }
     },

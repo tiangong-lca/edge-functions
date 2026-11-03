@@ -220,17 +220,163 @@ Deno.test(
 );
 
 Deno.test(
-  'V4 closed service context accepts the actual synthetic Database906 resolver projection',
+  'V4 closed contracts accept actual corrected Database906 service and fresh replay projections',
   async () => {
     const { reviewContextSchema } =
       await import('../supabase/functions/_shared/study/review_context.ts');
+    const { responseDataSchema } = await import('../contracts/lca-study/v4/responses.ts');
     const fixture = await read('database-service-contexts.json');
-    const parsed = reviewContextSchema.parse(fixture['export.request'].data);
-    assertEquals(parsed.operation, 'export.request');
-    assertEquals(
-      parsed.currentState.reportContentHash,
-      parsed.producerContext!.report!.contentHash,
+    for (const [operation, wrapped] of Object.entries(fixture.contexts)) {
+      const context = reviewContextSchema.parse((wrapped as { data: unknown }).data);
+      assertEquals(context.operation, operation);
+      if (context.producerContext)
+        assertEquals(
+          context.currentState.reportContentHash,
+          context.producerContext.report!.contentHash,
+        );
+      if (operation === 'export.download') {
+        assertEquals(context.producerContext, null);
+        assertEquals(context.share, null);
+        assertEquals(context.artifact!.artifactRef, context.export!.bundleRef);
+      }
+    }
+    const responses = fixture.responses.map((wrapped: { data: unknown }) =>
+      responseDataSchema.parse(wrapped.data),
     );
-    assertEquals(parsed.currentState.finalization!.acceptedReviewIds.length, 1);
+    assertEquals(responses.length, 6);
+    const finalization = responses.find(
+      (data: any) =>
+        data.type === 'finalization' &&
+        data.value.finalizationId !== data.state.finalization.finalizationId,
+    );
+    assertEquals(
+      finalization.value.finalizationId === finalization.state.finalization.finalizationId,
+      false,
+    );
+    for (const [index, data] of responses.entries()) {
+      const base = { schemaVersion: 'lca.study-api.v4', requestId: `actual-response-${index}` };
+      const request =
+        data.type === 'review'
+          ? {
+              ...base,
+              operation: 'review.record',
+              idempotencyKey: `actual-review-${index}`,
+              reportRevisionId: data.value.reportRevisionId,
+              expectedContentHash: data.value.reportContentHash,
+              reviewClass: data.value.reviewClass,
+              decision: data.value.decision,
+              comment: data.value.comment,
+              predecessorReviewId: data.value.predecessorReviewId,
+              delegationId: data.value.delegationId,
+            }
+          : data.type === 'finalization'
+            ? {
+                ...base,
+                operation: 'report.finalize',
+                idempotencyKey: `actual-final-${index}`,
+                target: {
+                  type: 'reportRevision',
+                  id: data.value.reportRevisionId,
+                  expectedRevision: data.state.reportRevision,
+                },
+                expectedContentHash: data.value.reportContentHash,
+                expectedReviewStateHash: data.value.expectedReviewStateHash,
+                profileId: data.value.profileId,
+                acceptedReviewIds: data.value.acceptedReviewIds,
+              }
+            : { ...base, operation: 'resource.actions', resource: data.resource };
+      validateResponseForRequest(parseRequest(request), parseResponse({ ...base, ok: true, data }));
+    }
+    const roles = responses.find((data: { type: string }) => data.type === 'actions');
+    assertEquals(roles.allowedMemberRoles, ['reviewer']);
+  },
+);
+
+Deno.test(
+  'V4 replay validators retain original outcomes alongside fresh current review, finalization and delegation metadata',
+  async () => {
+    const f = await read('protocol.json');
+    const reply = (data: unknown) =>
+      parseResponse({ schemaVersion: 'lca.study-api.v4', requestId: 'p3-request', ok: true, data });
+    const review = f.requests.find((r: { operation: string }) => r.operation === 'review.record');
+    const withdrawn = {
+      ...f.currentState,
+      reviewStateHash: 'c'.repeat(64),
+      acceptedReviewIds: [],
+      acceptance: 'invalidated',
+    };
+    validateResponseForRequest(
+      parseRequest(review),
+      reply({ type: 'review', value: f.review, state: withdrawn }),
+    );
+    const finalized = f.requests.find(
+      (r: { operation: string }) => r.operation === 'report.finalize',
+    );
+    const later = {
+      ...f.finalization,
+      finalizationId: 'later-finalization',
+      profileId: 'lca.study-report-unreviewed.v1',
+      expectedReviewStateHash: 'c'.repeat(64),
+      acceptedReviewIds: [],
+    };
+    validateResponseForRequest(
+      parseRequest(finalized),
+      reply({
+        type: 'finalization',
+        value: f.finalization,
+        state: { ...withdrawn, finalization: later, acceptance: 'current' },
+      }),
+    );
+    const issue = f.requests.find(
+      (r: { operation: string }) => r.operation === 'review.delegation.issue',
+    );
+    const delegation = {
+      studyId: 'p3-study',
+      reportRevisionId: issue.reportRevisionId,
+      reportContentHash: issue.expectedContentHash,
+      delegationId: 'delegation-1',
+      actorId: f.review.actorId,
+      clientId: issue.clientId,
+      reviewClass: issue.reviewClass,
+      decision: issue.decision,
+      predecessorReviewId: issue.predecessorReviewId,
+      issuedAt: '2026-11-03T00:00:00Z',
+      expiresAt: issue.expiresAt,
+      revokedAt: '2026-11-03T00:05:00Z',
+      consumedReviewId: f.review.reviewId,
+    };
+    validateResponseForRequest(
+      parseRequest(issue),
+      reply({ type: 'delegation', value: delegation }),
+    );
+    assertEquals(operationMetadata['export.download'].kind, 'query');
+  },
+);
+
+Deno.test(
+  'V4 actions carry exact Database-provided member-role choices without consumer role inference',
+  () => {
+    const request = parseRequest({
+      schemaVersion: 'lca.study-api.v4',
+      requestId: 'roles',
+      operation: 'resource.actions',
+      resource: { type: 'study', id: 'study-1' },
+    });
+    const reply = (allowedMemberRoles: string[]) =>
+      parseResponse({
+        schemaVersion: 'lca.study-api.v4',
+        requestId: 'roles',
+        ok: true,
+        data: {
+          type: 'actions',
+          resource: { type: 'study', id: 'study-1' },
+          actions: ['member.set'],
+          allowedMemberRoles,
+        },
+      });
+    validateResponseForRequest(request, reply(['reviewer']));
+    validateResponseForRequest(request, reply(['editor', 'reviewer', 'viewer']));
+    assertThrows(() => reply(['reviewer', 'reviewer']));
+    assertThrows(() => validateResponseForRequest(request, reply([])));
   },
 );

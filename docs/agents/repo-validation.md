@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
-lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
+lastReviewedCommit: 10b50e791c33b3d513791df9ab973a179b7d76d8
+lastReviewedNote: 'Edge #550: reviewed owner export download, fresh replay state and server-provided personal reviewer/team role choices; legacy V2/V3 and export renderer bytes remain pinned. Actual integration and delivery remain separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -327,3 +327,5 @@ Run `node --test scripts/study-contract-build.test.cjs` and `deno test --config 
 ## P3 review and named-share proof
 
 Run `test/study_review_contract_test.ts` and `test/study_review_runtime_test.ts` with exact Deno, plus `scripts/study-contract-build.test.cjs`, then the canonical baseline. Preserve actual renderer HTML/projection/finalization bindings, strict version discrimination and old P2 signature verification; exact pending and committed recovery; actor/client/hash/state failures; default-off admission; and denial or state change around every Storage read/upload. The shared P2 report fixture still executes the unchanged P2 assertions. Database owns actual SQL/RLS role, review-chain, non-author, delegation expiry/revoke/one-use, cursor, source-disclosure and share-race proof. Those tests plus owned OAuth, installed CLI/browser and exact cross-repository qualification are required separately; local adapter tests do not establish them or hosted readiness.
+
+V4 owner-download corrections require exact export/bundle selection, the real SDK query route and actor/service split, current authorization around I/O and locator-free bounded bytes. Replay fixtures must retain original outcome IDs alongside refreshed review/finalization state and revoked/expired shares or consumed/revoked delegation metadata. Validate personal reviewer-only and team member-role choices from `resource.actions.allowedMemberRoles`; consumers must not infer those choices from role strings.

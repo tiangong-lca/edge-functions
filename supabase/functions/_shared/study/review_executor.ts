@@ -119,6 +119,22 @@ function assertContext(c: ReviewContext, r: ReviewRequest, actor: ActorContext) 
       c.export
     )
       throw new StudyFailure('REFERENCE_MISMATCH', 502, 'review.producer_context');
+  } else if (r.operation === 'export.download') {
+    const ex = c.export,
+      a = c.artifact;
+    if (
+      !ex ||
+      !a ||
+      c.producerContext ||
+      c.share ||
+      ex.exportId !== r.exportId ||
+      ex.studyId !== s.studyId ||
+      ex.reportRevisionId !== s.reportRevisionId ||
+      ex.reportContentHash !== s.reportContentHash ||
+      a.studyId !== ex.studyId ||
+      !sameJson(a.artifactRef, ex.bundleRef)
+    )
+      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'review.export_download_context');
   } else if (r.operation === 'share.view' || r.operation === 'share.download') {
     const share = c.share,
       ex = c.export,
@@ -207,6 +223,9 @@ export async function executeReview(
     return result(request, {
       ...actions,
       actions: actions.actions.filter((a) => runtime.operations.includes(a)),
+      allowedMemberRoles: runtime.operations.includes('member.set')
+        ? actions.allowedMemberRoles
+        : [],
     });
   }
   const parsed = reviewIntentSchema.safeParse(data);
@@ -252,7 +271,11 @@ export async function executeReview(
       await recheck();
       return bytes;
     };
-    if (request.operation === 'share.view' || request.operation === 'share.download') {
+    if (
+      request.operation === 'share.view' ||
+      request.operation === 'share.download' ||
+      request.operation === 'export.download'
+    ) {
       const bytes = await read(context.artifact!),
         ex = context.export!,
         share = context.share!;
@@ -281,15 +304,22 @@ export async function executeReview(
         manifest = exportManifestSchema.parse(parseCanonicalBytes(bundle.manifestBytes));
       if (
         manifest.exportId !== ex.exportId ||
-        manifest.reportRevisionId !== share.reportRevisionId ||
-        manifest.reportContentHash !== share.reportContentHash ||
-        manifest.studyId !== share.studyId ||
+        manifest.reportRevisionId !== ex.reportRevisionId ||
+        manifest.reportContentHash !== ex.reportContentHash ||
+        manifest.studyId !== ex.studyId ||
         !sameJson(manifest.finalization, ex.finalization) ||
         !sameJson(bundle.receipt, ex.receipt)
       )
         throw new StudyFailure('REFERENCE_MISMATCH', 502, 'review.shared_download');
       await recheck();
-      return result(request, { type: 'download', share, encoding: 'base64', bytes: base64(bytes) });
+      return request.operation === 'export.download'
+        ? result(request, {
+            type: 'exportDownload',
+            export: ex,
+            encoding: 'base64',
+            bytes: base64(bytes),
+          })
+        : result(request, { type: 'download', share, encoding: 'base64', bytes: base64(bytes) });
     }
     const p = context.producerContext!,
       inputs = new Map<string, Uint8Array>();

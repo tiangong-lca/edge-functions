@@ -12,7 +12,13 @@ export const reviewIntentSchema = z
   .object({
     kind: z.literal('studyReviewIntent'),
     intentId: idSchema,
-    operation: z.enum(['report.view', 'export.request', 'share.view', 'share.download']),
+    operation: z.enum([
+      'report.view',
+      'export.request',
+      'export.download',
+      'share.view',
+      'share.download',
+    ]),
     expiresAt: timestampSchema,
   })
   .strict();
@@ -20,7 +26,13 @@ export const reviewContextSchema = z
   .object({
     kind: z.literal('studyReviewContext'),
     intentId: idSchema,
-    operation: z.enum(['report.view', 'export.request', 'share.view', 'share.download']),
+    operation: z.enum([
+      'report.view',
+      'export.request',
+      'export.download',
+      'share.view',
+      'share.download',
+    ]),
     expiresAt: timestampSchema,
     actorId: idSchema,
     clientId: idSchema.nullable(),

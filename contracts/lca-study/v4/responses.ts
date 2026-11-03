@@ -24,6 +24,10 @@ export const responseDataSchema = z.union([
       type: z.literal('actions'),
       resource: resourceSelectorSchema,
       actions: z.array(z.enum(OPERATIONS)).max(OPERATIONS.length),
+      allowedMemberRoles: z
+        .array(z.enum(['editor', 'reviewer', 'viewer']))
+        .max(3)
+        .refine((v) => new Set(v).size === v.length, 'unique roles required'),
     })
     .strict(),
   z
@@ -36,7 +40,7 @@ export const responseDataSchema = z.union([
     })
     .strict(),
   z.object({ type: z.literal('comment'), value: commentSchema }).strict(),
-  z.object({ type: z.literal('review'), value: reviewSchema }).strict(),
+  z.object({ type: z.literal('review'), value: reviewSchema, state: reportStateSchema }).strict(),
   z.object({ type: z.literal('delegation'), value: delegationSchema }).strict(),
   z
     .object({
@@ -65,6 +69,14 @@ export const responseDataSchema = z.union([
       view: reportViewSchema,
       state: reportStateSchema,
       share: shareSchema.nullable(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('exportDownload'),
+      export: exportSchema,
+      encoding: z.literal('base64'),
+      bytes: z.string().max(5592408).refine(isCanonicalBase64),
     })
     .strict(),
   z

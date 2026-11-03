@@ -1,111 +1,172 @@
 {
-  "export.request": {
-    "ok": true,
-    "data": {
-      "kind": "studyReviewContext",
-      "share": null,
-      "export": null,
-      "actorId": "89400000-0000-4000-8000-000000000001",
-      "request": {
-        "operation": "export.request",
-        "requestId": "review-export",
-        "schemaVersion": "lca.study-api.v4",
-        "finalizationId": "3be5e77a-9600-455f-942c-7e97d00ef142",
-        "idempotencyKey": "review-export",
-        "rendererVersion": "1.0.0",
-        "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-        "viewModelVersion": "lca.study-report-view.v1",
-        "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "expectedReviewStateHash": "2d2aa104d048156e451dcc32f5a312d3a8f8f56c505ab9948530041bb1365796"
-      },
-      "artifact": null,
-      "clientId": null,
-      "intentId": "d7ef3414-54d6-4a68-8010-9650963559af",
-      "expiresAt": "2026-11-03T15:28:36.616207+00:00",
-      "operation": "export.request",
-      "currentState": {
-        "studyId": "89400000-0000-4000-8000-000000000010",
-        "authorId": "89400000-0000-4000-8000-000000000001",
-        "validity": {
-          "status": "current",
-          "checkedAt": "2026-11-03T15:26:36.444786+00:00",
-          "reasonCodes": []
-        },
-        "checkedAt": "2026-11-03T15:26:36.616207+00:00",
-        "acceptance": "current",
-        "finalization": {
-          "actorId": "89400000-0000-4000-8000-000000000001",
-          "studyId": "89400000-0000-4000-8000-000000000010",
-          "profileId": "lca.study-report-internal-review.v1",
-          "finalizedAt": "2026-11-03T15:26:36.607407+00:00",
-          "finalizationId": "3be5e77a-9600-455f-942c-7e97d00ef142",
+  "contexts": {
+    "export.request": {
+      "ok": true,
+      "data": {
+        "kind": "studyReviewContext",
+        "share": null,
+        "export": null,
+        "actorId": "89400000-0000-4000-8000-000000000001",
+        "request": {
+          "operation": "export.request",
+          "requestId": "review-export",
+          "schemaVersion": "lca.study-api.v4",
+          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+          "idempotencyKey": "review-export",
+          "rendererVersion": "1.0.0",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["877f9768-c7ac-4289-ab65-15895e4523a6"],
-          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "expectedReviewStateHash": "2d2aa104d048156e451dcc32f5a312d3a8f8f56c505ab9948530041bb1365796"
+          "viewModelVersion": "lca.study-report-view.v1",
+          "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
         },
-        "reportRevision": 3,
-        "reviewStateHash": "2d2aa104d048156e451dcc32f5a312d3a8f8f56c505ab9948530041bb1365796",
-        "currentReviewIds": ["877f9768-c7ac-4289-ab65-15895e4523a6"],
-        "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-        "acceptedReviewIds": ["877f9768-c7ac-4289-ab65-15895e4523a6"],
-        "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-      },
-      "producerContext": {
-        "kind": "reportCommandContext",
-        "runs": [
-          {
-            "run": {
-              "runId": "90400000-0000-4000-8000-000000000012",
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "engineId": "solver-worker",
-              "validity": {
-                "status": "current",
-                "checkedAt": "2026-11-03T15:26:36.444786+00:00",
-                "reasonCodes": []
+        "artifact": null,
+        "clientId": null,
+        "intentId": "0bdf7e82-6fe0-4b81-989b-49de7cc9ef2c",
+        "expiresAt": "2026-11-03T15:55:05.948892+00:00",
+        "operation": "export.request",
+        "currentState": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.948892+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "producerContext": {
+          "kind": "reportCommandContext",
+          "runs": [
+            {
+              "run": {
+                "runId": "90400000-0000-4000-8000-000000000012",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "engineId": "solver-worker",
+                "validity": {
+                  "status": "current",
+                  "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+                  "reasonCodes": []
+                },
+                "execution": {
+                  "jobId": "90400000-0000-4000-8000-000000000010",
+                  "status": "completed"
+                },
+                "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "profileId": "lca.study-explicit-v1",
+                "resultRef": {
+                  "id": "90400000-0000-4000-8000-000000000020",
+                  "type": "runResult",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-result.v1"
+                },
+                "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+                "effectiveModelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+                "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+                "calculationContractRef": {
+                  "kind": "calculation_contract",
+                  "schema": "lca.calculation-contract.v1",
+                  "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+                }
               },
-              "execution": {
-                "jobId": "90400000-0000-4000-8000-000000000010",
-                "status": "completed"
+              "revision": {
+                "status": "frozen",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "modelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "revision": 1,
+                "definition": {
+                  "goal": "Synthetic test only",
+                  "methodRefs": [
+                    {
+                      "id": "method-1",
+                      "type": "datasetRevision",
+                      "version": "01.00.000",
+                      "datasetType": "lciamethod"
+                    }
+                  ],
+                  "assumptions": [],
+                  "functionalUnit": {
+                    "unit": "kg",
+                    "amount": "1",
+                    "referenceFlowId": "flow-1"
+                  },
+                  "systemBoundary": "explicit tested links only"
+                },
+                "revisionId": "90400000-0000-4000-8000-000000000001",
+                "validation": "passed",
+                "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                "parentRevisionId": null,
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021"
               },
-              "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-              "profileId": "lca.study-explicit-v1",
-              "resultRef": {
-                "id": "90400000-0000-4000-8000-000000000020",
-                "type": "runResult",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-result.v1"
+              "scenario": {
+                "status": "frozen",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "revision": 1,
+                "overrides": [],
+                "scenarioId": "48c62c42-130e-41c6-b4be-e42d1e078901",
+                "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+                "effectiveModelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+                "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+                "parentScenarioRevisionId": null
               },
-              "studyRevisionId": "90400000-0000-4000-8000-000000000001",
-              "effectiveModelRef": {
-                "type": "modelRevision",
-                "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                "digestScope": "worker_prepared_model",
-                "modelRevisionId": "model-894"
-              },
-              "modelPreparationId": "89400000-0000-4000-8000-000000000021",
-              "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
-              "calculationContractRef": {
-                "kind": "calculation_contract",
-                "schema": "lca.calculation-contract.v1",
-                "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
-              }
-            },
-            "revision": {
-              "status": "frozen",
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "modelRef": {
-                "type": "modelRevision",
-                "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                "digestScope": "worker_prepared_model",
-                "modelRevisionId": "model-894"
-              },
-              "revision": 1,
-              "definition": {
-                "goal": "Synthetic test only",
+              "preparation": {
+                "source": {
+                  "type": "modelSourceSnapshot",
+                  "snapshotId": "89400000-0000-4000-8000-000000000050",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256"
+                },
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "modelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "execution": {
+                  "jobId": "89400000-0000-4000-8000-000000000031",
+                  "status": "completed"
+                },
+                "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "profileId": "lca.study-explicit-v1",
                 "methodRefs": [
                   {
                     "id": "method-1",
@@ -114,251 +175,1058 @@
                     "datasetType": "lciamethod"
                   }
                 ],
-                "assumptions": [],
-                "functionalUnit": {
-                  "unit": "kg",
-                  "amount": "1",
-                  "referenceFlowId": "flow-1"
+                "preparationId": "89400000-0000-4000-8000-000000000021",
+                "inputArtifactRef": {
+                  "id": "89400000-0000-4000-8000-000000000061",
+                  "type": "modelInput",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-prepared-input.v1"
                 },
-                "systemBoundary": "explicit tested links only"
-              },
-              "revisionId": "90400000-0000-4000-8000-000000000001",
-              "validation": "passed",
-              "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-              "parentRevisionId": null,
-              "modelPreparationId": "89400000-0000-4000-8000-000000000021"
-            },
-            "scenario": {
-              "status": "frozen",
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "revision": 1,
-              "overrides": [],
-              "scenarioId": "1d03e952-bb58-4297-9645-9878238f1047",
-              "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-              "studyRevisionId": "90400000-0000-4000-8000-000000000001",
-              "effectiveModelRef": {
-                "type": "modelRevision",
-                "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                "digestScope": "worker_prepared_model",
-                "modelRevisionId": "model-894"
-              },
-              "modelPreparationId": "89400000-0000-4000-8000-000000000021",
-              "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
-              "parentScenarioRevisionId": null
-            },
-            "preparation": {
-              "source": {
-                "type": "modelSourceSnapshot",
-                "snapshotId": "89400000-0000-4000-8000-000000000050",
-                "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "digestScope": "artifact_bytes_sha256"
-              },
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "modelRef": {
-                "type": "modelRevision",
-                "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-                "digestScope": "worker_prepared_model",
-                "modelRevisionId": "model-894"
-              },
-              "execution": {
-                "jobId": "89400000-0000-4000-8000-000000000031",
-                "status": "completed"
-              },
-              "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-              "profileId": "lca.study-explicit-v1",
-              "methodRefs": [
-                {
-                  "id": "method-1",
-                  "type": "datasetRevision",
-                  "version": "01.00.000",
-                  "datasetType": "lciamethod"
+                "calculationContractRef": {
+                  "kind": "calculation_contract",
+                  "schema": "lca.calculation-contract.v1",
+                  "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
                 }
-              ],
-              "preparationId": "89400000-0000-4000-8000-000000000021",
-              "inputArtifactRef": {
-                "id": "89400000-0000-4000-8000-000000000061",
-                "type": "modelInput",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-prepared-input.v1"
               },
-              "calculationContractRef": {
-                "kind": "calculation_contract",
-                "schema": "lca.calculation-contract.v1",
-                "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+              "resultArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "90400000-0000-4000-8000-000000000020",
+                  "type": "runResult",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-result.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000020/result.json"
+              },
+              "preparedArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "89400000-0000-4000-8000-000000000061",
+                  "type": "modelInput",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-prepared-input.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/89400000-0000-4000-8000-000000000061/input.json"
               }
-            },
-            "resultArtifact": {
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "artifactRef": {
-                "id": "90400000-0000-4000-8000-000000000020",
-                "type": "runResult",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-result.v1"
-              },
-              "storageBucket": "study-artifacts",
-              "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000020/result.json"
-            },
-            "preparedArtifact": {
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "artifactRef": {
-                "id": "89400000-0000-4000-8000-000000000061",
-                "type": "modelInput",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-prepared-input.v1"
-              },
-              "storageBucket": "study-artifacts",
-              "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/89400000-0000-4000-8000-000000000061/input.json"
-            }
-          }
-        ],
-        "report": {
-          "runIds": ["90400000-0000-4000-8000-000000000012"],
-          "status": "frozen",
-          "studyId": "89400000-0000-4000-8000-000000000010",
-          "authorId": "89400000-0000-4000-8000-000000000001",
-          "revision": 3,
-          "factsRefs": [
-            {
-              "id": "90400000-0000-4000-8000-000000000060",
-              "type": "analysisFacts",
-              "byteSize": 2,
-              "mediaType": "application/json",
-              "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-              "digestScope": "artifact_bytes_sha256",
-              "schemaVersion": "lca.study-analysis-facts.v1"
             }
           ],
-          "contentRef": {
-            "id": "90600000-0000-4000-8000-000000000001",
-            "type": "reportContent",
+          "report": {
+            "runIds": ["90400000-0000-4000-8000-000000000012"],
+            "status": "frozen",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "authorId": "89400000-0000-4000-8000-000000000001",
+            "revision": 3,
+            "factsRefs": [
+              {
+                "id": "90400000-0000-4000-8000-000000000060",
+                "type": "analysisFacts",
+                "byteSize": 2,
+                "mediaType": "application/json",
+                "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                "digestScope": "artifact_bytes_sha256",
+                "schemaVersion": "lca.study-analysis-facts.v1"
+              }
+            ],
+            "contentRef": {
+              "id": "90600000-0000-4000-8000-000000000001",
+              "type": "reportContent",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-report-content.v1"
+            },
+            "templateId": "lca.study-report.v1",
+            "analysisIds": ["5d0c8307-2f32-4d6f-9807-11a9834e781d"],
+            "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "finalization": {
+              "status": "not_finalized",
+              "profileId": "lca.study-report-unreviewed.v1",
+              "reviewIds": [],
+              "finalizedAt": null,
+              "reviewRequirement": "none"
+            },
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "validitySnapshot": {
+              "status": "current",
+              "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+              "reasonCodes": []
+            },
+            "parentReportRevisionId": null
+          },
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "request": {
+            "operation": "export.request",
+            "requestId": "review-export",
+            "schemaVersion": "lca.study-api.v3",
+            "idempotencyKey": "review-export",
+            "rendererVersion": "1.0.0",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "viewModelVersion": "lca.study-report-view.v1",
+            "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "analyses": [
+            {
+              "analysis": {
+                "config": {
+                  "kind": "contribution",
+                  "runIds": ["90400000-0000-4000-8000-000000000012"],
+                  "schemaVersion": "lca.study-analysis-config.v1"
+                },
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "factsRef": {
+                  "id": "90400000-0000-4000-8000-000000000060",
+                  "type": "analysisFacts",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-analysis-facts.v1"
+                },
+                "execution": {
+                  "jobId": "8b79f14e-9d42-42ae-a693-ba3c1a1f0a9e",
+                  "status": "completed"
+                },
+                "profileId": "lca.study-analysis-explicit-v1",
+                "analysisId": "5d0c8307-2f32-4d6f-9807-11a9834e781d",
+                "configHash": "654479f22a14500c936ec8ed9e46ed454d85e7353fc63a3977255871bea76dfc",
+                "comparability": {
+                  "status": "not_assessed",
+                  "reasonCodes": ["comparison_not_requested"]
+                }
+              },
+              "factsArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "90400000-0000-4000-8000-000000000060",
+                  "type": "analysisFacts",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-analysis-facts.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000060/facts.json"
+              }
+            }
+          ],
+          "clientId": null,
+          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "intentId": "0bdf7e82-6fe0-4b81-989b-49de7cc9ef2c",
+          "expiresAt": "2026-11-03T15:55:05.948892+00:00",
+          "operation": "export.request",
+          "grantEpoch": 4,
+          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
+          "exportProfile": {
+            "keyId": "study906-key",
+            "issuerId": "study906-test",
+            "policyId": "lca.study-report-disclosure.v1",
+            "rendererVersion": "1.0.0",
+            "viewModelVersion": "lca.study-report-view.v1",
+            "rendererArtifactHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "contentArtifact": {
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "artifactRef": {
+              "id": "90600000-0000-4000-8000-000000000001",
+              "type": "reportContent",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-report-content.v1"
+            },
+            "storageBucket": "study-artifacts",
+            "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90600000-0000-4000-8000-000000000001/content.json"
+          },
+          "bundleArtifactId": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+          "factsBindingHash": "dfc705a3e2c11bff1b1bb7249ccc6db3eb7d0f6851132affaf5fc96c56cd5277",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "contentArtifactId": null,
+          "resourcesArtifactId": "061c1214-fa4d-4538-b593-92edb4bb4d89",
+          "projectionArtifactId": "51d012be-9a07-4d78-9447-0bac908d0375",
+          "disclosureContextHash": "4511b1cc7c307b03b6508a3ab4149002722582a7ec663823f25e0be362f57c2f"
+        }
+      }
+    },
+    "export.download": {
+      "ok": true,
+      "data": {
+        "kind": "studyReviewContext",
+        "share": null,
+        "export": {
+          "receipt": {
+            "keyId": "study906-key",
+            "algorithm": "Ed25519",
+            "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "manifestHash": "42579d740acebfe872ced40ea427be84ee79aa338319337075220544a9a67130",
+            "schemaVersion": "lca.study-export-receipt.v2"
+          },
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "bundleRef": {
+            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
-            "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             "digestScope": "artifact_bytes_sha256",
-            "schemaVersion": "lca.study-report-content.v1"
+            "schemaVersion": "lca.study-export-bundle.v2"
           },
-          "templateId": "lca.study-report.v1",
-          "analysisIds": ["b05a26f6-c044-46b0-a434-1db431c1a38f"],
-          "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
           "finalization": {
-            "status": "not_finalized",
-            "profileId": "lca.study-report-unreviewed.v1",
-            "reviewIds": [],
-            "finalizedAt": null,
-            "reviewRequirement": "none"
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "resourcesRef": {
+            "id": "061c1214-fa4d-4538-b593-92edb4bb4d89",
+            "type": "renderResources",
+            "byteSize": 1761,
+            "mediaType": "application/json",
+            "contentHash": "aab2f31e9fbaada626fa5d9dc109d713ce0dd927392deba70113847cc500431e",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-export-manifest.v2"
+          },
+          "projectionRef": {
+            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "type": "reportProjection",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-report-view.v1"
           },
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "validitySnapshot": {
-            "status": "current",
-            "checkedAt": "2026-11-03T15:26:36.444786+00:00",
-            "reasonCodes": []
-          },
-          "parentReportRevisionId": null
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "actorId": "89400000-0000-4000-8000-000000000001",
         "request": {
-          "operation": "export.request",
-          "requestId": "review-export",
-          "schemaVersion": "lca.study-api.v3",
-          "idempotencyKey": "review-export",
-          "rendererVersion": "1.0.0",
-          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "viewModelVersion": "lca.study-report-view.v1",
-          "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "operation": "export.download",
+          "requestId": "request",
+          "schemaVersion": "lca.study-api.v4"
         },
-        "studyId": "89400000-0000-4000-8000-000000000010",
-        "analyses": [
-          {
-            "analysis": {
-              "config": {
-                "kind": "contribution",
-                "runIds": ["90400000-0000-4000-8000-000000000012"],
-                "schemaVersion": "lca.study-analysis-config.v1"
-              },
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "factsRef": {
-                "id": "90400000-0000-4000-8000-000000000060",
-                "type": "analysisFacts",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-analysis-facts.v1"
-              },
-              "execution": {
-                "jobId": "4de0758f-d39a-4430-832c-d96deb728441",
-                "status": "completed"
-              },
-              "profileId": "lca.study-analysis-explicit-v1",
-              "analysisId": "b05a26f6-c044-46b0-a434-1db431c1a38f",
-              "configHash": "654479f22a14500c936ec8ed9e46ed454d85e7353fc63a3977255871bea76dfc",
-              "comparability": {
-                "status": "not_assessed",
-                "reasonCodes": ["comparison_not_requested"]
-              }
-            },
-            "factsArtifact": {
-              "studyId": "89400000-0000-4000-8000-000000000010",
-              "artifactRef": {
-                "id": "90400000-0000-4000-8000-000000000060",
-                "type": "analysisFacts",
-                "byteSize": 2,
-                "mediaType": "application/json",
-                "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-                "digestScope": "artifact_bytes_sha256",
-                "schemaVersion": "lca.study-analysis-facts.v1"
-              },
-              "storageBucket": "study-artifacts",
-              "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000060/facts.json"
-            }
-          }
-        ],
-        "clientId": null,
-        "exportId": "6751ff75-c920-469e-87bf-03fc223921e5",
-        "intentId": "d7ef3414-54d6-4a68-8010-9650963559af",
-        "expiresAt": "2026-11-03T15:28:36.616207+00:00",
-        "operation": "export.request",
-        "grantEpoch": 4,
-        "generatedAt": "2026-11-03T15:26:36.616207+00:00",
-        "exportProfile": {
-          "keyId": "study906-key",
-          "issuerId": "study906-test",
-          "policyId": "lca.study-report-disclosure.v1",
-          "rendererVersion": "1.0.0",
-          "viewModelVersion": "lca.study-report-view.v1",
-          "rendererArtifactHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        },
-        "contentArtifact": {
+        "artifact": {
+          "kind": "artifactCapability",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "artifactRef": {
-            "id": "90600000-0000-4000-8000-000000000001",
-            "type": "reportContent",
+            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
-            "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             "digestScope": "artifact_bytes_sha256",
-            "schemaVersion": "lca.study-report-content.v1"
+            "schemaVersion": "lca.study-export-bundle.v2"
           },
           "storageBucket": "study-artifacts",
-          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90600000-0000-4000-8000-000000000001/content.json"
+          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb/bundle.json"
         },
-        "bundleArtifactId": "ed9ff38e-aebc-46fd-a53f-36418f346837",
-        "factsBindingHash": "dfc705a3e2c11bff1b1bb7249ccc6db3eb7d0f6851132affaf5fc96c56cd5277",
-        "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-        "contentArtifactId": null,
-        "resourcesArtifactId": "c7fb58f6-cedd-4d57-a8e3-2af2963bfd77",
-        "projectionArtifactId": "e85b4236-8ec7-4710-b622-4fd3ae116b7a",
-        "disclosureContextHash": "f859bb6b08a61eaa741b2e0cf39cb22e7c7fc227f7dee3a08164271de3c5425b"
+        "clientId": null,
+        "intentId": "e5fb9670-a53a-4e2f-a1ff-3675675de1c6",
+        "expiresAt": "2026-11-03T15:55:05.983214+00:00",
+        "operation": "export.download",
+        "currentState": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.983214+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "producerContext": null
+      }
+    },
+    "report.view": {
+      "ok": true,
+      "data": {
+        "kind": "studyReviewContext",
+        "share": null,
+        "export": null,
+        "actorId": "89400000-0000-4000-8000-000000000002",
+        "request": {
+          "operation": "report.view",
+          "requestId": "request",
+          "schemaVersion": "lca.study-api.v4",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "artifact": null,
+        "clientId": null,
+        "intentId": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
+        "expiresAt": "2026-11-03T15:55:05.83259+00:00",
+        "operation": "report.view",
+        "currentState": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.83259+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
+            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d",
+          "currentReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "producerContext": {
+          "kind": "reportCommandContext",
+          "runs": [
+            {
+              "run": {
+                "runId": "90400000-0000-4000-8000-000000000012",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "engineId": "solver-worker",
+                "validity": {
+                  "status": "current",
+                  "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+                  "reasonCodes": []
+                },
+                "execution": {
+                  "jobId": "90400000-0000-4000-8000-000000000010",
+                  "status": "completed"
+                },
+                "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "profileId": "lca.study-explicit-v1",
+                "resultRef": {
+                  "id": "90400000-0000-4000-8000-000000000020",
+                  "type": "runResult",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-result.v1"
+                },
+                "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+                "effectiveModelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+                "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+                "calculationContractRef": {
+                  "kind": "calculation_contract",
+                  "schema": "lca.calculation-contract.v1",
+                  "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+                }
+              },
+              "revision": {
+                "status": "frozen",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "modelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "revision": 1,
+                "definition": {
+                  "goal": "Synthetic test only",
+                  "methodRefs": [
+                    {
+                      "id": "method-1",
+                      "type": "datasetRevision",
+                      "version": "01.00.000",
+                      "datasetType": "lciamethod"
+                    }
+                  ],
+                  "assumptions": [],
+                  "functionalUnit": {
+                    "unit": "kg",
+                    "amount": "1",
+                    "referenceFlowId": "flow-1"
+                  },
+                  "systemBoundary": "explicit tested links only"
+                },
+                "revisionId": "90400000-0000-4000-8000-000000000001",
+                "validation": "passed",
+                "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                "parentRevisionId": null,
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021"
+              },
+              "scenario": {
+                "status": "frozen",
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "revision": 1,
+                "overrides": [],
+                "scenarioId": "48c62c42-130e-41c6-b4be-e42d1e078901",
+                "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+                "effectiveModelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+                "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+                "parentScenarioRevisionId": null
+              },
+              "preparation": {
+                "source": {
+                  "type": "modelSourceSnapshot",
+                  "snapshotId": "89400000-0000-4000-8000-000000000050",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256"
+                },
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "modelRef": {
+                  "type": "modelRevision",
+                  "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "digestScope": "worker_prepared_model",
+                  "modelRevisionId": "model-894"
+                },
+                "execution": {
+                  "jobId": "89400000-0000-4000-8000-000000000031",
+                  "status": "completed"
+                },
+                "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "profileId": "lca.study-explicit-v1",
+                "methodRefs": [
+                  {
+                    "id": "method-1",
+                    "type": "datasetRevision",
+                    "version": "01.00.000",
+                    "datasetType": "lciamethod"
+                  }
+                ],
+                "preparationId": "89400000-0000-4000-8000-000000000021",
+                "inputArtifactRef": {
+                  "id": "89400000-0000-4000-8000-000000000061",
+                  "type": "modelInput",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-prepared-input.v1"
+                },
+                "calculationContractRef": {
+                  "kind": "calculation_contract",
+                  "schema": "lca.calculation-contract.v1",
+                  "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+                }
+              },
+              "resultArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "90400000-0000-4000-8000-000000000020",
+                  "type": "runResult",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-result.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000020/result.json"
+              },
+              "preparedArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "89400000-0000-4000-8000-000000000061",
+                  "type": "modelInput",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-prepared-input.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/89400000-0000-4000-8000-000000000061/input.json"
+              }
+            }
+          ],
+          "report": {
+            "runIds": ["90400000-0000-4000-8000-000000000012"],
+            "status": "frozen",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "authorId": "89400000-0000-4000-8000-000000000001",
+            "revision": 3,
+            "factsRefs": [
+              {
+                "id": "90400000-0000-4000-8000-000000000060",
+                "type": "analysisFacts",
+                "byteSize": 2,
+                "mediaType": "application/json",
+                "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                "digestScope": "artifact_bytes_sha256",
+                "schemaVersion": "lca.study-analysis-facts.v1"
+              }
+            ],
+            "contentRef": {
+              "id": "90600000-0000-4000-8000-000000000001",
+              "type": "reportContent",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-report-content.v1"
+            },
+            "templateId": "lca.study-report.v1",
+            "analysisIds": ["5d0c8307-2f32-4d6f-9807-11a9834e781d"],
+            "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "finalization": {
+              "status": "not_finalized",
+              "profileId": "lca.study-report-unreviewed.v1",
+              "reviewIds": [],
+              "finalizedAt": null,
+              "reviewRequirement": "none"
+            },
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "validitySnapshot": {
+              "status": "current",
+              "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+              "reasonCodes": []
+            },
+            "parentReportRevisionId": null
+          },
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "request": {
+            "operation": "export.request",
+            "requestId": "request",
+            "schemaVersion": "lca.study-api.v3",
+            "idempotencyKey": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
+            "rendererVersion": "1.0.0",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "viewModelVersion": "lca.study-report-view.v1",
+            "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "analyses": [
+            {
+              "analysis": {
+                "config": {
+                  "kind": "contribution",
+                  "runIds": ["90400000-0000-4000-8000-000000000012"],
+                  "schemaVersion": "lca.study-analysis-config.v1"
+                },
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "factsRef": {
+                  "id": "90400000-0000-4000-8000-000000000060",
+                  "type": "analysisFacts",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-analysis-facts.v1"
+                },
+                "execution": {
+                  "jobId": "8b79f14e-9d42-42ae-a693-ba3c1a1f0a9e",
+                  "status": "completed"
+                },
+                "profileId": "lca.study-analysis-explicit-v1",
+                "analysisId": "5d0c8307-2f32-4d6f-9807-11a9834e781d",
+                "configHash": "654479f22a14500c936ec8ed9e46ed454d85e7353fc63a3977255871bea76dfc",
+                "comparability": {
+                  "status": "not_assessed",
+                  "reasonCodes": ["comparison_not_requested"]
+                }
+              },
+              "factsArtifact": {
+                "studyId": "89400000-0000-4000-8000-000000000010",
+                "artifactRef": {
+                  "id": "90400000-0000-4000-8000-000000000060",
+                  "type": "analysisFacts",
+                  "byteSize": 2,
+                  "mediaType": "application/json",
+                  "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+                  "digestScope": "artifact_bytes_sha256",
+                  "schemaVersion": "lca.study-analysis-facts.v1"
+                },
+                "storageBucket": "study-artifacts",
+                "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000060/facts.json"
+              }
+            }
+          ],
+          "clientId": null,
+          "exportId": null,
+          "intentId": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
+          "expiresAt": "2026-11-03T15:55:05.83259+00:00",
+          "operation": "export.request",
+          "grantEpoch": 4,
+          "generatedAt": "2026-11-03T15:53:05.83259+00:00",
+          "exportProfile": {
+            "keyId": "study906-key",
+            "issuerId": "study906-test",
+            "policyId": "lca.study-report-disclosure.v1",
+            "rendererVersion": "1.0.0",
+            "viewModelVersion": "lca.study-report-view.v1",
+            "rendererArtifactHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "contentArtifact": {
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "artifactRef": {
+              "id": "90600000-0000-4000-8000-000000000001",
+              "type": "reportContent",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-report-content.v1"
+            },
+            "storageBucket": "study-artifacts",
+            "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90600000-0000-4000-8000-000000000001/content.json"
+          },
+          "bundleArtifactId": null,
+          "factsBindingHash": "dfc705a3e2c11bff1b1bb7249ccc6db3eb7d0f6851132affaf5fc96c56cd5277",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "contentArtifactId": null,
+          "resourcesArtifactId": null,
+          "projectionArtifactId": null,
+          "disclosureContextHash": "6524a7d85fa5b0b42d6de4621647e04f532ab3cf22a6af012ee97ddb0964beb5"
+        }
+      }
+    },
+    "share.view": {
+      "ok": true,
+      "data": {
+        "kind": "studyReviewContext",
+        "share": {
+          "status": "active",
+          "shareId": "4a8db367-34ce-4d69-8389-67693a5ba982",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "issuerId": "89400000-0000-4000-8000-000000000001",
+          "bundleRef": {
+            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "type": "reportExportBundle",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-export-bundle.v2"
+          },
+          "createdAt": "2026-11-03T15:53:05.993333+00:00",
+          "expiresAt": "2026-11-03T16:53:05.988806+00:00",
+          "revokedAt": null,
+          "grantEpoch": 4,
+          "recipientId": "89400000-0000-4000-8000-000000000003",
+          "projectionRef": {
+            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "type": "reportProjection",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-report-view.v1"
+          },
+          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "disclosurePolicyId": "lca.study-report-summary-share.v1",
+          "disclosureContextHash": "6f10441128239c6a75236afad0e43764df614baa36a322297ef60d819899b706"
+        },
+        "export": {
+          "receipt": {
+            "keyId": "study906-key",
+            "algorithm": "Ed25519",
+            "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "manifestHash": "42579d740acebfe872ced40ea427be84ee79aa338319337075220544a9a67130",
+            "schemaVersion": "lca.study-export-receipt.v2"
+          },
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "bundleRef": {
+            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "type": "reportExportBundle",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-export-bundle.v2"
+          },
+          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "resourcesRef": {
+            "id": "061c1214-fa4d-4538-b593-92edb4bb4d89",
+            "type": "renderResources",
+            "byteSize": 1761,
+            "mediaType": "application/json",
+            "contentHash": "aab2f31e9fbaada626fa5d9dc109d713ce0dd927392deba70113847cc500431e",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-export-manifest.v2"
+          },
+          "projectionRef": {
+            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "type": "reportProjection",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-report-view.v1"
+          },
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "actorId": "89400000-0000-4000-8000-000000000003",
+        "request": {
+          "shareId": "4a8db367-34ce-4d69-8389-67693a5ba982",
+          "operation": "share.view",
+          "requestId": "request",
+          "schemaVersion": "lca.study-api.v4"
+        },
+        "artifact": {
+          "kind": "artifactCapability",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "artifactRef": {
+            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "type": "reportProjection",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-report-view.v1"
+          },
+          "storageBucket": "study-artifacts",
+          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/51d012be-9a07-4d78-9447-0bac908d0375/projection.json"
+        },
+        "clientId": null,
+        "intentId": "5097852f-6c3b-474b-8231-aad3a81ef64c",
+        "expiresAt": "2026-11-03T15:55:06.012475+00:00",
+        "operation": "share.view",
+        "currentState": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:06.012475+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "producerContext": null
       }
     }
-  }
+  },
+  "responses": [
+    {
+      "ok": true,
+      "data": {
+        "type": "review",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.852725+00:00",
+          "acceptance": "invalidated",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
+            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "dea24f709c674b3e62557ac91dca3ca5c412305df61790f98c00f7162790e948",
+          "currentReviewIds": ["e3b3c182-3b41-4d70-bd55-f261f425fc6b"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": [],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000002",
+          "comment": "Actor assessment; no independent certification",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "clientId": null,
+          "decision": "withdraw",
+          "reviewId": "e3b3c182-3b41-4d70-bd55-f261f425fc6b",
+          "createdAt": "2026-11-03T15:53:05.852393+00:00",
+          "reviewClass": "internal",
+          "delegationId": null,
+          "authorityKind": "first_party_actor",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "predecessorReviewId": "19703486-ae21-420a-8675-fd5b8ffbd2f5"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "finalization",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.939807+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "profileId": "lca.study-report-internal-review.v1",
+          "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
+          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "finalization",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:06.071799+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-unreviewed.v1",
+            "finalizedAt": "2026-11-03T15:53:06.066569+00:00",
+            "finalizationId": "7a6d0bc2-e2f0-4eee-817f-a2540415fee3",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": [],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "profileId": "lca.study-report-internal-review.v1",
+          "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
+          "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "review",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:05.90034+00:00",
+          "acceptance": "invalidated",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-internal-review.v1",
+            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
+            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "19c3a68d8ff555ba5a30b1f68c0d120f58fb4a1b3c092280561e92680c3b05d8",
+          "currentReviewIds": ["30f77785-dbe2-4795-8672-54d7ccf58ded"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["30f77785-dbe2-4795-8672-54d7ccf58ded"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000002",
+          "comment": "Actor assessment; no independent certification",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "clientId": "90600000-0000-4000-8000-000000000101",
+          "decision": "approve",
+          "reviewId": "30f77785-dbe2-4795-8672-54d7ccf58ded",
+          "createdAt": "2026-11-03T15:53:05.899857+00:00",
+          "reviewClass": "internal",
+          "delegationId": "31c969aa-8b61-4c0e-8d73-ca39e3b8a2c8",
+          "authorityKind": "oauth_delegated_actor",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "predecessorReviewId": "e3b3c182-3b41-4d70-bd55-f261f425fc6b"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "finalization",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T15:53:06.071799+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-unreviewed.v1",
+            "finalizedAt": "2026-11-03T15:53:06.066569+00:00",
+            "finalizationId": "7a6d0bc2-e2f0-4eee-817f-a2540415fee3",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "acceptedReviewIds": [],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
+          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "profileId": "lca.study-report-internal-review.v1",
+          "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
+          "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": ["member.set"],
+        "resource": {
+          "id": "90600000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "allowedMemberRoles": ["reviewer"]
+      }
+    }
+  ]
 }

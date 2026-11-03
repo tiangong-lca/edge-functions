@@ -19,8 +19,8 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
-lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
+lastReviewedCommit: 10b50e791c33b3d513791df9ab973a179b7d76d8
+lastReviewedNote: 'Edge #550: reviewed owner export download, fresh replay state and server-provided personal reviewer/team role choices; legacy V2/V3 and export renderer bytes remain pinned. Actual integration and delivery remain separate.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md

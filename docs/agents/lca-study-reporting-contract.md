@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
-lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
+lastReviewedCommit: 10b50e791c33b3d513791df9ab973a179b7d76d8
+lastReviewedNote: 'Edge #550: reviewed owner export download, fresh replay state and server-provided personal reviewer/team role choices; legacy V2/V3 and export renderer bytes remain pinned. Actual integration and delivery remain separate.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md
@@ -83,7 +83,7 @@ Pending intent recovery ignores only transport `requestId` when comparing semant
 
 P3 is additive `lca.study-api.v4` / bundle `4.0.0`. Its exact schemas live in `contracts/lca-study/v4/`; `protocol.json` and `view.json` under the V4 fixtures bind the agreed Database #906 / Edge #550 wire. V2/V3 request/recovery identities, frozen P2 reports and signed P2 packages retain their original versions. The same consumer builder supports `--api-version v4` with contained Node/Deno ESM, JSON Schema and generated declarations. It never imports a sibling repository.
 
-`STUDY_REVIEW_CONFIG` separately admits explicit operations, finalization profiles, review classes and disclosure policies. Absence permits only capability read, with no profiles/classes/policies. The actual Database capability projection intersects that allowlist; `resource.actions` returns only Database-authorized actions further narrowed by deployment admission. Consumers display these actions rather than reconstructing role policy.
+`STUDY_REVIEW_CONFIG` separately admits explicit operations, finalization profiles, review classes and disclosure policies. Absence permits only capability read, with no profiles/classes/policies. The actual Database capability projection intersects that allowlist; `resource.actions` returns only Database-authorized actions further narrowed by deployment admission. Consumers display these actions rather than reconstructing role policy. `resource.actions.allowedMemberRoles` supplies exact role choices: personal owners may manage reviewer grants only; team owners may manage editor/reviewer/viewer grants. Removal is explicit `role:null`. V2 source/model/Run roles remain unchanged, including for personal reviewers.
 
 Database owns reviewer membership, append-only comments, exact predecessor review chains, one-use actor delegation, profile acceptance, finalization and shares. V4 adds reviewer through `member.set`; V2 source/model/Run permissions do not expand. Comments never approve. Internal review requires at least one current approving reviewer distinct from the report author. The only other initial finalization profile is explicit unreviewed finalization. Independent review is unavailable. Records are authenticated actor decisions and cannot establish human judgment or independent scientific review.
 
@@ -98,3 +98,9 @@ New exports use `lca.study-export-manifest.v2` and bundle v2. The manifest binds
 Named shares bind recipient UUID, persisted exact export/projection, disclosure policy/context, expiry and grant epoch. Initial summary disclosure permits public sources or exact issuer-owned private sources; borrowed private read permission cannot authorize redistribution. Only the named recipient resolves share view/download; issuers use report views, export metadata and share management. Recipients acquire no Study membership or raw-artifact access. Service resolution checks current issuer/source/client/share authority around Storage I/O. Responses contain bounded view/base64 bytes and current state, never an anonymous URL or locator. Downloaded copies remain historical and cannot be recalled.
 
 Run `study_review_contract_test.ts`, `study_review_runtime_test.ts`, the portable build tests and all retained V2/V3/signature suites before the canonical gate. Actual SQL/RLS, OAuth grant races, installed CLI/browser and cross-repository proof remain separate acceptance evidence. Source tests do not enable a hosted operation or complete P3 delivery.
+
+V4 `export.download` resolves an existing owner-authorized export by exact `exportId` and returns only its immutable bundle as bounded base64 in a distinct `exportDownload` response. Its strict service context binds the original actor, client, export, report/hash and exact bundle capability. Current export-read source/grant/client authority is rechecked around Storage I/O. It grants no raw artifact access and does not broaden V3 artifact registration.
+
+Same-key mutation recovery retains original immutable IDs, decisions, finalization and export receipts. Fields named current are freshly hydrated: `review.record` returns the original review with current report state; `report.finalize` returns its original finalization with current state, whose latest finalization may differ; share/delegation records retain their original identity with live revocation/expiry/consumption metadata. Current authority precedes replay. A successful old receipt cannot claim current acceptance after withdrawal or an active share after revocation.
+
+Online pre-finalization report previews have no export identity. Platform owns an additive preview rendering entrypoint sharing the view/content presentation with online framing. It must not pass a report ID as an export ID or claim an export receipt. The pinned renderer 1.0.0 and historical signed export bytes stay unchanged; current status/actions remain application state outside that view.

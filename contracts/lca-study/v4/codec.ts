@@ -48,6 +48,7 @@ export const QUERY_OPERATIONS = [
   'report.current',
   'report.view',
   'export.read',
+  'export.download',
   'share.read',
   'share.view',
   'share.download',
@@ -85,7 +86,10 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
       valid =
         d.type === 'actions' &&
         same(d.resource, request.resource) &&
-        new Set(d.actions).size === d.actions.length;
+        new Set(d.actions).size === d.actions.length &&
+        (d.resource.type === 'study' && d.actions.includes('member.set')
+          ? d.allowedMemberRoles.length > 0
+          : d.allowedMemberRoles.length === 0);
       break;
     case 'member.set':
       valid =
@@ -106,7 +110,9 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
         d.value.decision === request.decision &&
         d.value.comment === request.comment &&
         d.value.predecessorReviewId === request.predecessorReviewId &&
-        d.value.delegationId === request.delegationId;
+        d.value.delegationId === request.delegationId &&
+        report(d.state) &&
+        d.state.studyId === d.value.studyId;
       break;
     case 'review.delegation.issue':
       valid =
@@ -116,9 +122,7 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
         d.value.reviewClass === request.reviewClass &&
         d.value.decision === request.decision &&
         d.value.predecessorReviewId === request.predecessorReviewId &&
-        sameTime(d.value.expiresAt, request.expiresAt) &&
-        d.value.revokedAt === null &&
-        d.value.consumedReviewId === null;
+        sameTime(d.value.expiresAt, request.expiresAt);
       break;
     case 'review.delegation.revoke':
       valid =
@@ -137,7 +141,7 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
         d.state.reportRevisionId === request.target.id &&
         d.state.reportContentHash === request.expectedContentHash &&
         d.state.reportRevision === request.target.expectedRevision &&
-        same(d.state.finalization, d.value);
+        d.state.studyId === d.value.studyId;
       break;
     case 'report.current':
       valid = d.type === 'reportState' && report(d.value);
@@ -160,6 +164,9 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
       break;
     case 'export.read':
       valid = d.type === 'export' && d.value.exportId === request.exportId;
+      break;
+    case 'export.download':
+      valid = d.type === 'exportDownload' && d.export.exportId === request.exportId;
       break;
     case 'share.create':
       valid =
