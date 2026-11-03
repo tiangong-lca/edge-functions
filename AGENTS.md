@@ -40,15 +40,21 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-02
-lastReviewedCommit: d4a977144933905d468d98eabb5d5387cb6622d5
-lastReviewedNote: 'Edge #527: reuse existing server credentials for native ZIP links; remove custom JWT configuration while preserving actor and object boundaries.'
+lastReviewedAt: 2026-11-03
+lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
+lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
   - docs/agents/repo-architecture.md
   - README.md
 ---
+
+## Study runtime entrypoint
+
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](docs/agents/lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+
+W06 adds typed Study task recovery/cancellation and service-resolved artifact read intents. The owned local runtime qualifier remains opt-in; private Study/source authority is rechecked by Database before and after bounded artifact I/O, and generic job endpoints do not grant Study access. Exact source/queue/native/Storage evidence and hosted admission remain separate gates.
 
 ## Repo Contract
 

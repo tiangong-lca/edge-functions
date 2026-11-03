@@ -1,0 +1,1398 @@
+[
+  {
+    "name": "assumptions-not-array",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": {},
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "blank-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": " ",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "blank-unit",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": " ",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "control-in-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "text\u0001",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "duplicate-method-id",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        },
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "empty-methods",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "exponent-unit-amount",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1e3",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "invalid-reference-id",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "bad id"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "missing-assumption-evidence",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [
+        {
+          "id": "a",
+          "statement": "text"
+        }
+      ],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "missing-assumption-fields",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [{}],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "missing-functional-unit-fields",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {},
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "missing-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "missing-method-version",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "negative-unit-amount",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "-1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "null-unit-amount",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": null,
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "numeric-assumption-statement",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [
+        {
+          "id": "a",
+          "statement": 1,
+          "evidenceRef": "e"
+        }
+      ],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "numeric-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": 1,
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "numeric-reference-id",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": 1
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "numeric-unit-amount",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": 1,
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "overlong-codepoint-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "overlong-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "too-many-assumptions",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [
+        {
+          "id": "a1",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a2",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a3",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a4",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a5",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a6",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a7",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a8",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a9",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a10",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a11",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a12",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a13",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a14",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a15",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a16",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a17",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a18",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a19",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a20",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a21",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a22",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a23",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a24",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a25",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a26",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a27",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a28",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a29",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a30",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a31",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a32",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a33",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a34",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a35",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a36",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a37",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a38",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a39",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a40",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a41",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a42",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a43",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a44",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a45",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a46",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a47",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a48",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a49",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a50",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a51",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a52",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a53",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a54",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a55",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a56",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a57",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a58",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a59",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a60",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a61",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a62",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a63",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a64",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a65",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a66",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a67",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a68",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a69",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a70",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a71",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a72",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a73",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a74",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a75",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a76",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a77",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a78",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a79",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a80",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a81",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a82",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a83",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a84",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a85",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a86",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a87",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a88",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a89",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a90",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a91",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a92",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a93",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a94",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a95",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a96",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a97",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a98",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a99",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a100",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a101",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a102",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a103",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a104",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a105",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a106",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a107",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a108",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a109",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a110",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a111",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a112",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a113",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a114",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a115",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a116",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a117",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a118",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a119",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a120",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a121",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a122",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a123",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a124",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a125",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a126",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a127",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a128",
+          "statement": "text",
+          "evidenceRef": "e"
+        },
+        {
+          "id": "a129",
+          "statement": "text",
+          "evidenceRef": "e"
+        }
+      ],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "unicode-blank-goal",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": " ﻿",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "unknown-assumption-field",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [
+        {
+          "id": "a",
+          "extra": true,
+          "statement": "text",
+          "evidenceRef": "e"
+        }
+      ],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "unknown-definition-field",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "unknown": true,
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "unknown-functional-unit-field",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "extra": true,
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "unknown-method-field",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "extra": true,
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "valid-baseline",
+    "expected": true,
+    "dbAccepted": true,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "valid-codepoint-boundary",
+    "expected": true,
+    "dbAccepted": true,
+    "definition": {
+      "goal": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "valid-multibyte-below-boundary",
+    "expected": true,
+    "dbAccepted": true,
+    "definition": {
+      "goal": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "wrong-method-kind",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "process"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "1",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  },
+  {
+    "name": "zero-unit-amount",
+    "expected": false,
+    "dbAccepted": false,
+    "definition": {
+      "goal": "Synthetic test only",
+      "methodRefs": [
+        {
+          "id": "method-1",
+          "type": "datasetRevision",
+          "version": "01.00.000",
+          "datasetType": "lciamethod"
+        }
+      ],
+      "assumptions": [],
+      "functionalUnit": {
+        "unit": "kg",
+        "amount": "0",
+        "referenceFlowId": "flow-1"
+      },
+      "systemBoundary": "explicit tested links only"
+    }
+  }
+]
