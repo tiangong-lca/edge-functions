@@ -6,11 +6,11 @@ import {
   type StudyApiResponse,
 } from '../../../../contracts/lca-study/v2/index.ts';
 import { API_SCHEMA as V1_SCHEMA, idSchema } from '../../../../contracts/lca-study/v1/common.ts';
+import { validateRequest as validateV1Request } from '../../../../contracts/lca-study/v1/validation.ts';
 import {
-  validateRequest as validateV1Request,
-  validateResponseForRequest as validateV1Response,
-} from '../../../../contracts/lca-study/v1/validation.ts';
-import type { StudyApiRequest as V1Request } from '../../../../contracts/lca-study/v1/requests.ts';
+  StudyCodecError,
+  validateResponseForRequest,
+} from '../../../../contracts/lca-study/v2/codec.ts';
 import { corsHeaders } from '../cors.ts';
 import {
   resolveActorContext,
@@ -47,128 +47,6 @@ export type HandlerOptions = {
 const MAX_BODY_BYTES = 256 * 1024;
 function response(requestId: string, data: unknown): StudyApiResponse {
   return responseSchema.parse({ schemaVersion: API_SCHEMA, requestId, ok: true, data });
-}
-function bind(request: StudyApiRequest, value: StudyApiResponse): void {
-  if (!value.ok) return;
-  if (request.operation === 'task.read' || request.operation === 'task.cancel') {
-    if (
-      value.data.type !== 'task' ||
-      value.data.value.studyId !== request.studyId ||
-      JSON.stringify(value.data.value.resource) !== JSON.stringify(request.resource)
-    )
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.task_selection');
-    return;
-  }
-  if (request.operation === 'model.source.resolve' || request.operation === 'model.source.read') {
-    const d = value.data;
-    if (d.type !== 'modelSourceAcquisition')
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.source_kind');
-    if (
-      request.operation === 'model.source.read'
-        ? request.acquisitionId !== d.value.acquisitionId
-        : request.studyId !== d.value.studyId ||
-          JSON.stringify(request.originRef) !== JSON.stringify(d.value.originRef)
-    )
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.source_binding');
-    return;
-  }
-  if (request.operation === 'artifact.read' || request.operation === 'capability.read') return;
-  if (request.operation === 'study.resources.list') {
-    const d = value.data;
-    if (
-      d.type !== 'resourcePage' ||
-      d.studyId !== request.studyId ||
-      d.kind !== request.kind ||
-      d.items.length > request.limit
-    )
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.page_selection');
-    return;
-  }
-  if (request.operation === 'member.set') {
-    if (value.data.type !== 'study' || value.data.value.studyId !== request.target.id)
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.target');
-    return;
-  }
-  const d = value.data;
-  if (
-    (request.operation === 'revision.create' || request.operation === 'revision.save') &&
-    (d.type !== 'studyRevision' ||
-      JSON.stringify(d.value.definition) !== JSON.stringify(request.definition) ||
-      d.value.modelPreparationId !== request.modelPreparationId ||
-      JSON.stringify(d.value.modelRef) !== JSON.stringify(request.modelRef) ||
-      d.value.status !== 'draft' ||
-      d.value.validation !== 'not_checked')
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.revision_intent');
-  if (
-    request.operation === 'revision.freeze' &&
-    (d.type !== 'studyRevision' ||
-      d.value.status !== 'frozen' ||
-      d.value.validation !== 'passed' ||
-      d.value.contentHash !== request.expectedContentHash)
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.frozen_revision');
-  if (
-    (request.operation === 'scenario.create' || request.operation === 'scenario.save') &&
-    (d.type !== 'scenarioRevision' ||
-      JSON.stringify(d.value.overrides) !== JSON.stringify(request.overrides) ||
-      d.value.status !== 'draft' ||
-      d.value.modelPreparationId !== null ||
-      d.value.effectiveModelRef !== null)
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.scenario_intent');
-  if (
-    request.operation === 'scenario.create' &&
-    (d.type !== 'scenarioRevision' ||
-      d.value.studyRevisionId !== request.studyRevisionId ||
-      d.value.parentScenarioRevisionId !== request.parentScenarioRevisionId)
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.scenario_base');
-  if (
-    request.operation === 'scenario.freeze' &&
-    (d.type !== 'scenarioRevision' ||
-      d.value.status !== 'frozen' ||
-      d.value.contentHash !== request.expectedContentHash ||
-      d.value.modelPreparationId !== request.modelPreparationId ||
-      d.value.effectiveModelRef === null)
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.frozen_scenario');
-  if (
-    request.operation === 'study.select_revision' &&
-    (d.type !== 'study' || d.value.currentRevisionId !== request.revisionId)
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.study_head');
-  if (
-    request.operation === 'model.prepare' &&
-    request.methodRefs !== undefined &&
-    (d.type !== 'modelPreparation' ||
-      JSON.stringify(d.value.methodRefs) !== JSON.stringify(request.methodRefs))
-  )
-    throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.method_selection');
-  let projected =
-    value.data.type === 'scenarioRevision'
-      ? { ...value, data: { ...value.data, value: { ...value.data.value, overrides: [] } } }
-      : value;
-  if (value.data.type === 'modelPreparation') {
-    const { methodRefs: _methodRefs, ...legacy } = value.data.value;
-    projected = { ...value, data: { ...value.data, value: legacy } } as typeof projected;
-  }
-  const checked = validateV1Response({ ...request, schemaVersion: V1_SCHEMA } as V1Request, {
-    ...projected,
-    schemaVersion: V1_SCHEMA,
-  });
-  if (!checked.ok) throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.binding');
-  if ('target' in request && 'value' in value.data) {
-    const r = value.data.value as Record<string, unknown>;
-    const key = {
-      study: 'studyId',
-      studyRevision: 'revisionId',
-      scenarioRevision: 'scenarioRevisionId',
-      reportRevision: 'reportRevisionId',
-    }[request.target.type];
-    if (r[key] !== request.target.id)
-      throw new StudyFailure('REFERENCE_MISMATCH', 502, 'response.target');
-  }
 }
 
 export function createStudyHandler(options: HandlerOptions = {}) {
@@ -340,7 +218,7 @@ export function createStudyHandler(options: HandlerOptions = {}) {
       }
       assertActive();
       const value = response(requestId, data);
-      bind(request, value);
+      validateResponseForRequest(request, value);
       assertActive();
       return value;
     };
@@ -357,9 +235,11 @@ export function createStudyHandler(options: HandlerOptions = {}) {
       return response;
     } catch (error) {
       const failure =
-        error instanceof StudyFailure
-          ? error
-          : new StudyFailure('UPSTREAM_UNAVAILABLE', 502, 'runtime.invalid_response');
+        error instanceof StudyCodecError
+          ? new StudyFailure(error.code, 502, error.ruleId)
+          : error instanceof StudyFailure
+            ? error
+            : new StudyFailure('UPSTREAM_UNAVAILABLE', 502, 'runtime.invalid_response');
       return new Response(
         JSON.stringify({
           schemaVersion: API_SCHEMA,

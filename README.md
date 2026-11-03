@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: '2026-11-03'
-lastReviewedCommit: '532bb1e23c4340a6a498cef3b9c050fcbd5c104d'
-lastReviewedNote: 'Edge #536: reviewed explicit runtime v2 admission and producer boundaries; P0 v1 stays offline and hosted qualification remains separate.'
+lastReviewedAt: 2026-11-03
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -674,3 +674,7 @@ Only the accepted Supabase base path permits underscores in bucket names (such a
 Set `FINAL_RESULT_S3_SIGNER=supabase-storage` and the existing Release target fields. Reuse the same server-only Supabase credentials already configured for Edge; keep S3 credential variables empty. This deliberately accepts their existing administrative authority. The Edge actor checks, complete-Candidate selection and two fixed ZIP paths bound what users can download.
 
 Verify both formats using disposable synthetic objects, unchanged actor/current/complete-Candidate checks, and actual download hash/size. Confirm returned links contain only an object token and remove the exact test objects. A signed URL may remain usable until its 60-second expiry after withdrawal. Do not log server credentials or signed URLs. The former custom ZIP roles/JWT scheme is retired through Database-owned forward migration; historical migrations remain intact.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.

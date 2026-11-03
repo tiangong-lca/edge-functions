@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
-lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -419,3 +419,7 @@ Release-owned final Results use separate `_shared/result_query_v2.ts` modes `sou
 `_shared/result_download_v2.ts` owns `final_download`. Actor `api.qry_final_result_download_v2` applies complete-Candidate selection and support-data RLS. Edge verifies the canonical storage target and signs the two fixed Result ZIP names with server-side credentials. The Supabase signer reuses the existing service-role/secret key for the exact same project and obtains a single-object Storage capability; it does not disclose an Auth session token in a presigned S3 URL. A post-signing live recheck precedes disclosure; URLs remain bearer capabilities for at most 60 seconds. Legacy behavior stays in its existing path, never selected by a v2 failure.
 
 `lca_release_results` keeps its existing metadata/download modes and adds an explicit authenticated `query` mode through `_shared/result_query.ts`. The actor client reads the exact original Process using `public` RLS before the service client resolves `api.svc_result_query_resolve`. Database owns current formal-release membership; Worker owns file integrity, indexing and local cache. The gateway signs the exact descriptor-bound request and validates both returned result identity and numeric DTO before projecting frozen metadata. It does not use Portal Redis, fetch mutable labels, accept client storage paths or cache permission decisions. See README for the wire/configuration contract.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.

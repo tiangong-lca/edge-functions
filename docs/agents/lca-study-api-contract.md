@@ -19,8 +19,8 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
-lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md
@@ -154,3 +154,7 @@ deno test --config supabase/functions/deno.json --allow-read test/lca_study_api_
 ```
 
 The top-level test imports the pure contract modules, so the existing Deno graph/default test inventory includes them without a Function entrypoint. The ordinary `pnpm lint`, `pnpm check` and strict Docpact checks remain required. Local fixture success does not deploy an API, qualify RLS, prove a real signer, publish a package, or authorize production work.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.

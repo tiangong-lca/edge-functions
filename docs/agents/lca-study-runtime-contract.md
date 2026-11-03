@@ -18,8 +18,8 @@ checkPaths:
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
-lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - lca-study-api-contract.md
   - repo-validation.md
@@ -101,3 +101,7 @@ Invoke the same command with `verify` instead of `provision`. Verification signs
 After Database confirms the local-only configuration and quiet queue, `admit` starts the actual Study and generic worker HTTP handlers with normal Auth/SDK adapters. It cancels one real queued acquisition, rejects the generic Study job read/cancel route, discards another acquisition response and recovers it with the original key. It saves the API-issued identities and closes its listener/sessions. Only the separately owned Worker daemon may claim the remaining exact job. `verify` uses fresh Auth sessions/listener to recover that acquisition, obtain actual native/Storage preparation, validate/freeze the revision, prepare two frozen scenarios, submit/recover Runs and verify result bytes against independent bounded numerical expectations. It checks underlying private-source disclosure, generic-route denial, late cancellation and current Study grant revocation. No callbacks or successful result states are synthesized.
 
 Run each phase with exact Deno and `--config supabase/functions/deno.json`, loopback-only network permission and the explicit owned read/write paths. Check the script separately with `deno check`; default tests import only its configuration guard and never provision accounts or start a listener. The output receipt binds executed source hashes, fixture/Database generation and actual API identities. It distinguishes local handler/SQL/queue/native/Storage execution from hosted gateway, business-pilot and complete-LCIA qualification. Failed attempts and unknown completion outcomes remain preserved; stop the exact owned Worker before destructive fixture cleanup and retain unresolved upload intents/artifacts for its source-bound reconciliation. Database owns data/config cleanup; Auth accounts and copied credentials are removed only after that cleanup receipt. Listener shutdown and session sign-out run on ordinary success/failure.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.

@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: 79ef203048a23fec5b713cbea8935a49b068eafb
-lastReviewedNote: 'Edge #537: reviewed scoped Study tasks, opaque artifact intents, frozen input boundaries and opt-in owned runtime qualification. P0 v1 stays offline; hosted admission, business and full LCIA qualification remain separate.'
+lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
+lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -317,3 +317,9 @@ For Release-owned final Results, run `test/result_query_v2_test.ts` in addition 
 Run `test/result_query_test.ts` with `test/lca_release_results_test.ts` plus the canonical baseline. Real Supabase client transports with synthetic responses prove explicit actor `public` profile/version filtering, service RPC payload, repeated authorization after warm reads/revocation, cold202, immutable identity, HMAC UTF-8 framing, numeric signs/small values/frozen units, request and response bounds, cancellation and capacity release. The HMAC golden vector is independently computed with Python SHA-256. Existing anonymous metadata/download modes remain covered. Paired Database/Worker and browser qualification remain required before rollout; these tests do not establish live publication or production performance.
 
 The opt-in Release `final-result-readiness-database.test.mjs`, with `RELEASE_QUERY_EDGE_ROOT` selecting this checkout, invokes `test/fixtures/final-result-gateway.ts`. The runner uses real Edge handlers and Supabase client HTTP against an actual actor-scoped SQL facade, plus the real Worker binary and Release/Toolkit Candidate. It proves complete LCI pagination, frozen LCIA, absent LCIA, reader pins and database permission denials. Release owns/reset-label-checks the synthetic PostgreSQL fixture and cleans temporary input, Worker and HTTP processes. Authentication remains an explicitly synthetic fixed token; this does not replace hosted JWT or browser qualification.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+
+Run `node --test scripts/study-contract-build.test.cjs` and `deno test --config supabase/functions/deno.json --allow-env --allow-read test/study_codec_test.ts test/study_export_signature_test.ts`, then the canonical full gate. The build test loads the packed ESM in isolated Node and Deno without source/npm resolution. New build tooling keeps authoritative Deno/TypeScript unchanged; `pnpm install --frozen-lockfile` and the exact Zod map/build pin comparison remain mandatory.
