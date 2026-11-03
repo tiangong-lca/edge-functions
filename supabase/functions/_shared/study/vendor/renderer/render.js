@@ -1,5 +1,6 @@
 import { BROWSER_SCRIPT } from './browser.js';
 import { REPORT_CSS } from './styles.js';
+import { REPORT_DOCUMENT_LANGUAGE } from './documentLanguage.js';
 import { RENDERER_VERSION, validateRenderContext, validateReportView, } from './viewModel.js';
 export function escapeHtml(value) {
     return value.replace(/[&<>"']/gu, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
@@ -67,5 +68,5 @@ export async function renderReport(input, context) {
         base64Sha256(REPORT_CSS),
     ]);
     const policy = `default-src 'none'; script-src 'sha256-${scriptHash}'; style-src 'sha256-${styleHash}'; connect-src 'none'; img-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'`;
-    return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${policy}"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><meta name="format-detection" content="telephone=no,email=no,address=no"><meta name="robots" content="noindex"><title>${e(view.report.title)}</title><style>${REPORT_CSS}</style></head><body>${body}<script>${BROWSER_SCRIPT}</script></body></html>\n`;
+    return `<!doctype html>\n<html lang="${REPORT_DOCUMENT_LANGUAGE.canonicalLocale}" dir="${REPORT_DOCUMENT_LANGUAGE.direction}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${policy}"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><meta name="format-detection" content="telephone=no,email=no,address=no"><meta name="robots" content="noindex"><title>${e(view.report.title)}</title><style>${REPORT_CSS}</style></head><body>${body}<script>${BROWSER_SCRIPT}</script></body></html>\n`;
 }

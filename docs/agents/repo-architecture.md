@@ -37,7 +37,7 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
+lastReviewedCommit: c8784576377b4ab156e89dc4eac81014a87880f6
 lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
 related:
   - ../../AGENTS.md
