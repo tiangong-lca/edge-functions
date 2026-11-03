@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: c49eeff06eb3349fda15c0964ca74773f36f487b
-lastReviewedNote: 'Edge #550: reviewed static nonnull predecessor requirement for withdrawal record/delegation requests; exact head authorization remains Database-owned. Existing evidence dates, V2/V3, replay and renderer/export bytes stay unchanged.'
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md
@@ -106,3 +106,5 @@ Same-key mutation recovery retains original immutable IDs, decisions, finalizati
 Online pre-finalization report previews have no export identity. Platform owns an additive preview rendering entrypoint sharing the view/content presentation with online framing. It must not pass a report ID as an export ID or claim an export receipt. The pinned renderer 1.0.0 and historical signed export bytes stay unchanged; current status/actions remain application state outside that view.
 
 Withdrawal requests and withdrawal-delegation issue requests require a nonnull `predecessorReviewId`. This structural rule rejects a first withdrawal before Edge dispatch (`INVALID_REQUEST`). Database still owns exact current-head validation and returns `REVISION_CONFLICT` for missing/stale heads through its direct RPC surface. Initial approve/reject decisions retain nullable predecessor semantics; replay, actor and source authorization rules are unchanged.
+
+`resource.actions.corePermissions` is a strict `{read:boolean,write:boolean}` projection for a Study target only; both values are false for report, export or share targets. Database obtains each value from its existing V2 `private.study_authorize` semantics, with archived Studies never reporting write permission. Reviewer and named-share authority cannot become core Study access through this projection. The UI intersects these coarse flags with current V2 capabilities and the fetched target state. They do not authorize any exact source, mutation target, cancellation or I/O; normal commands recheck all current domain/source permissions. Edge forwards the server result without reconstructing role policy, and V2 wire/roles remain unchanged.

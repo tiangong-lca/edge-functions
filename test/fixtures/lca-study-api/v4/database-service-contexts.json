@@ -9,47 +9,47 @@
         "actorId": "89400000-0000-4000-8000-000000000001",
         "request": {
           "operation": "export.request",
-          "requestId": "review-export",
+          "requestId": "action-fresh-export",
           "schemaVersion": "lca.study-api.v4",
-          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
-          "idempotencyKey": "review-export",
+          "finalizationId": "066c30fa-6b01-4f93-ba83-4a2ed305a4b4",
+          "idempotencyKey": "action-fresh-export",
           "rendererVersion": "1.0.0",
-          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000004",
           "viewModelVersion": "lca.study-report-view.v1",
           "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          "expectedReviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4"
         },
         "artifact": null,
         "clientId": null,
-        "intentId": "0bdf7e82-6fe0-4b81-989b-49de7cc9ef2c",
-        "expiresAt": "2026-11-03T15:55:05.948892+00:00",
+        "intentId": "fd79a17d-9be3-461b-b857-43e932b16e2d",
+        "expiresAt": "2026-11-03T16:34:00.082548+00:00",
         "operation": "export.request",
         "currentState": {
           "studyId": "89400000-0000-4000-8000-000000000010",
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.948892+00:00",
+          "checkedAt": "2026-11-03T16:32:00.082548+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
-            "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
-            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "profileId": "lca.study-report-unreviewed.v1",
+            "finalizedAt": "2026-11-03T16:32:00.038417+00:00",
+            "finalizationId": "066c30fa-6b01-4f93-ba83-4a2ed305a4b4",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000004",
+            "acceptedReviewIds": [],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
-          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4",
+          "currentReviewIds": [],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000004",
+          "acceptedReviewIds": [],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "producerContext": {
@@ -62,7 +62,7 @@
                 "engineId": "solver-worker",
                 "validity": {
                   "status": "current",
-                  "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+                  "checkedAt": "2026-11-03T16:31:59.795798+00:00",
                   "reasonCodes": []
                 },
                 "execution": {
@@ -134,7 +134,7 @@
                 "studyId": "89400000-0000-4000-8000-000000000010",
                 "revision": 1,
                 "overrides": [],
-                "scenarioId": "48c62c42-130e-41c6-b4be-e42d1e078901",
+                "scenarioId": "8f5754aa-906d-41cd-a8dc-869da72a33c4",
                 "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
                 "studyRevisionId": "90400000-0000-4000-8000-000000000001",
                 "effectiveModelRef": {
@@ -248,7 +248,7 @@
               "schemaVersion": "lca.study-report-content.v1"
             },
             "templateId": "lca.study-report.v1",
-            "analysisIds": ["5d0c8307-2f32-4d6f-9807-11a9834e781d"],
+            "analysisIds": ["2a09898c-f1ad-49ee-967c-0cef60fb3da9"],
             "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "finalization": {
               "status": "not_finalized",
@@ -257,10 +257,10 @@
               "finalizedAt": null,
               "reviewRequirement": "none"
             },
-            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000004",
             "validitySnapshot": {
               "status": "current",
-              "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+              "checkedAt": "2026-11-03T16:31:59.795798+00:00",
               "reasonCodes": []
             },
             "parentReportRevisionId": null
@@ -268,11 +268,11 @@
           "actorId": "89400000-0000-4000-8000-000000000001",
           "request": {
             "operation": "export.request",
-            "requestId": "review-export",
+            "requestId": "action-fresh-export",
             "schemaVersion": "lca.study-api.v3",
-            "idempotencyKey": "review-export",
+            "idempotencyKey": "action-fresh-export",
             "rendererVersion": "1.0.0",
-            "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000004",
             "viewModelVersion": "lca.study-report-view.v1",
             "expectedContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
           },
@@ -296,11 +296,11 @@
                   "schemaVersion": "lca.study-analysis-facts.v1"
                 },
                 "execution": {
-                  "jobId": "8b79f14e-9d42-42ae-a693-ba3c1a1f0a9e",
+                  "jobId": "16f51c8a-1ce1-47ff-8e7d-36825fabb123",
                   "status": "completed"
                 },
                 "profileId": "lca.study-analysis-explicit-v1",
-                "analysisId": "5d0c8307-2f32-4d6f-9807-11a9834e781d",
+                "analysisId": "2a09898c-f1ad-49ee-967c-0cef60fb3da9",
                 "configHash": "654479f22a14500c936ec8ed9e46ed454d85e7353fc63a3977255871bea76dfc",
                 "comparability": {
                   "status": "not_assessed",
@@ -324,12 +324,12 @@
             }
           ],
           "clientId": null,
-          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
-          "intentId": "0bdf7e82-6fe0-4b81-989b-49de7cc9ef2c",
-          "expiresAt": "2026-11-03T15:55:05.948892+00:00",
+          "exportId": "9038cde6-5a04-4351-a660-282b6576f4ce",
+          "intentId": "fd79a17d-9be3-461b-b857-43e932b16e2d",
+          "expiresAt": "2026-11-03T16:34:00.082548+00:00",
           "operation": "export.request",
           "grantEpoch": 4,
-          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
+          "generatedAt": "2026-11-03T16:32:00.082548+00:00",
           "exportProfile": {
             "keyId": "study906-key",
             "issuerId": "study906-test",
@@ -352,13 +352,13 @@
             "storageBucket": "study-artifacts",
             "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90600000-0000-4000-8000-000000000001/content.json"
           },
-          "bundleArtifactId": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+          "bundleArtifactId": "925801bb-7fc0-41ad-9037-1ed86d227c2a",
           "factsBindingHash": "dfc705a3e2c11bff1b1bb7249ccc6db3eb7d0f6851132affaf5fc96c56cd5277",
-          "reportRevisionId": "90600000-0000-4000-8000-000000000002",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000004",
           "contentArtifactId": null,
-          "resourcesArtifactId": "061c1214-fa4d-4538-b593-92edb4bb4d89",
-          "projectionArtifactId": "51d012be-9a07-4d78-9447-0bac908d0375",
-          "disclosureContextHash": "4511b1cc7c307b03b6508a3ab4149002722582a7ec663823f25e0be362f57c2f"
+          "resourcesArtifactId": "2ae57ae6-0208-44bd-ab4c-0e6a0e181e66",
+          "projectionArtifactId": "3f8a3142-8db8-4a37-8afc-2baa2e125d3b",
+          "disclosureContextHash": "816fc0419ee8fa882276746c41384bff1221995394beebb82b5eca497869a7e3"
         }
       }
     },
@@ -372,13 +372,13 @@
             "keyId": "study906-key",
             "algorithm": "Ed25519",
             "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "manifestHash": "42579d740acebfe872ced40ea427be84ee79aa338319337075220544a9a67130",
+            "manifestHash": "c94a7e0a66c783753210ba6e52ea42e46589a8f104245c35518f3d5d2834bc7e",
             "schemaVersion": "lca.study-export-receipt.v2"
           },
           "studyId": "89400000-0000-4000-8000-000000000010",
-          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "exportId": "347259dc-ca09-453d-82ea-5e92d4c95611",
           "bundleRef": {
-            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "id": "d0f609be-ab6b-41bb-be69-61b9722bcb4d",
             "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -386,29 +386,29 @@
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-export-bundle.v2"
           },
-          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
+          "generatedAt": "2026-11-03T16:32:00.005664+00:00",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+            "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "resourcesRef": {
-            "id": "061c1214-fa4d-4538-b593-92edb4bb4d89",
+            "id": "0e328b2f-5953-4234-8a82-d533b51bcc80",
             "type": "renderResources",
             "byteSize": 1761,
             "mediaType": "application/json",
-            "contentHash": "aab2f31e9fbaada626fa5d9dc109d713ce0dd927392deba70113847cc500431e",
+            "contentHash": "e0696484c81619fac9aa4943a1c196126244644f4daf98508bc67d130b647524",
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-export-manifest.v2"
           },
           "projectionRef": {
-            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "id": "9c2d412f-f140-4552-9f35-7af1a242c9e0",
             "type": "reportProjection",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -421,7 +421,7 @@
         },
         "actorId": "89400000-0000-4000-8000-000000000001",
         "request": {
-          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "exportId": "347259dc-ca09-453d-82ea-5e92d4c95611",
           "operation": "export.download",
           "requestId": "request",
           "schemaVersion": "lca.study-api.v4"
@@ -430,7 +430,7 @@
           "kind": "artifactCapability",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "artifactRef": {
-            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "id": "d0f609be-ab6b-41bb-be69-61b9722bcb4d",
             "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -439,38 +439,38 @@
             "schemaVersion": "lca.study-export-bundle.v2"
           },
           "storageBucket": "study-artifacts",
-          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb/bundle.json"
+          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/d0f609be-ab6b-41bb-be69-61b9722bcb4d/bundle.json"
         },
         "clientId": null,
-        "intentId": "e5fb9670-a53a-4e2f-a1ff-3675675de1c6",
-        "expiresAt": "2026-11-03T15:55:05.983214+00:00",
+        "intentId": "57a06ab0-9f42-4fcf-8995-7b3bfd9cc172",
+        "expiresAt": "2026-11-03T16:34:00.108022+00:00",
         "operation": "export.download",
         "currentState": {
           "studyId": "89400000-0000-4000-8000-000000000010",
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.983214+00:00",
+          "checkedAt": "2026-11-03T16:32:00.108022+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+            "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69",
+          "currentReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "producerContext": null
@@ -492,35 +492,35 @@
         },
         "artifact": null,
         "clientId": null,
-        "intentId": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
-        "expiresAt": "2026-11-03T15:55:05.83259+00:00",
+        "intentId": "74f347b5-2910-4604-8ec4-41c8ef37f0d1",
+        "expiresAt": "2026-11-03T16:33:59.890572+00:00",
         "operation": "report.view",
         "currentState": {
           "studyId": "89400000-0000-4000-8000-000000000010",
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.83259+00:00",
+          "checkedAt": "2026-11-03T16:31:59.890572+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
-            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "finalizedAt": "2026-11-03T16:31:59.879643+00:00",
+            "finalizationId": "01380cd4-4593-4a86-a6f7-70d0ab2e24b7",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+            "expectedReviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541"
           },
           "reportRevision": 3,
-          "reviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d",
-          "currentReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "reviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541",
+          "currentReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "producerContext": {
@@ -533,7 +533,7 @@
                 "engineId": "solver-worker",
                 "validity": {
                   "status": "current",
-                  "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+                  "checkedAt": "2026-11-03T16:31:59.795798+00:00",
                   "reasonCodes": []
                 },
                 "execution": {
@@ -605,7 +605,7 @@
                 "studyId": "89400000-0000-4000-8000-000000000010",
                 "revision": 1,
                 "overrides": [],
-                "scenarioId": "48c62c42-130e-41c6-b4be-e42d1e078901",
+                "scenarioId": "8f5754aa-906d-41cd-a8dc-869da72a33c4",
                 "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
                 "studyRevisionId": "90400000-0000-4000-8000-000000000001",
                 "effectiveModelRef": {
@@ -719,7 +719,7 @@
               "schemaVersion": "lca.study-report-content.v1"
             },
             "templateId": "lca.study-report.v1",
-            "analysisIds": ["5d0c8307-2f32-4d6f-9807-11a9834e781d"],
+            "analysisIds": ["2a09898c-f1ad-49ee-967c-0cef60fb3da9"],
             "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "finalization": {
               "status": "not_finalized",
@@ -731,7 +731,7 @@
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
             "validitySnapshot": {
               "status": "current",
-              "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+              "checkedAt": "2026-11-03T16:31:59.795798+00:00",
               "reasonCodes": []
             },
             "parentReportRevisionId": null
@@ -741,7 +741,7 @@
             "operation": "export.request",
             "requestId": "request",
             "schemaVersion": "lca.study-api.v3",
-            "idempotencyKey": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
+            "idempotencyKey": "74f347b5-2910-4604-8ec4-41c8ef37f0d1",
             "rendererVersion": "1.0.0",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
             "viewModelVersion": "lca.study-report-view.v1",
@@ -767,11 +767,11 @@
                   "schemaVersion": "lca.study-analysis-facts.v1"
                 },
                 "execution": {
-                  "jobId": "8b79f14e-9d42-42ae-a693-ba3c1a1f0a9e",
+                  "jobId": "16f51c8a-1ce1-47ff-8e7d-36825fabb123",
                   "status": "completed"
                 },
                 "profileId": "lca.study-analysis-explicit-v1",
-                "analysisId": "5d0c8307-2f32-4d6f-9807-11a9834e781d",
+                "analysisId": "2a09898c-f1ad-49ee-967c-0cef60fb3da9",
                 "configHash": "654479f22a14500c936ec8ed9e46ed454d85e7353fc63a3977255871bea76dfc",
                 "comparability": {
                   "status": "not_assessed",
@@ -796,11 +796,11 @@
           ],
           "clientId": null,
           "exportId": null,
-          "intentId": "16ef454c-b68f-4854-84bc-0f5626d0fff8",
-          "expiresAt": "2026-11-03T15:55:05.83259+00:00",
+          "intentId": "74f347b5-2910-4604-8ec4-41c8ef37f0d1",
+          "expiresAt": "2026-11-03T16:33:59.890572+00:00",
           "operation": "export.request",
           "grantEpoch": 4,
-          "generatedAt": "2026-11-03T15:53:05.83259+00:00",
+          "generatedAt": "2026-11-03T16:31:59.890572+00:00",
           "exportProfile": {
             "keyId": "study906-key",
             "issuerId": "study906-test",
@@ -829,7 +829,7 @@
           "contentArtifactId": null,
           "resourcesArtifactId": null,
           "projectionArtifactId": null,
-          "disclosureContextHash": "6524a7d85fa5b0b42d6de4621647e04f532ab3cf22a6af012ee97ddb0964beb5"
+          "disclosureContextHash": "36e1c4b3c0929db24a58915219bdcd8a56e191122df4734a1a7363ff325a176f"
         }
       }
     },
@@ -839,12 +839,12 @@
         "kind": "studyReviewContext",
         "share": {
           "status": "active",
-          "shareId": "4a8db367-34ce-4d69-8389-67693a5ba982",
+          "shareId": "f912ac34-5b41-4640-983c-2eccdb7ec2f8",
           "studyId": "89400000-0000-4000-8000-000000000010",
-          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "exportId": "347259dc-ca09-453d-82ea-5e92d4c95611",
           "issuerId": "89400000-0000-4000-8000-000000000001",
           "bundleRef": {
-            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "id": "d0f609be-ab6b-41bb-be69-61b9722bcb4d",
             "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -852,13 +852,13 @@
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-export-bundle.v2"
           },
-          "createdAt": "2026-11-03T15:53:05.993333+00:00",
-          "expiresAt": "2026-11-03T16:53:05.988806+00:00",
+          "createdAt": "2026-11-03T16:32:00.118095+00:00",
+          "expiresAt": "2026-11-03T17:32:00.113555+00:00",
           "revokedAt": null,
           "grantEpoch": 4,
           "recipientId": "89400000-0000-4000-8000-000000000003",
           "projectionRef": {
-            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "id": "9c2d412f-f140-4552-9f35-7af1a242c9e0",
             "type": "reportProjection",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -866,24 +866,24 @@
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-report-view.v1"
           },
-          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+          "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "disclosurePolicyId": "lca.study-report-summary-share.v1",
-          "disclosureContextHash": "6f10441128239c6a75236afad0e43764df614baa36a322297ef60d819899b706"
+          "disclosureContextHash": "4c389982aae1d12edb4973674495bb70cad214147720f1e6459303ede1729ec5"
         },
         "export": {
           "receipt": {
             "keyId": "study906-key",
             "algorithm": "Ed25519",
             "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "manifestHash": "42579d740acebfe872ced40ea427be84ee79aa338319337075220544a9a67130",
+            "manifestHash": "c94a7e0a66c783753210ba6e52ea42e46589a8f104245c35518f3d5d2834bc7e",
             "schemaVersion": "lca.study-export-receipt.v2"
           },
           "studyId": "89400000-0000-4000-8000-000000000010",
-          "exportId": "7fb3cd7f-7309-4963-9eee-8c57f5e29cc8",
+          "exportId": "347259dc-ca09-453d-82ea-5e92d4c95611",
           "bundleRef": {
-            "id": "7b1fe53b-0693-4d3c-89fc-dc9380b1c9bb",
+            "id": "d0f609be-ab6b-41bb-be69-61b9722bcb4d",
             "type": "reportExportBundle",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -891,29 +891,29 @@
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-export-bundle.v2"
           },
-          "generatedAt": "2026-11-03T15:53:05.948892+00:00",
+          "generatedAt": "2026-11-03T16:32:00.005664+00:00",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+            "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "resourcesRef": {
-            "id": "061c1214-fa4d-4538-b593-92edb4bb4d89",
+            "id": "0e328b2f-5953-4234-8a82-d533b51bcc80",
             "type": "renderResources",
             "byteSize": 1761,
             "mediaType": "application/json",
-            "contentHash": "aab2f31e9fbaada626fa5d9dc109d713ce0dd927392deba70113847cc500431e",
+            "contentHash": "e0696484c81619fac9aa4943a1c196126244644f4daf98508bc67d130b647524",
             "digestScope": "artifact_bytes_sha256",
             "schemaVersion": "lca.study-export-manifest.v2"
           },
           "projectionRef": {
-            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "id": "9c2d412f-f140-4552-9f35-7af1a242c9e0",
             "type": "reportProjection",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -926,7 +926,7 @@
         },
         "actorId": "89400000-0000-4000-8000-000000000003",
         "request": {
-          "shareId": "4a8db367-34ce-4d69-8389-67693a5ba982",
+          "shareId": "f912ac34-5b41-4640-983c-2eccdb7ec2f8",
           "operation": "share.view",
           "requestId": "request",
           "schemaVersion": "lca.study-api.v4"
@@ -935,7 +935,7 @@
           "kind": "artifactCapability",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "artifactRef": {
-            "id": "51d012be-9a07-4d78-9447-0bac908d0375",
+            "id": "9c2d412f-f140-4552-9f35-7af1a242c9e0",
             "type": "reportProjection",
             "byteSize": 2,
             "mediaType": "application/json",
@@ -944,38 +944,38 @@
             "schemaVersion": "lca.study-report-view.v1"
           },
           "storageBucket": "study-artifacts",
-          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/51d012be-9a07-4d78-9447-0bac908d0375/projection.json"
+          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/9c2d412f-f140-4552-9f35-7af1a242c9e0/projection.json"
         },
         "clientId": null,
-        "intentId": "5097852f-6c3b-474b-8231-aad3a81ef64c",
-        "expiresAt": "2026-11-03T15:55:06.012475+00:00",
+        "intentId": "a9899276-788d-47ec-a347-80ee5d28b61c",
+        "expiresAt": "2026-11-03T16:34:00.136594+00:00",
         "operation": "share.view",
         "currentState": {
           "studyId": "89400000-0000-4000-8000-000000000010",
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:06.012475+00:00",
+          "checkedAt": "2026-11-03T16:32:00.136594+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+            "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69",
+          "currentReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "producerContext": null
@@ -992,25 +992,25 @@
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.852725+00:00",
+          "checkedAt": "2026-11-03T16:31:59.909832+00:00",
           "acceptance": "invalidated",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
-            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "finalizedAt": "2026-11-03T16:31:59.879643+00:00",
+            "finalizationId": "01380cd4-4593-4a86-a6f7-70d0ab2e24b7",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+            "expectedReviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541"
           },
           "reportRevision": 3,
-          "reviewStateHash": "dea24f709c674b3e62557ac91dca3ca5c412305df61790f98c00f7162790e948",
-          "currentReviewIds": ["e3b3c182-3b41-4d70-bd55-f261f425fc6b"],
+          "reviewStateHash": "3ed42cf734154a5c70d964ebe4c5e2659c734eba8f001aeef432e1244f55eab0",
+          "currentReviewIds": ["71897c17-0a69-4dac-9065-b819ceb2e158"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
           "acceptedReviewIds": [],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
@@ -1021,14 +1021,14 @@
           "studyId": "89400000-0000-4000-8000-000000000010",
           "clientId": null,
           "decision": "withdraw",
-          "reviewId": "e3b3c182-3b41-4d70-bd55-f261f425fc6b",
-          "createdAt": "2026-11-03T15:53:05.852393+00:00",
+          "reviewId": "71897c17-0a69-4dac-9065-b819ceb2e158",
+          "createdAt": "2026-11-03T16:31:59.909513+00:00",
           "reviewClass": "internal",
           "delegationId": null,
           "authorityKind": "first_party_actor",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "predecessorReviewId": "19703486-ae21-420a-8675-fd5b8ffbd2f5"
+          "predecessorReviewId": "50bdabeb-ced2-4983-9c33-c3c64b3e2f39"
         }
       }
     },
@@ -1041,39 +1041,39 @@
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.939807+00:00",
+          "checkedAt": "2026-11-03T16:31:59.99585+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-            "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+            "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+            "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+            "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69",
+          "currentReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "value": {
           "actorId": "89400000-0000-4000-8000-000000000001",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "profileId": "lca.study-report-internal-review.v1",
-          "finalizedAt": "2026-11-03T15:53:05.939598+00:00",
-          "finalizationId": "6df25801-f5b9-4c44-b702-4aec115d54ca",
+          "finalizedAt": "2026-11-03T16:31:59.995636+00:00",
+          "finalizationId": "6aa73225-ad77-4b8c-b0e8-fe3ca83d5ba9",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+          "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
         }
       }
     },
@@ -1086,39 +1086,84 @@
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:06.071799+00:00",
+          "checkedAt": "2026-11-03T16:32:00.038542+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-unreviewed.v1",
-            "finalizedAt": "2026-11-03T15:53:06.066569+00:00",
-            "finalizationId": "7a6d0bc2-e2f0-4eee-817f-a2540415fee3",
+            "finalizedAt": "2026-11-03T16:32:00.038417+00:00",
+            "finalizationId": "066c30fa-6b01-4f93-ba83-4a2ed305a4b4",
+            "reportRevisionId": "90600000-0000-4000-8000-000000000004",
+            "acceptedReviewIds": [],
+            "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "expectedReviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4"
+          },
+          "reportRevision": 3,
+          "reviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4",
+          "currentReviewIds": [],
+          "reportRevisionId": "90600000-0000-4000-8000-000000000004",
+          "acceptedReviewIds": [],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "value": {
+          "actorId": "89400000-0000-4000-8000-000000000001",
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "profileId": "lca.study-report-unreviewed.v1",
+          "finalizedAt": "2026-11-03T16:32:00.038417+00:00",
+          "finalizationId": "066c30fa-6b01-4f93-ba83-4a2ed305a4b4",
+          "reportRevisionId": "90600000-0000-4000-8000-000000000004",
+          "acceptedReviewIds": [],
+          "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "expectedReviewStateHash": "1c2766220153b8870e13d1b3f41de5cb1de0b206eb0bc09df460680371ec29a4"
+        }
+      }
+    },
+    {
+      "ok": true,
+      "data": {
+        "type": "finalization",
+        "state": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "authorId": "89400000-0000-4000-8000-000000000001",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T16:32:00.198074+00:00",
+          "acceptance": "current",
+          "finalization": {
+            "actorId": "89400000-0000-4000-8000-000000000001",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "profileId": "lca.study-report-unreviewed.v1",
+            "finalizedAt": "2026-11-03T16:32:00.190962+00:00",
+            "finalizationId": "ef83f525-43b7-4003-afe9-def206f44364",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
             "acceptedReviewIds": [],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69",
+          "currentReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "value": {
           "actorId": "89400000-0000-4000-8000-000000000001",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "profileId": "lca.study-report-internal-review.v1",
-          "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
-          "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+          "finalizedAt": "2026-11-03T16:31:59.879643+00:00",
+          "finalizationId": "01380cd4-4593-4a86-a6f7-70d0ab2e24b7",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+          "expectedReviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541"
         }
       }
     },
@@ -1131,27 +1176,27 @@
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:05.90034+00:00",
+          "checkedAt": "2026-11-03T16:31:59.956886+00:00",
           "acceptance": "invalidated",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-internal-review.v1",
-            "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
-            "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+            "finalizedAt": "2026-11-03T16:31:59.879643+00:00",
+            "finalizationId": "01380cd4-4593-4a86-a6f7-70d0ab2e24b7",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-            "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+            "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+            "expectedReviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541"
           },
           "reportRevision": 3,
-          "reviewStateHash": "19c3a68d8ff555ba5a30b1f68c0d120f58fb4a1b3c092280561e92680c3b05d8",
-          "currentReviewIds": ["30f77785-dbe2-4795-8672-54d7ccf58ded"],
+          "reviewStateHash": "58042215180717baae5f3827ebff01cbebebc6a97487bc4ae93ecc7917e35898",
+          "currentReviewIds": ["a873f206-f7a2-486e-b090-32319203d970"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["30f77785-dbe2-4795-8672-54d7ccf58ded"],
+          "acceptedReviewIds": ["a873f206-f7a2-486e-b090-32319203d970"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "value": {
@@ -1160,14 +1205,14 @@
           "studyId": "89400000-0000-4000-8000-000000000010",
           "clientId": "90600000-0000-4000-8000-000000000101",
           "decision": "approve",
-          "reviewId": "30f77785-dbe2-4795-8672-54d7ccf58ded",
-          "createdAt": "2026-11-03T15:53:05.899857+00:00",
+          "reviewId": "a873f206-f7a2-486e-b090-32319203d970",
+          "createdAt": "2026-11-03T16:31:59.956385+00:00",
           "reviewClass": "internal",
-          "delegationId": "31c969aa-8b61-4c0e-8d73-ca39e3b8a2c8",
+          "delegationId": "130aa01b-ed7b-4e4c-84cd-1277d2fd0631",
           "authorityKind": "oauth_delegated_actor",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "predecessorReviewId": "e3b3c182-3b41-4d70-bd55-f261f425fc6b"
+          "predecessorReviewId": "71897c17-0a69-4dac-9065-b819ceb2e158"
         }
       }
     },
@@ -1180,53 +1225,200 @@
           "authorId": "89400000-0000-4000-8000-000000000001",
           "validity": {
             "status": "current",
-            "checkedAt": "2026-11-03T15:53:05.753389+00:00",
+            "checkedAt": "2026-11-03T16:31:59.795798+00:00",
             "reasonCodes": []
           },
-          "checkedAt": "2026-11-03T15:53:06.071799+00:00",
+          "checkedAt": "2026-11-03T16:32:00.198074+00:00",
           "acceptance": "current",
           "finalization": {
             "actorId": "89400000-0000-4000-8000-000000000001",
             "studyId": "89400000-0000-4000-8000-000000000010",
             "profileId": "lca.study-report-unreviewed.v1",
-            "finalizedAt": "2026-11-03T15:53:06.066569+00:00",
-            "finalizationId": "7a6d0bc2-e2f0-4eee-817f-a2540415fee3",
+            "finalizedAt": "2026-11-03T16:32:00.190962+00:00",
+            "finalizationId": "ef83f525-43b7-4003-afe9-def206f44364",
             "reportRevisionId": "90600000-0000-4000-8000-000000000002",
             "acceptedReviewIds": [],
             "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "expectedReviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9"
+            "expectedReviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69"
           },
           "reportRevision": 3,
-          "reviewStateHash": "66e9b7b6d42e746b7b92cac2ce688357862a8487a771dbb1cdf6e44335c9bbe9",
-          "currentReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "reviewStateHash": "b44988ee3bcf1f74a20f0450db8dba44ad628a6ffba470a818dabb9ec79d1d69",
+          "currentReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["27d15276-57e7-4e74-bc62-98f3a764b6c9"],
+          "acceptedReviewIds": ["0f349a24-fe86-44a3-aba0-44bd24918505"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         },
         "value": {
           "actorId": "89400000-0000-4000-8000-000000000001",
           "studyId": "89400000-0000-4000-8000-000000000010",
           "profileId": "lca.study-report-internal-review.v1",
-          "finalizedAt": "2026-11-03T15:53:05.821269+00:00",
-          "finalizationId": "fc45cc28-720c-477d-bbc0-14cbeff19690",
+          "finalizedAt": "2026-11-03T16:31:59.879643+00:00",
+          "finalizationId": "01380cd4-4593-4a86-a6f7-70d0ab2e24b7",
           "reportRevisionId": "90600000-0000-4000-8000-000000000002",
-          "acceptedReviewIds": ["19703486-ae21-420a-8675-fd5b8ffbd2f5"],
+          "acceptedReviewIds": ["50bdabeb-ced2-4983-9c33-c3c64b3e2f39"],
           "reportContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-          "expectedReviewStateHash": "92f31d8689f89e369429677370c9224e5540bcf39f050d14ec4b0332af39f27d"
+          "expectedReviewStateHash": "1cadc70f238f3ca162b45f0bf4ab37caba29ba831734c0afdd5d1610c84a3541"
         }
       }
-    },
-    {
+    }
+  ],
+  "actions": {
+    "owner": {
       "ok": true,
       "data": {
         "type": "actions",
         "actions": ["member.set"],
         "resource": {
-          "id": "90600000-0000-4000-8000-000000000010",
+          "id": "89400000-0000-4000-8000-000000000010",
           "type": "study"
         },
-        "allowedMemberRoles": ["reviewer"]
+        "corePermissions": {
+          "read": true,
+          "write": true
+        },
+        "allowedMemberRoles": ["editor", "reviewer", "viewer"]
+      }
+    },
+    "editor": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": true,
+          "write": true
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "viewer": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": true,
+          "write": false
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "reviewer": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": false,
+          "write": false
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "recipient": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": false,
+          "write": false
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "readOnlyOAuth": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": true,
+          "write": false
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "archivedOwner": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": ["member.set"],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": true,
+          "write": false
+        },
+        "allowedMemberRoles": ["editor", "reviewer", "viewer"]
+      }
+    },
+    "teamRevoked": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [],
+        "resource": {
+          "id": "89400000-0000-4000-8000-000000000010",
+          "type": "study"
+        },
+        "corePermissions": {
+          "read": false,
+          "write": false
+        },
+        "allowedMemberRoles": []
+      }
+    },
+    "clientRevoked": {
+      "ok": false,
+      "code": "FORBIDDEN"
+    },
+    "nonStudy": {
+      "ok": true,
+      "data": {
+        "type": "actions",
+        "actions": [
+          "report.current",
+          "report.view",
+          "comment.list",
+          "review.list",
+          "comment.append",
+          "report.finalize",
+          "share.list",
+          "export.request"
+        ],
+        "resource": {
+          "id": "90600000-0000-4000-8000-000000000002",
+          "type": "reportRevision"
+        },
+        "corePermissions": {
+          "read": false,
+          "write": false
+        },
+        "allowedMemberRoles": []
       }
     }
-  ]
+  }
 }

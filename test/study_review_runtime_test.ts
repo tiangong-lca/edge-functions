@@ -98,6 +98,7 @@ async function fixture() {
           resource: r.resource,
           actions: ['report.view', 'review.record', 'export.request'],
           allowedMemberRoles: [],
+          corePermissions: { read: false, write: false },
         });
       if (r.operation === 'report.current') return success({ type: 'reportState', value: current });
       if (committed && r.operation === 'export.request') return success(committed);
@@ -639,5 +640,59 @@ Deno.test(
     assertEquals(f.flags.downloads, 0);
     assertEquals(f.flags.uploads, 0);
     assertEquals(f.flags.consumes, 0);
+  },
+);
+
+Deno.test(
+  'V4 handler forwards actual Database core action projections and client denial without role inference',
+  async () => {
+    const f = await fixture();
+    const actual = JSON.parse(
+      await Deno.readTextFile(
+        new URL('./fixtures/lca-study-api/v4/database-service-contexts.json', import.meta.url),
+      ),
+    );
+    for (const [name, wrapped] of Object.entries(actual.actions)) {
+      const value = wrapped as { ok: boolean; data?: any; code?: string };
+      const resource = value.data?.resource ?? actual.actions.owner.data.resource;
+      const request = {
+        schemaVersion: API_SCHEMA,
+        requestId: `actual-core-${name}`,
+        operation: 'resource.actions',
+        resource,
+      };
+      const unexpected = () => Promise.reject(new Error('unexpected artifact work'));
+      const repository: ReviewRepository = {
+        dispatch: async () => value,
+        resolveIntent: unexpected,
+        consumeIntent: unexpected,
+        download: unexpected,
+        upload: unexpected,
+      };
+      const handler = createStudyHandler({
+        resolveActor: async () => ({ ok: true, value: f.p2.actor }),
+        review: {
+          config: () => ({
+            type: 'capabilities',
+            contractVersion: '4.0.0',
+            runtimeEnabled: true,
+            operations: ['capability.read', 'resource.actions'],
+            finalizationProfiles: [],
+            reviewClasses: [],
+            disclosurePolicies: [],
+          }),
+          repository: () => repository,
+        },
+      });
+      const response = await f.call(request, handler);
+      if (!value.ok) {
+        assertEquals(response.status, 403);
+        assertEquals(response.body.code, 'FORBIDDEN');
+        continue;
+      }
+      assertEquals(response.status, 200);
+      assertEquals(response.body.data.actions, []);
+      assertEquals(response.body.data.corePermissions, value.data.corePermissions);
+    }
   },
 );

@@ -316,8 +316,6 @@ Deno.test(
             : { ...base, operation: 'resource.actions', resource: data.resource };
       validateResponseForRequest(parseRequest(request), parseResponse({ ...base, ok: true, data }));
     }
-    const roles = responses.find((data: { type: string }) => data.type === 'actions');
-    assertEquals(roles.allowedMemberRoles, ['reviewer']);
   },
 );
 
@@ -401,11 +399,90 @@ Deno.test(
           resource: { type: 'study', id: 'study-1' },
           actions: ['member.set'],
           allowedMemberRoles,
+          corePermissions: { read: true, write: true },
         },
       });
     validateResponseForRequest(request, reply(['reviewer']));
     validateResponseForRequest(request, reply(['editor', 'reviewer', 'viewer']));
     assertThrows(() => reply(['reviewer', 'reviewer']));
     assertThrows(() => validateResponseForRequest(request, reply([])));
+  },
+);
+
+Deno.test(
+  'V4 Study core permission projection is strict and cannot grant core access from another resource',
+  () => {
+    const request = {
+      schemaVersion: 'lca.study-api.v4',
+      requestId: 'core-actions',
+      operation: 'resource.actions',
+      resource: { type: 'study', id: 'study-1' },
+    };
+    const data = {
+      type: 'actions',
+      resource: request.resource,
+      actions: [],
+      allowedMemberRoles: [],
+      corePermissions: { read: true, write: false },
+    };
+    const reply = (value: unknown) =>
+      parseResponse({
+        schemaVersion: request.schemaVersion,
+        requestId: request.requestId,
+        ok: true,
+        data: value,
+      });
+    validateResponseForRequest(parseRequest(request), reply(data));
+    const { corePermissions: _flags, ...missing } = data;
+    assertThrows(() => reply(missing));
+    assertThrows(() => reply({ ...data, corePermissions: { read: 'true', write: false } }));
+    assertThrows(() =>
+      reply({ ...data, corePermissions: { read: true, write: false, role: 'editor' } }),
+    );
+    for (const type of ['reportRevision', 'export', 'share']) {
+      assertThrows(() => reply({ ...data, resource: { type, id: 'resource-1' } }));
+      validateResponseForRequest(
+        parseRequest({ ...request, resource: { type, id: 'resource-1' } }),
+        reply({
+          ...data,
+          resource: { type, id: 'resource-1' },
+          corePermissions: { read: false, write: false },
+        }),
+      );
+    }
+  },
+);
+
+Deno.test(
+  'V4 actual Database core permission projections preserve existing roles, read-only clients and revocation',
+  async () => {
+    const fixture = await read('database-service-contexts.json');
+    const expected: Record<string, { read: boolean; write: boolean }> = {
+      owner: { read: true, write: true },
+      editor: { read: true, write: true },
+      viewer: { read: true, write: false },
+      reviewer: { read: false, write: false },
+      recipient: { read: false, write: false },
+      readOnlyOAuth: { read: true, write: false },
+      archivedOwner: { read: true, write: false },
+      teamRevoked: { read: false, write: false },
+      nonStudy: { read: false, write: false },
+    };
+    for (const [name, wrapped] of Object.entries(fixture.actions)) {
+      const value = wrapped as { ok: boolean; code?: string; data?: any };
+      if (name === 'clientRevoked') {
+        assertEquals(value, { ok: false, code: 'FORBIDDEN' });
+        continue;
+      }
+      const base = { schemaVersion: 'lca.study-api.v4', requestId: `actual-core-${name}` };
+      const response = parseResponse({ ...base, ...value });
+      const request = parseRequest({
+        ...base,
+        operation: 'resource.actions',
+        resource: value.data.resource,
+      });
+      validateResponseForRequest(request, response);
+      assertEquals(value.data.corePermissions, expected[name]);
+    }
   },
 );

@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: c49eeff06eb3349fda15c0964ca74773f36f487b
-lastReviewedNote: 'Edge #550: reviewed static nonnull predecessor requirement for withdrawal record/delegation requests; exact head authorization remains Database-owned. Existing evidence dates, V2/V3, replay and renderer/export bytes stay unchanged.'
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

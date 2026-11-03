@@ -137,6 +137,35 @@ test('V4 portable owner codec retains strict review and versioned export API out
       }).operation,
       'review.delegation.issue',
     );
+    const coreActions = {
+      schemaVersion: codec.API_SCHEMA,
+      requestId: 'core-actions',
+      operation: 'resource.actions',
+      resource: { type: 'study', id: 'study-1' },
+    };
+    const coreReply = codec.parseResponse({
+      schemaVersion: codec.API_SCHEMA,
+      requestId: 'core-actions',
+      ok: true,
+      data: {
+        type: 'actions',
+        resource: coreActions.resource,
+        actions: [],
+        allowedMemberRoles: [],
+        corePermissions: { read: true, write: false },
+      },
+    });
+    assert.doesNotThrow(() =>
+      codec.validateResponseForRequest(codec.parseRequest(coreActions), coreReply),
+    );
+    assert.throws(
+      () =>
+        codec.parseResponse({
+          ...coreReply,
+          data: { ...coreReply.data, resource: { type: 'share', id: 'share-1' } },
+        }),
+      { code: 'REFERENCE_MISMATCH' },
+    );
     assert.equal(typeof codec.verifyVersionedExport, 'function');
     assert.equal(typeof codec.validateExportViewBindings, 'function');
     assert.equal(codec.operationMetadata['share.download'].kind, 'query');

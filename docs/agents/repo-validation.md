@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: c49eeff06eb3349fda15c0964ca74773f36f487b
-lastReviewedNote: 'Edge #550: reviewed static nonnull predecessor requirement for withdrawal record/delegation requests; exact head authorization remains Database-owned. Existing evidence dates, V2/V3, replay and renderer/export bytes stay unchanged.'
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -329,3 +329,5 @@ Run `node --test scripts/study-contract-build.test.cjs` and `deno test --config 
 Run `test/study_review_contract_test.ts` and `test/study_review_runtime_test.ts` with exact Deno, plus `scripts/study-contract-build.test.cjs`, then the canonical baseline. Preserve actual renderer HTML/projection/finalization bindings, strict version discrimination and old P2 signature verification; exact pending and committed recovery; actor/client/hash/state failures; default-off admission; and denial or state change around every Storage read/upload. The shared P2 report fixture still executes the unchanged P2 assertions. Database owns actual SQL/RLS role, review-chain, non-author, delegation expiry/revoke/one-use, cursor, source-disclosure and share-race proof. Those tests plus owned OAuth, installed CLI/browser and exact cross-repository qualification are required separately; local adapter tests do not establish them or hosted readiness.
 
 V4 owner-download corrections require exact export/bundle selection, the real SDK query route and actor/service split, current authorization around I/O and locator-free bounded bytes. Replay fixtures must retain original outcome IDs alongside refreshed review/finalization state and revoked/expired shares or consumed/revoked delegation metadata. Validate personal reviewer-only and team member-role choices from `resource.actions.allowedMemberRoles`; consumers must not infer those choices from role strings.
+
+Core Study permissions in V4 actions require exact strict boolean projection, false values on non-Study targets and unchanged actor/api forwarding. Database actual tests own owner/editor/viewer/reviewer, read-only OAuth, archive and live team/client revocation checks through existing core authorization. Edge adapter tests prove that available V4 actions do not substitute for these flags. The projection does not grant per-source/target access or a cancellation action.

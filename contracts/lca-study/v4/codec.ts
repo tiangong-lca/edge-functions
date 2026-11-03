@@ -87,6 +87,7 @@ export function validateResponseForRequest(request: ReviewRequest, response: Rev
         d.type === 'actions' &&
         same(d.resource, request.resource) &&
         new Set(d.actions).size === d.actions.length &&
+        (d.resource.type === 'study' || (!d.corePermissions.read && !d.corePermissions.write)) &&
         (d.resource.type === 'study' && d.actions.includes('member.set')
           ? d.allowedMemberRoles.length > 0
           : d.allowedMemberRoles.length === 0);

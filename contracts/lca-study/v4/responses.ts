@@ -24,12 +24,17 @@ export const responseDataSchema = z.union([
       type: z.literal('actions'),
       resource: resourceSelectorSchema,
       actions: z.array(z.enum(OPERATIONS)).max(OPERATIONS.length),
+      corePermissions: z.object({ read: z.boolean(), write: z.boolean() }).strict(),
       allowedMemberRoles: z
         .array(z.enum(['editor', 'reviewer', 'viewer']))
         .max(3)
         .refine((v) => new Set(v).size === v.length, 'unique roles required'),
     })
-    .strict(),
+    .strict()
+    .refine(
+      (v) => v.resource.type === 'study' || (!v.corePermissions.read && !v.corePermissions.write),
+      'core permissions require a Study target',
+    ),
   z
     .object({
       type: z.literal('member'),
