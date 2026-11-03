@@ -228,7 +228,7 @@ Deno.test(
           p_audit: {
             command: 'review_contact_activate',
             actorUserId: USER_ID,
-            sdkVersion: '0.4.1',
+            sdkVersion: '0.6.0',
           },
         },
       },

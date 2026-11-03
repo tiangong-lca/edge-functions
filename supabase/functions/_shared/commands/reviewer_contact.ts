@@ -1,4 +1,4 @@
-import { createContact } from 'npm:@tiangong-lca/tidas-sdk@0.4.1/core';
+import { createContact } from 'npm:@tiangong-lca/tidas-sdk@0.6.0/core';
 import { z } from 'zod';
 
 import type { ActorContext } from '../command_runtime/actor_context.ts';
@@ -126,7 +126,7 @@ export async function executeReviewerContactCommand(
     p_audit: {
       command: 'review_contact_activate',
       actorUserId: actor.userId,
-      sdkVersion: '0.4.1',
+      sdkVersion: '0.6.0',
     },
   });
 
