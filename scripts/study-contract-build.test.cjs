@@ -92,3 +92,42 @@ test('portable owner codec packs exact deterministic bytes and executes without 
     await rm(temp, { recursive: true, force: true });
   }
 });
+
+test('V4 portable owner codec retains strict review and versioned export API outside source', async () => {
+  const { buildStudyContract } = await import('./build-study-contract.mjs');
+  const temp = await mkdtemp(path.join(os.tmpdir(), 'study-review-codec-'));
+  try {
+    const output = path.join(temp, 'codec');
+    const artifact = await buildStudyContract(output, { allowDirty: true, apiVersion: 'v4' });
+    assert.equal(artifact.apiSchema, 'lca.study-api.v4');
+    assert.equal(artifact.contractVersion, '4.0.0');
+    const codec = await import(pathToFileURL(path.join(output, 'index.mjs')).href);
+    const fixtures = JSON.parse(
+      await readFile(
+        path.join(__dirname, '../test/fixtures/lca-study-api/v4/protocol.json'),
+        'utf8',
+      ),
+    );
+    for (const request of fixtures.requests) assert.deepEqual(codec.parseRequest(request), request);
+    assert.equal(typeof codec.verifyVersionedExport, 'function');
+    assert.equal(typeof codec.validateExportViewBindings, 'function');
+    assert.equal(codec.operationMetadata['share.download'].kind, 'query');
+    const deno = execFileSync(
+      'deno',
+      [
+        'eval',
+        '--no-config',
+        '--no-npm',
+        `const c=await import(${JSON.stringify(pathToFileURL(path.join(output, 'index.mjs')).href)});console.log(c.parseRequest(${JSON.stringify(fixtures.requests[0])}).schemaVersion);`,
+      ],
+      { cwd: temp, encoding: 'utf8' },
+    );
+    assert.equal(deno.trim(), 'lca.study-api.v4');
+    for (const file of artifact.files) {
+      const bytes = await readFile(path.join(output, file.path));
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), file.sha256);
+    }
+  } finally {
+    await rm(temp, { recursive: true, force: true });
+  }
+});

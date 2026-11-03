@@ -37,6 +37,8 @@ import {
 } from './protocol.ts';
 import { createPreparedInputValidator } from './validator.ts';
 import { executeReporting, type ReportingOptions } from './reporting_executor.ts';
+import { executeReview, type ReviewOptions } from './review_executor.ts';
+import { API_SCHEMA as REVIEW_SCHEMA } from '../../../../contracts/lca-study/v4/review.ts';
 import { API_SCHEMA as REPORTING_SCHEMA } from '../../../../contracts/lca-study/v3/report.ts';
 
 export type HandlerOptions = {
@@ -46,6 +48,7 @@ export type HandlerOptions = {
   validateRevision?: ServerValidator | null;
   timeoutMs?: number;
   reporting?: ReportingOptions;
+  review?: ReviewOptions;
 };
 const MAX_BODY_BYTES = 256 * 1024;
 function response(requestId: string, data: unknown): StudyApiResponse {
@@ -57,7 +60,12 @@ export function createStudyHandler(options: HandlerOptions = {}) {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
     let requestId = crypto.randomUUID() as string;
     const wireHeader = req.headers.get('x-study-schema');
-    let responseVersion: string = wireHeader === REPORTING_SCHEMA ? REPORTING_SCHEMA : API_SCHEMA;
+    let responseVersion: string =
+      wireHeader === REVIEW_SCHEMA
+        ? REVIEW_SCHEMA
+        : wireHeader === REPORTING_SCHEMA
+          ? REPORTING_SCHEMA
+          : API_SCHEMA;
     const controller = new AbortController();
     const abort = () => controller.abort(req.signal.reason);
     req.signal.addEventListener('abort', abort, { once: true });
@@ -121,6 +129,21 @@ export function createStudyHandler(options: HandlerOptions = {}) {
           input.schemaVersion !== wireHeader)
       )
         throw new StudyFailure('INVALID_REQUEST', 400, 'schema.header_binding');
+      if (
+        input &&
+        typeof input === 'object' &&
+        'schemaVersion' in input &&
+        input.schemaVersion === REVIEW_SCHEMA
+      ) {
+        responseVersion = REVIEW_SCHEMA;
+        return await executeReview(
+          input,
+          actor.value,
+          controller.signal,
+          assertActive,
+          options.review,
+        );
+      }
       if (
         input &&
         typeof input === 'object' &&

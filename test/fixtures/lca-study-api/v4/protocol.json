@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "lca.study-review-fixtures.v1",
+  "requests": [
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "capability.read"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "resource.actions",
+      "resource": {
+        "type": "reportRevision",
+        "id": "p3-report"
+      }
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "member.set",
+      "idempotencyKey": "p3-member",
+      "target": {
+        "type": "study",
+        "id": "p3-study",
+        "expectedRevision": 1
+      },
+      "memberId": "10000000-0000-4000-8000-000000000002",
+      "role": "reviewer"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "comment.append",
+      "idempotencyKey": "p3-comment",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "text": "This comment does not approve."
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "review.record",
+      "idempotencyKey": "p3-review-key",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "reviewClass": "internal",
+      "decision": "approve",
+      "comment": "Reviewed the exact frozen report.",
+      "predecessorReviewId": null,
+      "delegationId": null
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "review.delegation.issue",
+      "idempotencyKey": "p3-delegation-key",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "clientId": "20000000-0000-4000-8000-000000000001",
+      "reviewClass": "internal",
+      "decision": "approve",
+      "predecessorReviewId": null,
+      "expiresAt": "2026-11-03T00:10:00Z"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "report.finalize",
+      "idempotencyKey": "p3-finalization-key",
+      "target": {
+        "type": "reportRevision",
+        "id": "p3-report",
+        "expectedRevision": 2
+      },
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "profileId": "lca.study-report-internal-review.v1",
+      "acceptedReviewIds": ["p3-review"]
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "report.current",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "report.view",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "export.request",
+      "idempotencyKey": "p3-export-key",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "finalizationId": "p3-finalization",
+      "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rendererVersion": "1.0.0",
+      "viewModelVersion": "lca.study-report-view.v1"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.create",
+      "idempotencyKey": "p3-share-key",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "exportId": "p3-export",
+      "recipientId": "10000000-0000-4000-8000-000000000002",
+      "disclosurePolicyId": "lca.study-report-summary-share.v1",
+      "expiresAt": "2026-11-04T00:00:00Z"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "comment.list",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cursor": null,
+      "limit": 20
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "review.list",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cursor": null,
+      "limit": 20
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "review.delegation.list",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cursor": null,
+      "limit": 20
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.list",
+      "reportRevisionId": "p3-report",
+      "expectedContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cursor": null,
+      "limit": 20
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.read",
+      "shareId": "p3-share"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.view",
+      "shareId": "p3-share"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.download",
+      "shareId": "p3-share"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "share.revoke",
+      "idempotencyKey": "p3-revoke",
+      "shareId": "p3-share",
+      "reason": "End recipient access."
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "review.delegation.revoke",
+      "idempotencyKey": "p3-revoke-grant",
+      "delegationId": "p3-delegation"
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "operation": "export.read",
+      "exportId": "p3-export"
+    }
+  ],
+  "responses": [
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "ok": true,
+      "data": {
+        "type": "review",
+        "value": {
+          "studyId": "p3-study",
+          "reportRevisionId": "p3-report",
+          "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "reviewId": "p3-review",
+          "actorId": "10000000-0000-4000-8000-000000000002",
+          "clientId": null,
+          "reviewClass": "internal",
+          "decision": "approve",
+          "comment": "Reviewed the exact frozen report.",
+          "predecessorReviewId": null,
+          "delegationId": null,
+          "authorityKind": "first_party_actor",
+          "createdAt": "2026-11-03T00:00:00Z"
+        }
+      }
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "ok": true,
+      "data": {
+        "type": "finalization",
+        "value": {
+          "studyId": "p3-study",
+          "reportRevisionId": "p3-report",
+          "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "finalizationId": "p3-finalization",
+          "actorId": "10000000-0000-4000-8000-000000000001",
+          "profileId": "lca.study-report-internal-review.v1",
+          "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "acceptedReviewIds": ["p3-review"],
+          "finalizedAt": "2026-11-03T00:00:00Z"
+        },
+        "state": {
+          "studyId": "p3-study",
+          "reportRevisionId": "p3-report",
+          "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "reportRevision": 2,
+          "authorId": "10000000-0000-4000-8000-000000000001",
+          "reviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "currentReviewIds": ["p3-review"],
+          "acceptedReviewIds": ["p3-review"],
+          "finalization": {
+            "studyId": "p3-study",
+            "reportRevisionId": "p3-report",
+            "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "finalizationId": "p3-finalization",
+            "actorId": "10000000-0000-4000-8000-000000000001",
+            "profileId": "lca.study-report-internal-review.v1",
+            "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "acceptedReviewIds": ["p3-review"],
+            "finalizedAt": "2026-11-03T00:00:00Z"
+          },
+          "acceptance": "current",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T00:00:00Z",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T00:00:00Z"
+        }
+      }
+    },
+    {
+      "schemaVersion": "lca.study-api.v4",
+      "requestId": "p3-request",
+      "ok": true,
+      "data": {
+        "type": "reportState",
+        "value": {
+          "studyId": "p3-study",
+          "reportRevisionId": "p3-report",
+          "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "reportRevision": 2,
+          "authorId": "10000000-0000-4000-8000-000000000001",
+          "reviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "currentReviewIds": ["p3-review"],
+          "acceptedReviewIds": ["p3-review"],
+          "finalization": {
+            "studyId": "p3-study",
+            "reportRevisionId": "p3-report",
+            "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "finalizationId": "p3-finalization",
+            "actorId": "10000000-0000-4000-8000-000000000001",
+            "profileId": "lca.study-report-internal-review.v1",
+            "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "acceptedReviewIds": ["p3-review"],
+            "finalizedAt": "2026-11-03T00:00:00Z"
+          },
+          "acceptance": "current",
+          "validity": {
+            "status": "current",
+            "checkedAt": "2026-11-03T00:00:00Z",
+            "reasonCodes": []
+          },
+          "checkedAt": "2026-11-03T00:00:00Z"
+        }
+      }
+    }
+  ],
+  "review": {
+    "studyId": "p3-study",
+    "reportRevisionId": "p3-report",
+    "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "reviewId": "p3-review",
+    "actorId": "10000000-0000-4000-8000-000000000002",
+    "clientId": null,
+    "reviewClass": "internal",
+    "decision": "approve",
+    "comment": "Reviewed the exact frozen report.",
+    "predecessorReviewId": null,
+    "delegationId": null,
+    "authorityKind": "first_party_actor",
+    "createdAt": "2026-11-03T00:00:00Z"
+  },
+  "finalization": {
+    "studyId": "p3-study",
+    "reportRevisionId": "p3-report",
+    "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "finalizationId": "p3-finalization",
+    "actorId": "10000000-0000-4000-8000-000000000001",
+    "profileId": "lca.study-report-internal-review.v1",
+    "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "acceptedReviewIds": ["p3-review"],
+    "finalizedAt": "2026-11-03T00:00:00Z"
+  },
+  "currentState": {
+    "studyId": "p3-study",
+    "reportRevisionId": "p3-report",
+    "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "reportRevision": 2,
+    "authorId": "10000000-0000-4000-8000-000000000001",
+    "reviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "currentReviewIds": ["p3-review"],
+    "acceptedReviewIds": ["p3-review"],
+    "finalization": {
+      "studyId": "p3-study",
+      "reportRevisionId": "p3-report",
+      "reportContentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "finalizationId": "p3-finalization",
+      "actorId": "10000000-0000-4000-8000-000000000001",
+      "profileId": "lca.study-report-internal-review.v1",
+      "expectedReviewStateHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "acceptedReviewIds": ["p3-review"],
+      "finalizedAt": "2026-11-03T00:00:00Z"
+    },
+    "acceptance": "current",
+    "validity": {
+      "status": "current",
+      "checkedAt": "2026-11-03T00:00:00Z",
+      "reasonCodes": []
+    },
+    "checkedAt": "2026-11-03T00:00:00Z"
+  }
+}

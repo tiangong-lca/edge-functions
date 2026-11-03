@@ -14,14 +14,18 @@ whenToUpdate:
 checkPaths:
   - contracts/lca-study/v2/codec.ts
   - contracts/lca-study/v3/**
+  - contracts/lca-study/v4/**
+  - supabase/functions/_shared/study/review_*.ts
+  - test/study_review_contract_test.ts
+  - test/study_review_runtime_test.ts
   - supabase/functions/_shared/study/reporting_*.ts
   - scripts/build-study-contract.mjs
   - scripts/study-contract-build.test.cjs
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c8784576377b4ab156e89dc4eac81014a87880f6
-lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
+lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
+lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md
@@ -74,3 +78,23 @@ Run portable Node/Deno outside-source tests, strict request/selection tests and 
 Run its explicit Deno check and the ordinary canonical gate. Installed CLI login, source acquisition, native preparation/run/analysis, report claim validation, signed export and offline browser verification require actual execution receipts. Successful OAuth alone does not prove those later steps. Retain exact process/resource ownership and private credentials only for the scoped qualification; close listeners and reconcile actual DB/Storage state before removing owned auth identities.
 
 Pending intent recovery ignores only transport `requestId` when comparing semantic requests; original idempotency, actor/client and content remain bound. Freeze validates and renders the bounded final view before committing, so unsupported view size cannot produce a frozen but unexportable report. Native Worker schema/golden fixture bytes and the renderer inventory are hash-bound producer artifacts; formatting must preserve those bytes.
+
+## V4 review, finalization and named shares
+
+P3 is additive `lca.study-api.v4` / bundle `4.0.0`. Its exact schemas live in `contracts/lca-study/v4/`; `protocol.json` and `view.json` under the V4 fixtures bind the agreed Database #906 / Edge #550 wire. V2/V3 request/recovery identities, frozen P2 reports and signed P2 packages retain their original versions. The same consumer builder supports `--api-version v4` with contained Node/Deno ESM, JSON Schema and generated declarations. It never imports a sibling repository.
+
+`STUDY_REVIEW_CONFIG` separately admits explicit operations, finalization profiles, review classes and disclosure policies. Absence permits only capability read, with no profiles/classes/policies. The actual Database capability projection intersects that allowlist; `resource.actions` returns only Database-authorized actions further narrowed by deployment admission. Consumers display these actions rather than reconstructing role policy.
+
+Database owns reviewer membership, append-only comments, exact predecessor review chains, one-use actor delegation, profile acceptance, finalization and shares. V4 adds reviewer through `member.set`; V2 source/model/Run permissions do not expand. Comments never approve. Internal review requires at least one current approving reviewer distinct from the report author. The only other initial finalization profile is explicit unreviewed finalization. Independent review is unavailable. Records are authenticated actor decisions and cannot establish human judgment or independent scientific review.
+
+OAuth review requires a distinct first-party-issued grant by that exact reviewing actor, bound to client, frozen report/hash, class, decision and predecessor, with at most fifteen minutes to consume. Explicit revocation, client admission and current reviewer eligibility remain live checks. Expiry limits first consumption; it does not erase an already committed historical actor decision. The exact original semantic request and one consumed review survive same-key recovery under current authorization. Caller-written evidence strings confer no authority.
+
+Actor `qry_study_review_v1` / `cmd_study_review_v1` preserve the ordinary verified JWT and `api` schema. Only service `svc_study_review_intent_resolve_v1` receives opaque read/producer intent IDs. Its strict `studyReviewContext` binds the original V4 request, actor/client, report/hash and current state. For report views/export it carries a service-only P2 producer context under the Study owner's current source/disclosure authority. A reviewer receives only the allowlisted report view, never raw source/model/full-facts artifacts. The read-only producer validator relaxes only export-allocation/profile presence; frozen identities and actual Worker/content bytes still undergo the P2 validator. Every bounded read/upload is enclosed by fresh service resolution; changed contexts fail before disclosure/commit. Database clocks govern domain expiry while the existing monotonic Edge deadline bounds all I/O.
+
+Finalization is a separate immutable record. It binds frozen report ID/hash/CAS, profile, expected current review-state hash and exact accepted review IDs. Later withdrawal changes current acceptance without rewriting that record or the frozen report. Current online state travels separately from a historical view. The exact existing Platform view.v1 / renderer 1.0.0 supports reviewed and finalized snapshots and remains byte unchanged.
+
+New exports use `lca.study-export-manifest.v2` and bundle v2. The manifest binds the immutable finalization record and actual accepted review IDs to the view snapshot and exact visible HTML/projection bytes. Signature domain and receipt v2 stay unchanged; strict manifest version discrimination preserves historical manifest v1 verification as P2 unreviewed evidence. V4 verification validates the actual canonical projection against its manifest after signature/file checks. Offline proof cannot establish current acceptance or permission.
+
+Named shares bind recipient UUID, persisted exact export/projection, disclosure policy/context, expiry and grant epoch. Initial summary disclosure permits public sources or exact issuer-owned private sources; borrowed private read permission cannot authorize redistribution. Only the named recipient resolves share view/download; issuers use report views, export metadata and share management. Recipients acquire no Study membership or raw-artifact access. Service resolution checks current issuer/source/client/share authority around Storage I/O. Responses contain bounded view/base64 bytes and current state, never an anonymous URL or locator. Downloaded copies remain historical and cannot be recalled.
+
+Run `study_review_contract_test.ts`, `study_review_runtime_test.ts`, the portable build tests and all retained V2/V3/signature suites before the canonical gate. Actual SQL/RLS, OAuth grant races, installed CLI/browser and cross-repository proof remain separate acceptance evidence. Source tests do not enable a hosted operation or complete P3 delivery.

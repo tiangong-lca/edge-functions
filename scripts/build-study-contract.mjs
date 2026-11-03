@@ -63,7 +63,7 @@ export async function buildStudyContract(
   outputDirectory,
   { allowDirty = false, apiVersion = 'v2' } = {},
 ) {
-  if (!['v2', 'v3'].includes(apiVersion)) throw new Error('study_api_version');
+  if (!['v2', 'v3', 'v4'].includes(apiVersion)) throw new Error('study_api_version');
   const output = path.resolve(outputDirectory);
   if (output === root || !path.isAbsolute(outputDirectory))
     throw new Error('study_output_absolute_directory_required');
@@ -97,7 +97,7 @@ export async function buildStudyContract(
   const schemaResult = await build({
     ...options,
     stdin: {
-      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/${apiVersion}/${apiVersion === 'v2' ? 'requests' : 'report'}.ts'; import { responseSchema } from './contracts/lca-study/${apiVersion}/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' }); ${apiVersion === 'v3' ? "import {exportManifestSchema,exportReceiptSchema,exportTrustAnchorSchema} from './contracts/lca-study/v3/export.ts'; export const manifest=z.toJSONSchema(exportManifestSchema); export const receipt=z.toJSONSchema(exportReceiptSchema); export const anchor=z.toJSONSchema(exportTrustAnchorSchema);" : ''}`,
+      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/${apiVersion}/${apiVersion === 'v2' ? 'requests' : apiVersion === 'v3' ? 'report' : 'review'}.ts'; import { responseSchema } from './contracts/lca-study/${apiVersion}/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' }); ${apiVersion !== 'v2' ? `import {exportManifestSchema,exportReceiptSchema,exportTrustAnchorSchema} from './contracts/lca-study/${apiVersion}/export.ts'; export const manifest=z.toJSONSchema(exportManifestSchema); export const receipt=z.toJSONSchema(exportReceiptSchema); export const anchor=z.toJSONSchema(exportTrustAnchorSchema); ${apiVersion === 'v4' ? "import {exportManifestSchema as historicalManifest} from './contracts/lca-study/v3/export.ts'; export const historical=z.toJSONSchema(historicalManifest);" : ''}` : ''}`,
       resolveDir: root,
       sourcefile: 'study-schema-build.ts',
       loader: 'ts',
@@ -110,8 +110,10 @@ export async function buildStudyContract(
     `data:text/javascript;base64,${Buffer.from(result.outputFiles[0].contents).toString('base64')}`
   );
   let declarations = `// Generated from exact Edge-owned schemas. Refinements are enforced by the codec.\nexport declare const API_SCHEMA: ${JSON.stringify(codec.API_SCHEMA)};\nexport declare const CONTRACT_VERSION: ${JSON.stringify(codec.CONTRACT_VERSION)};\nexport type StudyApiRequest = ${declaration(schema.request)};\nexport type StudyApiResponse = ${declaration(schema.response)};\nexport declare class StudyCodecError extends Error { readonly code: 'INVALID_REQUEST'|'UNSUPPORTED_SCHEMA'|'REFERENCE_MISMATCH'; readonly ruleId: string; }\nexport declare function parseRequest(input: unknown): StudyApiRequest;\nexport declare function parseResponse(input: unknown): StudyApiResponse;\nexport declare function validateResponseForRequest(request: StudyApiRequest, response: StudyApiResponse): void;\nexport declare const OPERATIONS: ReadonlyArray<StudyApiRequest['operation']>;\nexport declare const operationMetadata: Readonly<Record<StudyApiRequest['operation'], Readonly<{operation: StudyApiRequest['operation']; kind:'query'|'mutation'}>>>;\n`;
-  if (apiVersion === 'v3')
-    declarations += `export type ExportManifest = ${declaration(schema.manifest)};\nexport type ExportReceipt = ${declaration(schema.receipt)};\nexport type ExportTrustAnchor = ${declaration(schema.anchor)};\nexport declare function analysisConfigHash(input: unknown): Promise<string>;\nexport declare function canonicalReceiptBytes(input:unknown):Uint8Array;\nexport declare function validateExportViewBindings(view:unknown,manifest:ExportManifest):void;\nexport declare function parseExportBundle(bytes:Uint8Array):{manifestBytes:Uint8Array;receipt:ExportReceipt;files:Array<{path:'report.html'|'projection.json';bytes:Uint8Array}>};\nexport declare function verifyExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest>;\n`;
+  if (apiVersion !== 'v2')
+    declarations += `export type ExportManifest = ${declaration(schema.manifest)};\nexport type ExportReceipt = ${declaration(schema.receipt)};\nexport type ExportTrustAnchor = ${declaration(schema.anchor)};\n${apiVersion === 'v3' ? 'export declare function analysisConfigHash(input: unknown): Promise<string>;\n' : ''}export declare function canonicalReceiptBytes(input:unknown):Uint8Array;\nexport declare function validateExportViewBindings(view:unknown,manifest:ExportManifest):void;\nexport declare function parseExportBundle(bytes:Uint8Array):{manifestBytes:Uint8Array;receipt:ExportReceipt;files:Array<{path:'report.html'|'projection.json';bytes:Uint8Array}>};\nexport declare function verifyExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest>;\n`;
+  if (apiVersion === 'v4')
+    declarations += `export type HistoricalExportManifest = ${declaration(schema.historical)};\nexport declare function verifyVersionedExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest | HistoricalExportManifest>;\n`;
   const metadata = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
   const importMap = JSON.parse(
     await readFile(path.join(root, 'supabase/functions/deno.json'), 'utf8'),
@@ -129,11 +131,16 @@ export async function buildStudyContract(
     [
       'package.json',
       Buffer.from(
-        `${JSON.stringify({ name: '@tiangong-lca/study-contract', version: codec.CONTRACT_VERSION, private: true, type: 'module', exports: { '.': { types: './index.d.ts', import: './index.mjs' } }, files: ['index.mjs', 'index.d.ts', 'request.schema.json', 'response.schema.json', 'manifest.json', 'LICENSE.zod'], engines: { node: '>=24.19.0 <25' } }, null, 2)}\n`,
+        `${JSON.stringify({ name: '@tiangong-lca/study-contract', version: codec.CONTRACT_VERSION, private: true, type: 'module', exports: { '.': { types: './index.d.ts', import: './index.mjs' } }, files: ['index.mjs', 'index.d.ts', 'request.schema.json', 'response.schema.json', 'manifest.json', 'LICENSE.zod', ...(apiVersion === 'v4' ? ['LICENSE.renderer'] : [])], engines: { node: '>=24.19.0 <25' } }, null, 2)}\n`,
       ),
     ],
     ['LICENSE.zod', await readFile(path.join(root, 'node_modules/zod/LICENSE'))],
   ]);
+  if (apiVersion === 'v4')
+    files.set(
+      'LICENSE.renderer',
+      await readFile(path.join(root, 'supabase/functions/_shared/study/vendor/renderer/LICENSE')),
+    );
   const inputs = [];
   const sourcePaths = new Set([
     ...Object.keys(result.metafile.inputs).filter((name) => !name.startsWith('node_modules/')),
@@ -141,6 +148,12 @@ export async function buildStudyContract(
     'package.json',
     'pnpm-lock.yaml',
     'supabase/functions/deno.json',
+    ...(apiVersion === 'v4'
+      ? [
+          'supabase/functions/_shared/study/vendor/renderer/manifest.json',
+          'supabase/functions/_shared/study/vendor/renderer/consumption.json',
+        ]
+      : []),
   ]);
   for (const relative of [...sourcePaths].sort()) {
     const bytes = await readFile(path.resolve(root, relative));
@@ -185,7 +198,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     else if (args[i] === '--allow-dirty' && !allowDirty) allowDirty = true;
     else
       throw new Error(
-        'usage: build-study-contract --out <new-absolute-directory> [--api-version v2|v3] [--allow-dirty]',
+        'usage: build-study-contract --out <new-absolute-directory> [--api-version v2|v3|v4] [--allow-dirty]',
       );
   }
   if (!output) throw new Error('study_output_required');
