@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
-lastReviewedNote: 'edge-functions #545: reviewed exact TIDAS SDK 0.6.0 adoption and existing consumer tests; runtime, validation policy, delivery gates and deployment authority are unchanged.'
+lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
+lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -52,7 +52,7 @@ related:
 
 ## Study runtime entrypoint
 
-W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](docs/agents/lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](docs/agents/lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](docs/agents/lca-study-reporting-contract.md); review/share remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 W06 adds typed Study task recovery/cancellation and service-resolved artifact read intents. The owned local runtime qualifier remains opt-in; private Study/source authority is rechecked by Database before and after bounded artifact I/O, and generic job endpoints do not grant Study access. Exact source/queue/native/Storage evidence and hosted admission remain separate gates.
 
@@ -223,3 +223,7 @@ Install the versioned local hook once per checkout:
 ```
 
 The `pre-push` hook runs `scripts/docpact-gate.sh`, which delegates CLI lookup to `scripts/docpact` and performs strict config validation plus enforced lint before the push leaves the machine. It then runs non-mutating `pnpm lint` and canonical `pnpm check` as the local test gate, and aborts if the lint step changes the working tree. The wrapper checks `DOCPACT_BIN`, Cargo install locations, Homebrew install locations, and then `PATH`, so local agent shells should not fail only because bare `docpact` is unavailable. The default comparison base is `origin/dev` for routine branches and `origin/main` for promote or hotfix branches. Override it for unusual stacks with `DOCPACT_BASE_REF=<ref>` or `scripts/docpact-gate.sh --base <ref>`. The gate writes its detailed report to a temporary file so normal pushes do not create `.docpact/runs/` artifacts. The GitHub `CI` workflow supports manual dispatch and narrowly scoped dependency/stack qualification input PRs.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.

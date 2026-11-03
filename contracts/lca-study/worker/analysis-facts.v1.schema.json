@@ -1,0 +1,919 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-facts.v1",
+  "$comment": "Worker owns numerical/schema meaning. Artifact identity and current Study/source authorization are independently required; parsing alone proves no issuance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "profileId",
+    "analyzerVersion",
+    "studyId",
+    "analysisId",
+    "config",
+    "configHash",
+    "inputs",
+    "comparability",
+    "facts",
+    "coverage",
+    "scenarioEvidence",
+    "hotspots",
+    "businessPilotQualified",
+    "scientificRankingQualified"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "lca.study-analysis-facts.v1"
+    },
+    "profileId": {
+      "const": "lca.study-analysis-explicit-v1"
+    },
+    "analyzerVersion": {
+      "const": "study.analysis.v1"
+    },
+    "studyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "analysisId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "config": {
+      "$ref": "#/$defs/config"
+    },
+    "configHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inputBinding"
+      },
+      "maxItems": 2,
+      "minItems": 1
+    },
+    "comparability": {
+      "$ref": "#/$defs/comparability"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fact"
+      },
+      "maxItems": 8192,
+      "minItems": 1
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/coverage"
+      },
+      "maxItems": 2
+    },
+    "scenarioEvidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenarioEvidence"
+      },
+      "maxItems": 2
+    },
+    "hotspots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hotspots"
+      },
+      "maxItems": 50
+    },
+    "businessPilotQualified": {
+      "const": false
+    },
+    "scientificRankingQualified": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "datasetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instanceId",
+        "exchangeId"
+      ],
+      "properties": {
+        "instanceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "exchangeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "inventoryAxis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "flow",
+        "direction",
+        "unit"
+      ],
+      "properties": {
+        "flow": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "direction": {
+          "enum": [
+            "Input",
+            "Output"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "calculationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema",
+        "sha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "calculation_contract"
+        },
+        "schema": {
+          "const": "lca.calculation-contract.v1"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "modelInput",
+            "runResult"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "modelRevisionId",
+        "contentHash",
+        "digestScope"
+      ],
+      "properties": {
+        "type": {
+          "const": "modelRevision"
+        },
+        "modelRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "worker_prepared_model"
+        }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checkedAt",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "current",
+            "superseded",
+            "withdrawn",
+            "unknown"
+          ]
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 32
+        }
+      }
+    },
+    "config": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "runIds"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "lca.study-analysis-config.v1"
+            },
+            "kind": {
+              "const": "contribution"
+            },
+            "runIds": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "runIds"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "lca.study-analysis-config.v1"
+            },
+            "kind": {
+              "const": "comparison"
+            },
+            "runIds": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "inputBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "studyRevisionId",
+        "scenarioRevisionId",
+        "modelPreparationId",
+        "inputHash",
+        "effectiveModelRef",
+        "preparedArtifactRef",
+        "resultRef",
+        "calculationContractRef",
+        "methodSourceHash",
+        "validity"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "studyRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scenarioRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "modelPreparationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "inputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "effectiveModelRef": {
+          "$ref": "#/$defs/modelRef"
+        },
+        "preparedArtifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "resultRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "calculationContractRef": {
+          "$ref": "#/$defs/calculationRef"
+        },
+        "methodSourceHash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "validity": {
+          "$ref": "#/$defs/validity"
+        }
+      }
+    },
+    "unitIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "flow",
+        "method",
+        "support",
+        "view"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "model_view_reference_unit",
+            "flow_reference_unit",
+            "lcia_method_quantity",
+            "dimensionless"
+          ]
+        },
+        "flow": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "support": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/datasetRef"
+          },
+          "maxItems": 4
+        },
+        "view": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/port"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "factId",
+            "kind",
+            "label",
+            "runIds",
+            "methodRef",
+            "canonicalValue",
+            "unit",
+            "unitIdentity",
+            "coverage",
+            "scope",
+            "reasonCodes",
+            "subject"
+          ],
+          "properties": {
+            "factId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "kind": {
+              "enum": [
+                "activity",
+                "inventory",
+                "impact",
+                "viewContribution",
+                "inventoryContribution",
+                "comparisonDelta",
+                "relativeDelta"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "runIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "methodRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "canonicalValue": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^(?!-0$)-?(?:0|[1-9]\\d*)(?:\\.\\d*[1-9])?(?:e-?[1-9]\\d{0,2})?$",
+              "$comment": "Producer additionally requires finite binary64 shortest-roundtrip spelling after facts-only normalization; regex alone is not that proof."
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "unitIdentity": {
+              "$ref": "#/$defs/unitIdentity"
+            },
+            "coverage": {
+              "enum": [
+                "complete",
+                "partial"
+              ]
+            },
+            "scope": {
+              "enum": [
+                "declared_model_activity",
+                "declared_inventory",
+                "characterized_subtotal",
+                "characterized_inventory_term",
+                "numeric_delta_of_characterized_subtotals",
+                "delta_divided_by_absolute_baseline"
+              ]
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "maxItems": 32
+            },
+            "subject": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "view",
+                "inventory"
+              ],
+              "properties": {
+                "view": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/port"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "inventory": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/inventoryAxis"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "factId",
+            "kind",
+            "label",
+            "runIds",
+            "methodRef",
+            "canonicalValue",
+            "unit",
+            "unitIdentity",
+            "coverage",
+            "scope",
+            "reasonCodes",
+            "subject"
+          ],
+          "properties": {
+            "factId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "kind": {
+              "enum": [
+                "activity",
+                "inventory",
+                "impact",
+                "viewContribution",
+                "inventoryContribution",
+                "comparisonDelta",
+                "relativeDelta"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "runIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "methodRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "canonicalValue": {
+              "type": "null"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "unitIdentity": {
+              "$ref": "#/$defs/unitIdentity"
+            },
+            "coverage": {
+              "const": "unknown"
+            },
+            "scope": {
+              "enum": [
+                "declared_model_activity",
+                "declared_inventory",
+                "characterized_subtotal",
+                "characterized_inventory_term",
+                "numeric_delta_of_characterized_subtotals",
+                "delta_divided_by_absolute_baseline"
+              ]
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "maxItems": 32
+            },
+            "subject": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "view",
+                "inventory"
+              ],
+              "properties": {
+                "view": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/port"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "inventory": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/inventoryAxis"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "comparability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reasonCodes",
+        "scope",
+        "rankingAllowed",
+        "checks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_assessed",
+            "comparable",
+            "not_comparable"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 32
+        },
+        "scope": {
+          "const": "frozen_numerical_inputs_only"
+        },
+        "rankingAllowed": {
+          "const": false
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ruleId",
+              "status"
+            ],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "unknown"
+                ]
+              }
+            }
+          },
+          "maxItems": 32
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "gaps",
+        "qualityFindings",
+        "completeLciaScores"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "method",
+              "inventoryIndex"
+            ],
+            "properties": {
+              "method": {
+                "$ref": "#/$defs/datasetRef"
+              },
+              "inventoryIndex": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "maxItems": 102400
+        },
+        "qualityFindings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "maxItems": 512
+        },
+        "completeLciaScores": {
+          "type": "boolean"
+        }
+      }
+    },
+    "scenarioEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "scenarioRevisionId",
+        "contentHash",
+        "overrides"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scenarioRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "value"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            }
+          },
+          "maxItems": 256
+        }
+      }
+    },
+    "hotspots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "methodRef",
+        "coverage",
+        "ordering",
+        "factIds"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "ordering": {
+          "const": "absolute_characterized_contribution_desc_then_fact_id"
+        },
+        "factIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 128
+        }
+      }
+    }
+  }
+}

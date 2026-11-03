@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: c7a8aeb1b6c2724603f4b99ec554e4c69548d598
-lastReviewedNote: 'edge-functions #545: reviewed exact TIDAS SDK 0.6.0 adoption and existing consumer tests; runtime, validation policy, delivery gates and deployment authority are unchanged.'
+lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
+lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -50,7 +50,7 @@ related:
 
 ## Study runtime entrypoint
 
-W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. Report/review/share production remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); review/share remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 The W06 adapter uses typed Study `task.read`/`task.cancel` resource references rather than generic requester-only job routes. Artifact RPCs expose opaque short-lived intents to actors; only service resolution yields a locator, and the shared bounded reader resolves current authority again after byte/hash verification. The opt-in owned runtime qualifier composes actual handlers with the separately owned Database/Worker processes and keeps hosted admission separate; details stay in the runtime contract.
 
@@ -419,3 +419,7 @@ Release-owned final Results use separate `_shared/result_query_v2.ts` modes `sou
 `_shared/result_download_v2.ts` owns `final_download`. Actor `api.qry_final_result_download_v2` applies complete-Candidate selection and support-data RLS. Edge verifies the canonical storage target and signs the two fixed Result ZIP names with server-side credentials. The Supabase signer reuses the existing service-role/secret key for the exact same project and obtains a single-object Storage capability; it does not disclose an Auth session token in a presigned S3 URL. A post-signing live recheck precedes disclosure; URLs remain bearer capabilities for at most 60 seconds. Legacy behavior stays in its existing path, never selected by a v2 failure.
 
 `lca_release_results` keeps its existing metadata/download modes and adds an explicit authenticated `query` mode through `_shared/result_query.ts`. The actor client reads the exact original Process using `public` RLS before the service client resolves `api.svc_result_query_resolve`. Database owns current formal-release membership; Worker owns file integrity, indexing and local cache. The gateway signs the exact descriptor-bound request and validates both returned result identity and numeric DTO before projecting frozen metadata. It does not use Portal Redis, fetch mutable labels, accept client storage paths or cache permission decisions. See README for the wire/configuration contract.
+
+## P2 reporting contract preparation
+
+The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.

@@ -6,6 +6,7 @@ import { commandError } from './http.ts';
 
 export type ActorContext = {
   userId: string;
+  clientId?: string;
   accessToken: string;
   supabase: SupabaseClient;
 };
@@ -64,6 +65,7 @@ export async function resolveActorContext(
     ok: true,
     value: {
       userId: authResult.principal.userId,
+      ...(authResult.principal.clientId ? { clientId: authResult.principal.clientId } : {}),
       accessToken,
       supabase: requestSupabase,
     },

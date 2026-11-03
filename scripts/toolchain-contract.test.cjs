@@ -178,7 +178,7 @@ test('makes canonical check run exact environment, graph, and behavior tests', (
   assert.equal(scripts.check, 'pnpm check:env && pnpm check:types && pnpm test');
   assert.equal(
     scripts.lint,
-    'pnpm exec prettier --check "**/*.{cjs,js,jsx,tsx,ts,less,md,json,yml,yaml}"',
+    'pnpm exec prettier --check "**/*.{cjs,mjs,js,jsx,tsx,ts,less,md,json,yml,yaml}"',
   );
 });
 
