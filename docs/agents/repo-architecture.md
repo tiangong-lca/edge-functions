@@ -36,8 +36,8 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: f1a36ceee7d6efb9499e0edecfdd5278c27ab8e2
+lastReviewedAt: 2026-11-05
+lastReviewedCommit: 3a1996fa19554d11903c9afecd974df65a8c2def
 lastReviewedNote: 'Edge #557: reviewed early strict portable V6 request/response, exact export CAS binding, generated schemas/types, immutable Worker/component and renderer3 input hashes, actor/service DTO seams and bounded producer/view tests. The source-bound consumer interface does not complete the unfinished handler/executors, actual installed runtime, hosted admission or scientific qualification; old protocols/renderers remain exact.'
 related:
   - ../../AGENTS.md

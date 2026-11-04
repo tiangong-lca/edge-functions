@@ -68,6 +68,33 @@ test('V6 portable consumer is deterministic, source-bound and usable outside sou
       await codec.methodEvidenceHash(service.evidenceContext.data.request.content),
       service.evidenceContext.data.contentHash,
     );
+    const evidenceQ = codec.parseRequest(service.evidenceContext.data.request);
+    const evidenceR = codec.parseResponse({
+      ...response,
+      requestId: evidenceQ.requestId,
+      data: service.evidenceRecord.data,
+    });
+    await codec.validateResponseContentForRequest(evidenceQ, evidenceR);
+    assert.equal(
+      codec.canonicalBytes(evidenceQ.content).byteLength,
+      evidenceR.data.value.artifactRef.byteSize,
+    );
+    await assert.rejects(
+      codec.validateResponseContentForRequest(
+        evidenceQ,
+        codec.parseResponse({
+          ...evidenceR,
+          data: {
+            ...evidenceR.data,
+            value: {
+              ...evidenceR.data.value,
+              artifactRef: { ...evidenceR.data.value.artifactRef, contentHash: 'f'.repeat(64) },
+            },
+          },
+        }),
+      ),
+      { ruleId: 'response.evidence_bytes' },
+    );
     for (const data of [
       {
         ...actual.authoringCapability,
@@ -108,6 +135,11 @@ test('V6 portable consumer is deterministic, source-bound and usable outside sou
     assert.match(JSON.stringify(responseSchema), /lca\.study-method-report-summary\.v1/);
     const declarations = await readFile(path.join(output, 'index.d.ts'), 'utf8');
     assert.doesNotMatch(declarations, /from\s+['"]|import\(/);
+    assert.match(declarations, /function canonicalBytes\(input:unknown\):Uint8Array/);
+    assert.match(
+      declarations,
+      /function validateResponseContentForRequest\(request:StudyApiRequest,response:StudyApiResponse\):Promise<void>/,
+    );
     await writeFile(
       path.join(output, 'types.ts'),
       `import type {StudyApiRequest,StudyApiResponse,ExportManifest,HistoricalExportManifest} from './index.d.ts';\nconst q:StudyApiRequest=${JSON.stringify(q)};\nconst operation:'method.assessment.read'=q.operation;\nlet response:StudyApiResponse|undefined;let current:ExportManifest|undefined;let retained:HistoricalExportManifest|undefined;void [operation,response,current,retained];\n// @ts-expect-error no old-version fallback\nconst old:StudyApiRequest={schemaVersion:'lca.study-api.v5',requestId:'x',operation:'capability.read'};\nvoid old;\n`,

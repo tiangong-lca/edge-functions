@@ -3,6 +3,7 @@ import {
   parseRequest,
   parseResponse,
   validateResponseForRequest,
+  validateResponseContentForRequest,
   API_SCHEMA,
   operationMetadata,
 } from '../contracts/lca-study/v6/codec.ts';
@@ -41,6 +42,58 @@ const response = (data: unknown) => ({
   ok: true,
   data,
 });
+
+Deno.test(
+  'V6 async owner receipt validation binds exact evidence bytes and method config digest',
+  async () => {
+    const data = service as unknown as Record<string, any>;
+    const q = parseRequest(data.evidenceContext.data.request);
+    const r = parseResponse({ ...response(data.evidenceRecord.data), requestId: q.requestId });
+    await validateResponseContentForRequest(q, r);
+    if (!r.ok || r.data.type !== 'methodEvidence') throw Error('fixture family');
+    for (const patch of [
+      { contentHash: 'f'.repeat(64) },
+      { byteSize: r.data.value.artifactRef.byteSize + 1 },
+    ]) {
+      let rejected = false;
+      try {
+        await validateResponseContentForRequest(
+          q,
+          parseResponse({
+            ...r,
+            data: {
+              ...r.data,
+              value: { ...r.data.value, artifactRef: { ...r.data.value.artifactRef, ...patch } },
+            },
+          }),
+        );
+      } catch {
+        rejected = true;
+      }
+      assertEquals(rejected, true);
+    }
+    const method = parseRequest(data.methodRequest);
+    const record = parseResponse({
+      ...response(data.methodRecord.data),
+      requestId: method.requestId,
+    });
+    await validateResponseContentForRequest(method, record);
+    if (!record.ok || record.data.type !== 'methodAssessment') throw Error('fixture family');
+    let rejected = false;
+    try {
+      await validateResponseContentForRequest(
+        parseRequest({ ...method, configHash: 'f'.repeat(64) }),
+        parseResponse({
+          ...record,
+          data: { ...record.data, value: { ...record.data.value, configHash: 'f'.repeat(64) } },
+        }),
+      );
+    } catch {
+      rejected = true;
+    }
+    assertEquals(rejected, true);
+  },
+);
 
 Deno.test(
   'V6 strict public/service shapes consume actual immutable Database candidate metadata without asserting blob authority',

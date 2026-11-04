@@ -11,6 +11,9 @@ import { StudyCodecError } from '../v2/codec.ts';
 import { sameMethodJson } from './authoring.ts';
 import { validateResponseForRequest as validateReview } from './review_codec.ts';
 import type { ReviewRequest } from './review.ts';
+import { methodConfigHash } from './schemas.ts';
+import { methodEvidenceHash } from './evidence_contract.ts';
+import { canonicalBytes } from '../v3/canonical.ts';
 export { API_SCHEMA, CONTRACT_VERSION, OPERATIONS, StudyCodecError };
 export { methodConfigHash } from './schemas.ts';
 export { methodEvidenceHash } from './evidence_contract.ts';
@@ -136,6 +139,30 @@ export function validateResponseForRequest(request: MethodRequest, response: Met
 }
 function decodedLength(bytes: string): number {
   return (bytes.length / 4) * 3 - (bytes.endsWith('==') ? 2 : bytes.endsWith('=') ? 1 : 0);
+}
+/** Async owner identity checks complement structural/selection validation.
+ * Callers use these exact owner hashes; they never rebuild domain canonicalization.
+ */
+export async function validateResponseContentForRequest(
+  request: MethodRequest,
+  response: MethodResponse,
+): Promise<void> {
+  validateResponseForRequest(request, response);
+  if (
+    request.operation === 'method.assessment.request' &&
+    (await methodConfigHash(request.config)) !== request.configHash
+  )
+    throw new StudyCodecError('REFERENCE_MISMATCH', 'request.config_hash');
+  if (!response.ok) return;
+  if (request.operation === 'method.evidence.create') {
+    const data = response.data;
+    if (
+      data.type !== 'methodEvidence' ||
+      data.value.artifactRef.contentHash !== (await methodEvidenceHash(request.content)) ||
+      data.value.artifactRef.byteSize !== canonicalBytes(request.content).length
+    )
+      throw new StudyCodecError('REFERENCE_MISMATCH', 'response.evidence_bytes');
+  }
 }
 const queries = [
   'capability.read',

@@ -132,7 +132,7 @@ export async function buildStudyContract(
     declarations += `export type HistoricalExportManifest = ${declaration(schema.historical)};\nexport declare function verifyVersionedExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest | HistoricalExportManifest>;\n`;
   if (apiVersion === 'v6')
     declarations +=
-      'export declare function methodConfigHash(input:unknown):Promise<string>;\nexport declare function methodEvidenceHash(input:unknown):Promise<string>;\n';
+      'export declare function methodConfigHash(input:unknown):Promise<string>;\nexport declare function methodEvidenceHash(input:unknown):Promise<string>;\nexport declare function canonicalBytes(input:unknown):Uint8Array;\nexport declare function validateResponseContentForRequest(request:StudyApiRequest,response:StudyApiResponse):Promise<void>;\n';
   const metadata = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
   const importMap = JSON.parse(
     await readFile(path.join(root, 'supabase/functions/deno.json'), 'utf8'),
