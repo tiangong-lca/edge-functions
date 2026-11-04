@@ -22,7 +22,8 @@
   },
   "fixtures": {
     "test/fixtures/lca-study-v6/worker-service-seams.json": "186d4b406aa27fb4e9f290d02f5dc7aeca041824597214e416473bfc7d008d48",
-    "test/fixtures/lca-study-v6/facts.synthetic.json": "f779f432bcf1cf1d256352b4c5b9454dd84bbb2e69773591759c18fd96c4d039"
+    "test/fixtures/lca-study-v6/facts.synthetic.json": "f779f432bcf1cf1d256352b4c5b9454dd84bbb2e69773591759c18fd96c4d039",
+    "test/fixtures/lca-study-v6/arithmetic.native.json": "7ebe5fa613242a9520085a62557fdd199130377541ca515946667e544b077540"
   },
   "sourceInputs": [
     {
@@ -109,6 +110,22 @@
       "path": "crates/solver-worker/tests/fixtures/study-method-assessment/facts.synthetic.json",
       "byteSize": 129906,
       "sha256": "f779f432bcf1cf1d256352b4c5b9454dd84bbb2e69773591759c18fd96c4d039"
+    },
+    {
+      "path": "crates/solver-worker/tests/fixtures/study-method-assessment/arithmetic.json",
+      "byteSize": 25823,
+      "sha256": "7ebe5fa613242a9520085a62557fdd199130377541ca515946667e544b077540",
+      "classification": "isolated_arithmetic_not_a_study_or_conformance_case; supplemental relation oracle"
     }
-  ]
+  ],
+  "moduleMetadata": {
+    "path": "contracts/lca-study/worker/method/module-metadata.json",
+    "sha256": "ac1b81a20d9e67f7e8807bcb86ff7cbb47a69772df5e093aa5cb445a43d2492b",
+    "rawPackageSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+    "rawPackageByteSize": 153035,
+    "payloadSha256": "407314bc364e5cfeddc8a44696118ee20cc696db5e9ef93812fd02516097a0a1",
+    "projectionSha256": "44059325552effddecf1a5d4acae3d1258996598cfabc2c1d6ef38c1be488c9e",
+    "sourceWorkerPath": "crates/solver-worker/src/study/method_assets/method.pef-2021-ef31.0.1.0.json",
+    "extractionScript": "scripts/build-study-method-module.mjs"
+  }
 }

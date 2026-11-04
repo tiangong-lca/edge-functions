@@ -24,8 +24,8 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: dba8318a266af644829c0398056498920e9be8b6
-lastReviewedNote: 'Edge #557: reviewed exact Worker13a method schemas, contained reference/Unicode conversion, mandatory method summary/View3, pure validator build and byte/source qualification boundaries. This initial component milestone enables no actor facade, deployment, permission or scientific approval; V2-V5 and retained renderer bytes stay unchanged.'
+lastReviewedCommit: 1fe8008b9aee5082647b4278770034d9684b9c90
+lastReviewedNote: 'Edge #557: reviewed source/primary eligibility and exact published module roster/parameters in the pure summary/View3 component. Owner JSON bytes remain unchanged; comparison adds no characterization/NW algorithm, permission or scientific approval. V2-V5 and retained renderer bytes remain exact; public V6 facade and actual qualification are still pending.'
 ---
 
 # TianGong-LCA-Edge-Functions

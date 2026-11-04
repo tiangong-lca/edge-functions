@@ -1,0 +1,741 @@
+{
+  "classification": "isolated_arithmetic_not_a_study_or_conformance_case",
+  "inputCategories": [
+    {
+      "canonicalCharacterisedValue": "0",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "6209b35f-9447-40b5-b68c-a1099e3674a0",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Climate change",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg CO2 Equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "706261af-a357-4cc0-a50a-f3033fcbd556",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Climate change-Biogenic",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "6209b35f-9447-40b5-b68c-a1099e3674a0",
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg CO2-Equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "7fce5b3a-66b8-4ce1-91e8-a925aee1f186",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Climate change-Fossil",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "6209b35f-9447-40b5-b68c-a1099e3674a0",
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg CO2 Equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "14af9ca7-aa1d-4832-b1d9-ab05a06dcb12",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Climate change-Land use and land use change",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "6209b35f-9447-40b5-b68c-a1099e3674a0",
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg CO2-Equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "-8.62644882693525e-6",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "2299222a-bbd8-474f-9d4f-4dd1f18aea7c",
+        "version": "01.01.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, cancer",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "01500b74-7ffb-463e-9bd4-72f17c2263ff",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, cancer_inorganics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "2299222a-bbd8-474f-9d4f-4dd1f18aea7c",
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "503699e0-eca9-4089-8bf8-e0f49c93e578",
+        "version": "01.01.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, cancer_organics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "2299222a-bbd8-474f-9d4f-4dd1f18aea7c",
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "0.000128735735008072",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "7cfdcfcf-b222-4b26-888a-a55f9fbf7ac8",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, non-cancer",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "9d1d43a2-e1aa-4c16-acd4-3dd8a6a2fb85",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, non-cancer_inorganics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "7cfdcfcf-b222-4b26-888a-a55f9fbf7ac8",
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "8c3141e9-1f15-43b5-bff2-182e49893a46",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Human toxicity, non-cancer_organics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "7cfdcfcf-b222-4b26-888a-a55f9fbf7ac8",
+      "reasonCodes": [],
+      "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUh"
+    },
+    {
+      "canonicalCharacterisedValue": "3544.786646066225",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "05316e7a-b254-4bea-9cf0-6bf33eb5c630",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Ecotoxicity, freshwater",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "585d3441-af58-49c9-a5c2-1d1e5b63f8d5",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUe"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "dacd48b5-4da5-49aa-aff4-cd5f5495c037",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Ecotoxicity, freshwater-inorganics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "05316e7a-b254-4bea-9cf0-6bf33eb5c630",
+      "reasonCodes": [],
+      "referenceQuantityId": "585d3441-af58-49c9-a5c2-1d1e5b63f8d5",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUe"
+    },
+    {
+      "canonicalCharacterisedValue": "1e100",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "fd530f00-9325-424a-92ef-aaac67922fd9",
+        "version": "01.00.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Ecotoxicity, freshwater-organics",
+      "normalisationWeightingIncluded": false,
+      "parentMethodId": "05316e7a-b254-4bea-9cf0-6bf33eb5c630",
+      "reasonCodes": [],
+      "referenceQuantityId": "585d3441-af58-49c9-a5c2-1d1e5b63f8d5",
+      "role": "subcategory",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "CTUe"
+    },
+    {
+      "canonicalCharacterisedValue": "-39.0903631038382",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c619fa-def3-11e6-bf01-fe55135034f3",
+        "version": "02.00.010"
+      },
+      "missingInventoryIndices": [],
+      "name": "Eutrophication marine",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg N equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "4.82055638486439",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b53ec18f-7377-4ad3-86eb-cc3f4f276b2b",
+        "version": "01.00.010"
+      },
+      "missingInventoryIndices": [],
+      "name": "Eutrophication, freshwater",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg P equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "265.132499683413",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c614d2-def3-11e6-bf01-fe55135034f3",
+        "version": "01.02.009"
+      },
+      "missingInventoryIndices": [],
+      "name": "Eutrophication, terrestrial",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "341fd786-b2ad-4552-a762-5eafcab45dee",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "mol N equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "1040068.154624264",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b2ad6110-c78d-11e6-9d9d-cec0c932ce01",
+        "version": "01.00.010"
+      },
+      "missingInventoryIndices": [],
+      "name": "Resource use, fossils",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200c9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "MJ"
+    },
+    {
+      "canonicalCharacterisedValue": "-0.007952826904619337",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b2ad6494-c78d-11e6-9d9d-cec0c932ce01",
+        "version": "01.00.010"
+      },
+      "missingInventoryIndices": [],
+      "name": "Resource use, minerals and metals",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg Sb equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "8601.531480569774",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b2ad66ce-c78d-11e6-9d9d-cec0c932ce01",
+        "version": "03.00.014"
+      },
+      "missingInventoryIndices": [],
+      "name": "Water use",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-22da-a746-0800200c9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "m3-world equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "3687741.8231536397",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b2ad6890-c78d-11e6-9d9d-cec0c932ce01",
+        "version": "01.00.010"
+      },
+      "missingInventoryIndices": [],
+      "name": "Land use",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "01846770-4cfe-4a25-8ad9-919d8d378345",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "dimensionless (pt)"
+    },
+    {
+      "canonicalCharacterisedValue": "13.892385307650475",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c611c6-def3-11e6-bf01-fe55135034f3",
+        "version": "01.04.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Acidification",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "341fd786-b2ad-4552-a762-5eafcab45dee",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "mol H+ equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "0.0065435479230022625",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c629d6-def3-11e6-bf01-fe55135034f3",
+        "version": "02.00.012"
+      },
+      "missingInventoryIndices": [],
+      "name": "Ozone depletion",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg CFC11 equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "-16880.65356059972",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c632be-def3-11e6-bf01-fe55135034f3",
+        "version": "01.00.011"
+      },
+      "missingInventoryIndices": [],
+      "name": "Ionising radiation, human health",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-17da-a746-0800200c9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kBq U235 equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "326.8735818782176",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c610fe-def3-11e6-bf01-fe55135034f3",
+        "version": "02.01.000"
+      },
+      "missingInventoryIndices": [],
+      "name": "Photochemical ozone formation - human health",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "kg NMVOC equivalents"
+    },
+    {
+      "canonicalCharacterisedValue": "0.001488417052813695",
+      "coverage": "complete",
+      "methodRef": {
+        "id": "b5c602c6-def3-11e6-bf01-fe55135034f3",
+        "version": "02.00.011"
+      },
+      "missingInventoryIndices": [],
+      "name": "EF-particulate Matter",
+      "normalisationWeightingIncluded": true,
+      "parentMethodId": null,
+      "reasonCodes": [],
+      "referenceQuantityId": "01846770-4cfe-4a25-8ad9-919d8d378345",
+      "role": "primary",
+      "selected": true,
+      "sourceCompatible": true,
+      "unit": "disease incidence"
+    }
+  ],
+  "moduleArtifactSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+  "normalisationWeighting": {
+    "basis": "source_global_per_capita_reference_impacts",
+    "canonicalCandidateSingleScore": "2.261675",
+    "categories": [
+      {
+        "canonicalCharacterisedValue": "0",
+        "canonicalNormalisedValue": "0",
+        "canonicalWeightedValue": "0",
+        "characterisedUnit": "kg CO2 Equivalents",
+        "methodRef": {
+          "id": "6209b35f-9447-40b5-b68c-a1099e3674a0",
+          "version": "01.00.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "7553.08316285117",
+        "sourceShortDescription": "CC",
+        "sourceUnitLabel": "kg CO2 eq",
+        "sourceWeightFraction": "0.2106",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "0.0065435479230022625",
+        "canonicalNormalisedValue": "0.125",
+        "canonicalWeightedValue": "0.0078875",
+        "characterisedUnit": "kg CFC11 equivalents",
+        "methodRef": {
+          "id": "b5c629d6-def3-11e6-bf01-fe55135034f3",
+          "version": "02.00.012"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "0.0523483833840181",
+        "sourceShortDescription": "ODP",
+        "sourceUnitLabel": "kg CFC-11eq",
+        "sourceWeightFraction": "0.0631",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "-8.62644882693525e-6",
+        "canonicalNormalisedValue": "-0.5",
+        "canonicalWeightedValue": "-0.01065",
+        "characterisedUnit": "CTUh",
+        "methodRef": {
+          "id": "2299222a-bbd8-474f-9d4f-4dd1f18aea7c",
+          "version": "01.01.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+        "sourceNormalisationFactor": "0.0000172528976538705",
+        "sourceShortDescription": "HTC",
+        "sourceUnitLabel": "CTUh",
+        "sourceWeightFraction": "0.0213",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "0.000128735735008072",
+        "canonicalNormalisedValue": "1",
+        "canonicalWeightedValue": "0.0184",
+        "characterisedUnit": "CTUh",
+        "methodRef": {
+          "id": "7cfdcfcf-b222-4b26-888a-a55f9fbf7ac8",
+          "version": "01.00.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "f65d356a-d702-4d79-850e-dd68b47bbcd9",
+        "sourceNormalisationFactor": "0.000128735735008072",
+        "sourceShortDescription": "HTN",
+        "sourceUnitLabel": "CTUh",
+        "sourceWeightFraction": "0.0184",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "0.001488417052813695",
+        "canonicalNormalisedValue": "2.5",
+        "canonicalWeightedValue": "0.224",
+        "characterisedUnit": "disease incidence",
+        "methodRef": {
+          "id": "b5c602c6-def3-11e6-bf01-fe55135034f3",
+          "version": "02.00.011"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "01846770-4cfe-4a25-8ad9-919d8d378345",
+        "sourceNormalisationFactor": "0.000595366821125478",
+        "sourceShortDescription": "PM",
+        "sourceUnitLabel": "Disease incidences",
+        "sourceWeightFraction": "0.0896",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "-16880.65356059972",
+        "canonicalNormalisedValue": "-4",
+        "canonicalWeightedValue": "-0.2004",
+        "characterisedUnit": "kBq U235 equivalents",
+        "methodRef": {
+          "id": "b5c632be-def3-11e6-bf01-fe55135034f3",
+          "version": "01.00.011"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-17da-a746-0800200c9a66",
+        "sourceNormalisationFactor": "4220.16339014993",
+        "sourceShortDescription": "IR",
+        "sourceUnitLabel": "kBq U235",
+        "sourceWeightFraction": "0.0501",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "326.8735818782176",
+        "canonicalNormalisedValue": "8",
+        "canonicalWeightedValue": "0.3824",
+        "characterisedUnit": "kg NMVOC equivalents",
+        "methodRef": {
+          "id": "b5c610fe-def3-11e6-bf01-fe55135034f3",
+          "version": "02.01.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "40.8591977347772",
+        "sourceShortDescription": "POz",
+        "sourceUnitLabel": "kg NMVOC eq",
+        "sourceWeightFraction": "0.0478",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "13.892385307650475",
+        "canonicalNormalisedValue": "0.25",
+        "canonicalWeightedValue": "0.0155",
+        "characterisedUnit": "mol H+ equivalents",
+        "methodRef": {
+          "id": "b5c611c6-def3-11e6-bf01-fe55135034f3",
+          "version": "01.04.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "341fd786-b2ad-4552-a762-5eafcab45dee",
+        "sourceNormalisationFactor": "55.5695412306019",
+        "sourceShortDescription": "ACI",
+        "sourceUnitLabel": "mol H+ eq",
+        "sourceWeightFraction": "0.062",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "265.132499683413",
+        "canonicalNormalisedValue": "1.5",
+        "canonicalWeightedValue": "0.055650000000000005",
+        "characterisedUnit": "mol N equivalents",
+        "methodRef": {
+          "id": "b5c614d2-def3-11e6-bf01-fe55135034f3",
+          "version": "01.02.009"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "341fd786-b2ad-4552-a762-5eafcab45dee",
+        "sourceNormalisationFactor": "176.754999788942",
+        "sourceShortDescription": "EUt",
+        "sourceUnitLabel": "mol N eq",
+        "sourceWeightFraction": "0.0371",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "4.82055638486439",
+        "canonicalNormalisedValue": "3",
+        "canonicalWeightedValue": "0.084",
+        "characterisedUnit": "kg P equivalents",
+        "methodRef": {
+          "id": "b53ec18f-7377-4ad3-86eb-cc3f4f276b2b",
+          "version": "01.00.010"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "1.60685212828813",
+        "sourceShortDescription": "EUf",
+        "sourceUnitLabel": "kg P eq",
+        "sourceWeightFraction": "0.028",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "-39.0903631038382",
+        "canonicalNormalisedValue": "-2",
+        "canonicalWeightedValue": "-0.0592",
+        "characterisedUnit": "kg N equivalents",
+        "methodRef": {
+          "id": "b5c619fa-def3-11e6-bf01-fe55135034f3",
+          "version": "02.00.010"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "19.5451815519191",
+        "sourceShortDescription": "EUm",
+        "sourceUnitLabel": "kg N eq",
+        "sourceWeightFraction": "0.0296",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "3544.786646066225",
+        "canonicalNormalisedValue": "0.0625",
+        "canonicalWeightedValue": "0.0012",
+        "characterisedUnit": "CTUe",
+        "methodRef": {
+          "id": "05316e7a-b254-4bea-9cf0-6bf33eb5c630",
+          "version": "01.00.000"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "585d3441-af58-49c9-a5c2-1d1e5b63f8d5",
+        "sourceNormalisationFactor": "56716.5863370596",
+        "sourceShortDescription": "Eto",
+        "sourceUnitLabel": "CTUitaloe",
+        "sourceWeightFraction": "0.0192",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "3687741.8231536397",
+        "canonicalNormalisedValue": "4.5",
+        "canonicalWeightedValue": "0.3573",
+        "characterisedUnit": "dimensionless (pt)",
+        "methodRef": {
+          "id": "b2ad6890-c78d-11e6-9d9d-cec0c932ce01",
+          "version": "01.00.010"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "01846770-4cfe-4a25-8ad9-919d8d378345",
+        "sourceNormalisationFactor": "819498.182923031",
+        "sourceShortDescription": "Lnd",
+        "sourceUnitLabel": "soil quality index",
+        "sourceWeightFraction": "0.0794",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "8601.531480569774",
+        "canonicalNormalisedValue": "0.75",
+        "canonicalWeightedValue": "0.06382499999999999",
+        "characterisedUnit": "m3-world equivalents",
+        "methodRef": {
+          "id": "b2ad66ce-c78d-11e6-9d9d-cec0c932ce01",
+          "version": "03.00.014"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-22da-a746-0800200c9a66",
+        "sourceNormalisationFactor": "11468.7086407597",
+        "sourceShortDescription": "Wat",
+        "sourceUnitLabel": "m3 water eq. deprived",
+        "sourceWeightFraction": "0.0851",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "-0.007952826904619337",
+        "canonicalNormalisedValue": "-0.125",
+        "canonicalWeightedValue": "-0.0094375",
+        "characterisedUnit": "kg Sb equivalents",
+        "methodRef": {
+          "id": "b2ad6494-c78d-11e6-9d9d-cec0c932ce01",
+          "version": "01.00.010"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200b9a66",
+        "sourceNormalisationFactor": "0.0636226152369547",
+        "sourceShortDescription": "RMi",
+        "sourceUnitLabel": "kg Sb eq",
+        "sourceWeightFraction": "0.0755",
+        "weightedUnit": "Pt"
+      },
+      {
+        "canonicalCharacterisedValue": "1040068.154624264",
+        "canonicalNormalisedValue": "16",
+        "canonicalWeightedValue": "1.3312",
+        "characterisedUnit": "MJ",
+        "methodRef": {
+          "id": "b2ad6110-c78d-11e6-9d9d-cec0c932ce01",
+          "version": "01.00.010"
+        },
+        "normalisedUnit": "1",
+        "referenceQuantityId": "93a60a56-a3c8-11da-a746-0800200c9a66",
+        "sourceNormalisationFactor": "65004.2596640165",
+        "sourceShortDescription": "REn",
+        "sourceUnitLabel": "MJ",
+        "sourceWeightFraction": "0.0832",
+        "weightedUnit": "Pt"
+      }
+    ],
+    "pointDefinition": "1 Pt = sum of characterised_i / source_NF_i times source_weight_fraction_i over exactly sixteen primary categories",
+    "reasonCodes": [],
+    "scalingFactor": "1",
+    "scope": "candidate_arithmetic_only_not_pef_qualification",
+    "scoreUnit": "Pt",
+    "status": "candidate_arithmetic_available",
+    "weightRepresentation": "source_fraction_no_additional_division_by_100"
+  }
+}

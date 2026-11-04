@@ -10,6 +10,7 @@ import type {
   MethodFactsRef,
 } from '../worker/method/types.d.ts';
 import { canonicalJson, canonicalBytes, domainBytes, sha256 } from '../v3/canonical.ts';
+import { METHOD_PUBLIC_MODULE } from './module_identity.ts';
 
 export type {
   MethodConfig,
@@ -74,7 +75,18 @@ type RelationalFacts = Pick<
   | 'requirements'
   | 'candidateNormalisationWeighting'
   | 'factCatalog'
->;
+  | 'frozenEvidence'
+> & {
+  methodSourceEvidence: Pick<
+    MethodFacts['methodSourceEvidence'],
+    | 'frozenCMatchesVerifiedBundle'
+    | 'normativeVersion'
+    | 'factorPackageVersion'
+    | 'interimGuidanceSnapshot'
+    | 'normalisationWeightingSourceSha256'
+    | 'officialFactorPackageSha256'
+  >;
+};
 
 /** Exact owner selector relationships only. No characterisation or N/W arithmetic. */
 export function assertMethodFactRelations(value: RelationalFacts): void {
@@ -84,6 +96,17 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
   if (
     value.config.baselineRunId !== value.baseline.runId ||
     !same(value.config.moduleRef, value.moduleRef) ||
+    !same(value.moduleRef, METHOD_PUBLIC_MODULE.moduleRef) ||
+    value.methodSourceEvidence.normativeVersion !== METHOD_PUBLIC_MODULE.normativeVersion ||
+    value.methodSourceEvidence.factorPackageVersion !== METHOD_PUBLIC_MODULE.factorPackageVersion ||
+    !same(
+      value.methodSourceEvidence.interimGuidanceSnapshot,
+      METHOD_PUBLIC_MODULE.interimGuidanceSnapshot,
+    ) ||
+    value.methodSourceEvidence.normalisationWeightingSourceSha256 !==
+      METHOD_PUBLIC_MODULE.normalisationWeightingSourceSha256 ||
+    value.methodSourceEvidence.officialFactorPackageSha256 !==
+      METHOD_PUBLIC_MODULE.officialFactorPackageSha256 ||
     value.categories.length !== 25 ||
     value.categories.filter((v) => v.role === 'primary').length !== 16 ||
     value.categories.filter((v) => v.role === 'subcategory').length !== 9 ||
@@ -106,8 +129,23 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
   )
     fail();
   value.categories.forEach((category, index) => {
+    const expected = METHOD_PUBLIC_MODULE.categories[index];
     const fact = value.factCatalog[index];
+    const axis = value.frozenEvidence.methodAxes.find(
+      (axis) => axis.id === category.methodRef.id && axis.version === category.methodRef.version,
+    );
     if (
+      !same(category.methodRef, expected.methodRef) ||
+      category.name !== expected.name ||
+      category.role !== expected.role ||
+      category.parentMethodId !== expected.parentMethodId ||
+      category.referenceQuantityId !== expected.referenceQuantityId ||
+      category.unit !== expected.unit ||
+      category.selected !== Boolean(axis) ||
+      (category.sourceCompatible &&
+        (!value.methodSourceEvidence.frozenCMatchesVerifiedBundle ||
+          !axis ||
+          axis.unit !== category.unit)) ||
       fact.factId !== `category:${category.methodRef.id}:characterised` ||
       !same(fact.context, {
         kind: 'characterisedCategory',
@@ -128,6 +166,16 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
     )
       fail();
   });
+  value.requirements.forEach((requirement, index) => {
+    const expected = METHOD_PUBLIC_MODULE.requirements[index];
+    if (
+      requirement.requirementId !== expected.requirementId ||
+      requirement.sourceApplicability !== expected.sourceApplicability ||
+      requirement.sourceCheckKind !== expected.sourceCheckKind ||
+      !same(requirement.sourceCitations, expected.sourceCitations)
+    )
+      fail();
+  });
   const score = value.factCatalog[57];
   if (score.context.kind !== 'candidateSingleScore' || score.unitIdentity.kind !== 'candidateScore')
     fail();
@@ -137,8 +185,32 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
   const primaries = value.categories.filter((v) => v.role === 'primary').map((v) => v.methodRef);
   const nw = value.candidateNormalisationWeighting;
   const available = nw.status === 'candidate_arithmetic_available';
+  const primaryCategories = value.categories.filter((category) => category.role === 'primary');
+  // These are the owner's eligibility/mapping predicates, not an Edge-issued
+  // calculation or approval. Ineligible/null/partial rows cannot claim N/W.
+  if (
+    (available &&
+      (!value.methodSourceEvidence.frozenCMatchesVerifiedBundle ||
+        nw.reasonCodes.length !== 0 ||
+        primaryCategories.some(
+          (category) =>
+            !category.selected ||
+            !category.sourceCompatible ||
+            category.coverage !== 'complete' ||
+            category.canonicalCharacterisedValue === null,
+        ))) ||
+    value.categories.some(
+      (category) =>
+        category.normalisationWeightingIncluded !== (available && category.role === 'primary'),
+    )
+  )
+    fail();
   if (
     methods.length !== 16 ||
+    !same(
+      methods,
+      METHOD_PUBLIC_MODULE.normalisation.map((n) => n.methodRef),
+    ) ||
     new Set(methods.map((v) => canonicalJson(v))).size !== 16 ||
     methods.some((m) => !primaries.some((p) => same(m, p))) ||
     !same(score.unitIdentity.primaryMethods, methods) ||
@@ -158,8 +230,23 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
   )
     fail();
   methods.forEach((method, i) => {
-    const category = nw.categories.find((c) => same(c.methodRef, method));
+    const expected = METHOD_PUBLIC_MODULE.normalisation[i];
+    const category = available ? nw.categories[i] : undefined;
+    const primary = primaryCategories.find((c) => same(c.methodRef, method));
     if ((category !== undefined) !== available) fail();
+    if (
+      category &&
+      (!primary ||
+        !same(category.methodRef, method) ||
+        category.canonicalCharacterisedValue !== primary.canonicalCharacterisedValue ||
+        category.characterisedUnit !== primary.unit ||
+        category.referenceQuantityId !== primary.referenceQuantityId ||
+        category.sourceNormalisationFactor !== expected.sourceNormalisationFactor ||
+        category.sourceWeightFraction !== expected.sourceWeightFraction ||
+        category.sourceUnitLabel !== expected.sourceUnitLabel ||
+        category.sourceShortDescription !== expected.sourceShortDescription)
+    )
+      fail();
     for (const normalised of [true, false]) {
       const fact = value.factCatalog[25 + i * 2 + (normalised ? 0 : 1)];
       if (
@@ -186,6 +273,8 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
         if (
           !same(fact.unitIdentity.methodRef, method) ||
           fact.unitIdentity.unit !== fact.unit ||
+          fact.unitIdentity.referenceQuantityId !== primary?.referenceQuantityId ||
+          fact.unitIdentity.sourceNormalisationFactor !== expected.sourceNormalisationFactor ||
           fact.unitIdentity.moduleArtifactSha256 !== value.moduleRef.artifactSha256
         )
           fail();
@@ -198,6 +287,7 @@ export function assertMethodFactRelations(value: RelationalFacts): void {
           fact.unitIdentity.kind === 'weighted' &&
           (fact.unitIdentity.pointDefinition !== nw.pointDefinition ||
             fact.unitIdentity.scalingFactor !== nw.scalingFactor ||
+            fact.unitIdentity.sourceWeightFraction !== expected.sourceWeightFraction ||
             (category && fact.unitIdentity.sourceWeightFraction !== category.sourceWeightFraction))
         )
           fail();

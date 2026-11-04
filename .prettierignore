@@ -29,3 +29,6 @@ contracts/lca-study/worker/method/*.schema.json
 contracts/lca-study/worker/method/*.d.ts
 test/fixtures/lca-study-v6/facts.synthetic.json
 test/fixtures/lca-study-v6/worker-service-seams.json
+test/fixtures/lca-study-v6/arithmetic.native.json
+# Reproducibly extracted public module metadata; exact file pin applies.
+contracts/lca-study/worker/method/module-metadata.json

@@ -48,6 +48,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
   for (const [file, expected] of Object.entries({
     ...consumption.schemas,
     ...consumption.fixtures,
+    [consumption.moduleMetadata.path]: consumption.moduleMetadata.sha256,
   }))
     if (sha(await readFile(path.join(root, file))) !== expected)
       throw new Error('method_summary_owner_drift');
@@ -70,7 +71,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
   const schema = await build({
     ...options,
     stdin: {
-      contents: `import{z}from'zod';import{methodSummaryJsonSchema,makeMethodSummary}from'./contracts/lca-study/v6/summary.ts';import{methodViewSchema}from'./contracts/lca-study/v6/view_schema.ts';import{canonicalBytes,domainBytes}from'./contracts/lca-study/v3/canonical.ts';export const summary=methodSummaryJsonSchema();export const view=z.toJSONSchema(methodViewSchema,{target:'draft-7'});export{makeMethodSummary,canonicalBytes,domainBytes};`,
+      contents: `import{z}from'zod';import{methodSummaryJsonSchema,makeMethodSummary}from'./contracts/lca-study/v6/summary.ts';import{methodViewSchema}from'./contracts/lca-study/v6/view_schema.ts';import{canonicalBytes,domainBytes}from'./contracts/lca-study/v3/canonical.ts';export{METHOD_PUBLIC_MODULE_FILE_SHA256,METHOD_PUBLIC_MODULE_PROJECTION_SHA256}from'./contracts/lca-study/v6/module_identity.ts';export const summary=methodSummaryJsonSchema();export const view=z.toJSONSchema(methodViewSchema,{target:'draft-7'});export{makeMethodSummary,canonicalBytes,domainBytes};`,
       resolveDir: root,
       sourcefile: 'method-summary-build.ts',
       loader: 'ts',
@@ -79,6 +80,13 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
   const generated = await import(
     `data:text/javascript;base64,${Buffer.from(schema.outputFiles[0].contents).toString('base64')}`
   );
+  const moduleMetadataBytes = await readFile(path.join(root, consumption.moduleMetadata.path));
+  if (
+    sha(moduleMetadataBytes) !== generated.METHOD_PUBLIC_MODULE_FILE_SHA256 ||
+    JSON.parse(moduleMetadataBytes.toString('utf8')).projectionSha256 !==
+      generated.METHOD_PUBLIC_MODULE_PROJECTION_SHA256
+  )
+    throw new Error('method_summary_public_module_drift');
   const factsBytes = await readFile(
     path.join(root, 'test/fixtures/lca-study-v6/facts.synthetic.json'),
   );
@@ -238,6 +246,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
     ['summary.schema.json', Buffer.from(JSON.stringify(generated.summary, null, 2) + '\n')],
     ['view3.schema.json', Buffer.from(JSON.stringify(generated.view, null, 2) + '\n')],
     ['producer-fixture.json', Buffer.from(JSON.stringify(fixture, null, 2) + '\n')],
+    ['module-metadata.json', moduleMetadataBytes],
     ['LICENSE.zod', await readFile(path.join(root, 'node_modules/zod/LICENSE'))],
     [
       'LICENSE.renderer',
@@ -261,6 +270,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
               'summary.schema.json',
               'view3.schema.json',
               'producer-fixture.json',
+              'module-metadata.json',
               'manifest.json',
               'LICENSE.zod',
               'LICENSE.renderer',
@@ -280,6 +290,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
   );
   for (const file of [
     'scripts/build-study-method-summary.mjs',
+    'scripts/build-study-method-module.mjs',
     'scripts/build-study-contract.mjs',
     'package.json',
     'pnpm-lock.yaml',
@@ -288,6 +299,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
     'contracts/lca-study/worker/method/manifest.json',
     ...Object.keys(consumption.schemas),
     ...Object.keys(consumption.fixtures),
+    consumption.moduleMetadata.path,
   ])
     inputNames.add(file);
   const inputs = [];
@@ -307,6 +319,7 @@ export async function buildStudyMethodSummary(outputDirectory, { allowDirty = fa
     classification:
       'pure schema/summary component and synthetic projection; not a renderer, authorization receipt, activation or scientific qualification',
     workerSourceCommit: consumption.sourceCommit,
+    publicModule: consumption.moduleMetadata,
     toolchain: {
       node: process.versions.node,
       esbuild: esbuildVersion,

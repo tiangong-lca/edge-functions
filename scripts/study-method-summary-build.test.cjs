@@ -24,6 +24,77 @@ test('method declarations retain sibling string assertions and are generated fro
   assert.doesNotMatch(actual, /"title": unknown/u);
 });
 
+test('public module projection binds exact raw/payload identities and isolated Native metadata without a CF catalog', async () => {
+  const { projectMethodModule } = await import('./build-study-method-module.mjs');
+  assert.throws(() => projectMethodModule(Buffer.from('{}')), /method_module_package_pin/u);
+  const bytes = await readFile(
+    path.join(__dirname, '../contracts/lca-study/worker/method/module-metadata.json'),
+  );
+  assert.equal(
+    createHash('sha256').update(bytes).digest('hex'),
+    'ac1b81a20d9e67f7e8807bcb86ff7cbb47a69772df5e093aa5cb445a43d2492b',
+  );
+  const value = JSON.parse(bytes.toString('utf8'));
+  assert.equal(
+    value.rawPackageSha256,
+    'b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad',
+  );
+  assert.equal(
+    value.payloadSha256,
+    '407314bc364e5cfeddc8a44696118ee20cc696db5e9ef93812fd02516097a0a1',
+  );
+  const canonical = (v) =>
+    Array.isArray(v)
+      ? v.map(canonical)
+      : v && typeof v === 'object'
+        ? Object.fromEntries(
+            Object.keys(v)
+              .sort()
+              .map((k) => [k, canonical(v[k])]),
+          )
+        : v;
+  assert.equal(
+    createHash('sha256')
+      .update(JSON.stringify(canonical(value.projection)))
+      .digest('hex'),
+    value.projectionSha256,
+  );
+  const arithmetic = JSON.parse(
+    await readFile(
+      path.join(__dirname, '../test/fixtures/lca-study-v6/arithmetic.native.json'),
+      'utf8',
+    ),
+  );
+  assert.equal(arithmetic.classification, 'isolated_arithmetic_not_a_study_or_conformance_case');
+  assert.deepEqual(
+    value.projection.categories,
+    arithmetic.inputCategories.map((c) => ({
+      methodRef: c.methodRef,
+      name: c.name,
+      role: c.role,
+      parentMethodId: c.parentMethodId,
+      referenceQuantityId: c.referenceQuantityId,
+      unit: c.unit,
+    })),
+  );
+  for (let i = 0; i < 16; i++) {
+    const row = arithmetic.normalisationWeighting.categories[i],
+      expected = value.projection.normalisation[i];
+    for (const key of [
+      'methodRef',
+      'referenceQuantityId',
+      'sourceNormalisationFactor',
+      'sourceWeightFraction',
+      'sourceUnitLabel',
+      'sourceShortDescription',
+    ])
+      assert.deepEqual(row[key], expected[key]);
+    assert.equal(row.characterisedUnit, expected.unit);
+  }
+  assert.equal('factors' in value.projection, false);
+  assert.equal('authored_files' in value.projection, false);
+});
+
 test('method summary/view component builds deterministically and validates outside source in Node and Deno', async () => {
   const { buildStudyMethodSummary } = await import('./build-study-method-summary.mjs');
   const temp = await mkdtemp(path.join(os.tmpdir(), 'study-method-summary-component-'));
@@ -50,13 +121,25 @@ const m=await import(${JSON.stringify(pathToFileURL(path.join(a, 'index.mjs')).h
 const fixture=JSON.parse(readFileSync(${JSON.stringify(path.join(a, 'producer-fixture.json'))},'utf8'));
 assert.deepEqual(m.parseMethodSummary(fixture.summary),fixture.summary);
 assert.deepEqual(m.parseMethodView(fixture.view),fixture.view);
-for(const change of ['machine','catalog','sourceFact','baseline','functionalUnit','bytes']){
+for(const change of ['machine','catalog','sourceFact','baseline','functionalUnit','availableNW','coupledRoster','coupledNF','bytes']){
  const v=structuredClone(fixture.view);
  if(change==='machine')v.methodAssessment.requirements.pop();
  if(change==='catalog')v.facts[0].canonicalValue='6';
  if(change==='sourceFact')v.facts[0].provenance.sourceFactId='candidate:singleScore';
  if(change==='baseline')v.runs[0].inputHash='f'.repeat(64);
  if(change==='functionalUnit')v.definition.functionalUnit.amount='2';
+ if(change==='coupledRoster')Object.assign(v,JSON.parse(JSON.stringify(v).replaceAll(v.methodAssessment.categories[0].methodRef.id,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa')));
+ if(change==='coupledNF')Object.assign(v,JSON.parse(JSON.stringify(v).replaceAll(v.methodAssessment.factCatalog[25].unitIdentity.sourceNormalisationFactor,'7553.08316285118')));
+ if(change==='availableNW'){
+  const s=v.methodAssessment,nw=s.candidateNormalisationWeighting;
+  nw.status='candidate_arithmetic_available';nw.reasonCodes=[];nw.canonicalCandidateSingleScore='1';
+  nw.categories=s.factCatalog[57].context.primaryMethods.map((method,i)=>{
+   const c=s.categories.find(x=>x.methodRef.id===method.id),n=s.factCatalog[25+i*2],w=s.factCatalog[26+i*2];
+   for(const f of[n,w]){f.canonicalValue='1';f.coverage='complete';f.reasonCodes=[];}
+   return{methodRef:method,referenceQuantityId:c.referenceQuantityId,characterisedUnit:c.unit,canonicalCharacterisedValue:c.canonicalCharacterisedValue,sourceNormalisationFactor:n.unitIdentity.sourceNormalisationFactor,sourceWeightFraction:w.unitIdentity.sourceWeightFraction,sourceUnitLabel:'Synthetic unit',sourceShortDescription:'Relation forgery only',canonicalNormalisedValue:'1',normalisedUnit:'1',canonicalWeightedValue:'1',weightedUnit:'Pt'};
+  });
+  s.factCatalog[57].canonicalValue='1';s.factCatalog[57].coverage='complete';s.factCatalog[57].reasonCodes=[];
+ }
  if(change==='bytes')v.sections=Array.from({length:32},(_,i)=>({sectionId:'s-'+i,title:'Section',paragraphs:Array.from({length:32},()=> 'x'.repeat(2048)),factIds:[],citationIds:[]}));
  assert.throws(()=>m.parseMethodView(v),/method_view_invalid/);
 }
