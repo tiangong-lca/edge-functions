@@ -1,0 +1,342 @@
+{
+  "classification": "actualSQLSyntheticMetadataOnly",
+  "project": "study912",
+  "migrationSha256": "0034086fb21e8f17a7a36b432a8678f3ea75ec9fe70eed7051897d44c42bddae",
+  "serviceDtos": {
+    "assessment": {
+      "config": {
+        "moduleRef": {
+          "moduleId": "method.pef-2021-ef31",
+          "repository": "tiangong-lca/pcr",
+          "sourceCommit": "51c0842c67b14ba886e2edee2846e26eefac030f",
+          "moduleVersion": "0.1.0",
+          "artifactSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+          "reviewBasisSha256": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165",
+          "sourceBindingsSha256": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+        },
+        "declarations": {
+          "studyPhase": "finalStudy",
+          "productRole": "finishedCementIntermediate",
+          "categoryRule": {
+            "kind": "noneEstablished"
+          },
+          "referenceUnitBasis": "declaredMass"
+        },
+        "evidenceRefs": [],
+        "baselineRunId": "90400000-0000-4000-8000-000000000012",
+        "schemaVersion": "lca.study-method-assessment-config.v1"
+      },
+      "studyId": "89400000-0000-4000-8000-000000000010",
+      "factsRef": {
+        "id": "91200000-0000-4000-8000-000000000060",
+        "type": "methodAssessmentFacts",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-method-assessment-facts.v1"
+      },
+      "execution": {
+        "jobId": "a2a6e512-26da-427a-961f-d598aab5b96d",
+        "status": "completed"
+      },
+      "profileId": "lca.study-method-pef-2021-ef31-cement-intermediate.v1",
+      "configHash": "a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755",
+      "assessmentId": "eadca3ab-e556-4393-affe-494bbde6e210"
+    },
+    "completion": {
+      "factsRef": {
+        "id": "91200000-0000-4000-8000-000000000060",
+        "type": "methodAssessmentFacts",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-method-assessment-facts.v1"
+      },
+      "profileId": "lca.study-method-pef-2021-ef31-cement-intermediate.v1",
+      "configHash": "a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755",
+      "storageBucket": "study-artifacts",
+      "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/91200000-0000-4000-8000-000000000060/method-facts.json",
+      "selectedFactorRecordCount": 2
+    },
+    "evidenceBody": {
+      "title": "Recorded declaration only",
+      "citations": [
+        {
+          "kind": "normativeSource",
+          "locator": "Section 3",
+          "version": "2022 corrigendum",
+          "identity": "Commission Recommendation 2021/2279 Annex I",
+          "contentHash": null
+        }
+      ],
+      "statement": "This fixture is not professional approval or method conformity.",
+      "declaredKind": "professionalRecord",
+      "requirementId": "PEF-01",
+      "schemaVersion": "lca.study-method-evidence.v1"
+    },
+    "inputContext": {
+      "input": {
+        "baseline": {
+          "run": {
+            "runId": "90400000-0000-4000-8000-000000000012",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "engineId": "solver-worker",
+            "validity": {
+              "status": "current",
+              "checkedAt": "2026-11-04T14:18:48.022571+00:00",
+              "reasonCodes": []
+            },
+            "execution": {
+              "jobId": "90400000-0000-4000-8000-000000000010",
+              "status": "completed"
+            },
+            "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "profileId": "lca.study-explicit-v1",
+            "resultRef": {
+              "id": "90400000-0000-4000-8000-000000000020",
+              "type": "runResult",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-result.v1"
+            },
+            "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+            "effectiveModelRef": {
+              "type": "modelRevision",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "worker_prepared_model",
+              "modelRevisionId": "model-894"
+            },
+            "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+            "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+            "calculationContractRef": {
+              "kind": "calculation_contract",
+              "schema": "lca.calculation-contract.v1",
+              "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+            }
+          },
+          "revision": {
+            "status": "frozen",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "modelRef": {
+              "type": "modelRevision",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "worker_prepared_model",
+              "modelRevisionId": "model-894"
+            },
+            "revision": 1,
+            "definition": {
+              "goal": "Synthetic test only",
+              "methodRefs": [
+                {
+                  "id": "method-1",
+                  "type": "datasetRevision",
+                  "version": "01.00.000",
+                  "datasetType": "lciamethod"
+                }
+              ],
+              "assumptions": [],
+              "functionalUnit": {
+                "unit": "kg",
+                "amount": "1",
+                "referenceFlowId": "flow-1"
+              },
+              "systemBoundary": "explicit tested links only"
+            },
+            "revisionId": "90400000-0000-4000-8000-000000000001",
+            "validation": "passed",
+            "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "parentRevisionId": null,
+            "modelPreparationId": "89400000-0000-4000-8000-000000000021"
+          },
+          "scenario": {
+            "status": "frozen",
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "revision": 1,
+            "overrides": [],
+            "scenarioId": "7aba68f4-034b-4200-ab0a-eff60a682241",
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+            "effectiveModelRef": {
+              "type": "modelRevision",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "worker_prepared_model",
+              "modelRevisionId": "model-894"
+            },
+            "modelPreparationId": "89400000-0000-4000-8000-000000000021",
+            "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+            "parentScenarioRevisionId": null
+          },
+          "preparation": {
+            "source": {
+              "type": "modelSourceSnapshot",
+              "snapshotId": "89400000-0000-4000-8000-000000000050",
+              "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "digestScope": "artifact_bytes_sha256"
+            },
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "modelRef": {
+              "type": "modelRevision",
+              "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "digestScope": "worker_prepared_model",
+              "modelRevisionId": "model-894"
+            },
+            "execution": {
+              "jobId": "89400000-0000-4000-8000-000000000031",
+              "status": "completed"
+            },
+            "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "profileId": "lca.study-explicit-v1",
+            "methodRefs": [
+              {
+                "id": "method-1",
+                "type": "datasetRevision",
+                "version": "01.00.000",
+                "datasetType": "lciamethod"
+              }
+            ],
+            "preparationId": "89400000-0000-4000-8000-000000000021",
+            "inputArtifactRef": {
+              "id": "89400000-0000-4000-8000-000000000061",
+              "type": "modelInput",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-prepared-input.v1"
+            },
+            "calculationContractRef": {
+              "kind": "calculation_contract",
+              "schema": "lca.calculation-contract.v1",
+              "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+            }
+          },
+          "resultArtifact": {
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "artifactRef": {
+              "id": "90400000-0000-4000-8000-000000000020",
+              "type": "runResult",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-result.v1"
+            },
+            "storageBucket": "study-artifacts",
+            "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/90400000-0000-4000-8000-000000000020/result.json"
+          },
+          "preparedArtifact": {
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "artifactRef": {
+              "id": "89400000-0000-4000-8000-000000000061",
+              "type": "modelInput",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-prepared-input.v1"
+            },
+            "storageBucket": "study-artifacts",
+            "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/89400000-0000-4000-8000-000000000061/input.json"
+          }
+        },
+        "assessment": {
+          "config": {
+            "moduleRef": {
+              "moduleId": "method.pef-2021-ef31",
+              "repository": "tiangong-lca/pcr",
+              "sourceCommit": "51c0842c67b14ba886e2edee2846e26eefac030f",
+              "moduleVersion": "0.1.0",
+              "artifactSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+              "reviewBasisSha256": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165",
+              "sourceBindingsSha256": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+            },
+            "declarations": {
+              "studyPhase": "finalStudy",
+              "productRole": "finishedCementIntermediate",
+              "categoryRule": {
+                "kind": "noneEstablished"
+              },
+              "referenceUnitBasis": "declaredMass"
+            },
+            "evidenceRefs": [],
+            "baselineRunId": "90400000-0000-4000-8000-000000000012",
+            "schemaVersion": "lca.study-method-assessment-config.v1"
+          },
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "execution": {
+            "jobId": "a2a6e512-26da-427a-961f-d598aab5b96d",
+            "status": "running"
+          },
+          "profileId": "lca.study-method-pef-2021-ef31-cement-intermediate.v1",
+          "configHash": "a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755",
+          "assessmentId": "eadca3ab-e556-4393-affe-494bbde6e210"
+        },
+        "schemaVersion": "lca.study-method-assessment-input.v1",
+        "sourceArtifact": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "artifactRef": {
+            "id": "89400000-0000-4000-8000-000000000060",
+            "type": "modelSource",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-source-snapshot.v1"
+          },
+          "storageBucket": "study-artifacts",
+          "storageObjectPath": "study/89400000-0000-4000-8000-000000000010/89400000-0000-4000-8000-000000000060/source.json"
+        },
+        "sourceSnapshot": {
+          "studyId": "89400000-0000-4000-8000-000000000010",
+          "issuerId": "database.study-source.v1",
+          "originRef": {
+            "id": "89400000-0000-4000-8000-000000000101",
+            "type": "datasetRevision",
+            "version": "01.00.000",
+            "datasetType": "lifecyclemodel"
+          },
+          "licenseRef": "study-source-access.actor-data-rights.v1",
+          "observedAt": "2026-11-04T14:18:48.010165+00:00",
+          "snapshotId": "89400000-0000-4000-8000-000000000050",
+          "digestScope": "artifact_bytes_sha256",
+          "sourceArtifactRef": {
+            "id": "89400000-0000-4000-8000-000000000060",
+            "type": "modelSource",
+            "byteSize": 2,
+            "mediaType": "application/json",
+            "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "digestScope": "artifact_bytes_sha256",
+            "schemaVersion": "lca.study-source-snapshot.v1"
+          }
+        }
+      },
+      "budget": {
+        "maxFactsBytes": 4194304,
+        "maxSelectedFactorRecords": 8192
+      },
+      "schemaVersion": "lca.study-method-job-context.v1"
+    },
+    "evidenceRecord": {
+      "status": "recorded_unverified",
+      "studyId": "89400000-0000-4000-8000-000000000010",
+      "evidenceId": "1a405161-b6df-463b-b0f9-969716f235cc",
+      "recordedAt": "2026-11-04T14:18:48.051149+00:00",
+      "artifactRef": {
+        "id": "84e5bc3c-c0fc-4df8-863b-b26065027a25",
+        "type": "methodEvidence",
+        "byteSize": 391,
+        "mediaType": "application/json",
+        "contentHash": "42a48b7b55155d80723b67979474fbbeadf1748fd49acd2d0f15e859a5961af8",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-method-evidence.v1"
+      },
+      "declaredKind": "professionalRecord",
+      "requirementId": "PEF-01",
+      "schemaVersion": "lca.study-method-evidence-record.v1"
+    }
+  }
+}

@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
-lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
+lastReviewedAt: 2026-11-05
+lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
+lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

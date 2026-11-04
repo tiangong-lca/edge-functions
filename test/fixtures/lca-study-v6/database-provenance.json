@@ -1,0 +1,35 @@
+{
+  "classification": "actual SQL/PostgREST fixture metadata; no blob/crypto/native/scientific authorization proof",
+  "sourceRepository": "tiangong-lca/database",
+  "sourceCommit": "dc8e25e9af9e6d40e232f23a9c16d1162a45fcdd",
+  "migrationSha256": "0034086fb21e8f17a7a36b432a8678f3ea75ec9fe70eed7051897d44c42bddae",
+  "files": [
+    {
+      "source": "actions-fix-public-rpc-dtos.json",
+      "destination": "test/fixtures/lca-study-v6/database-public-dtos.json",
+      "sha256": "da48fe477c8fc2766e0bcc0e635b3959a1a215a7d844bcff79d3484fe3582f57"
+    },
+    {
+      "source": "actions-fix-service-vectors.json",
+      "destination": "test/fixtures/lca-study-v6/database-service-contexts.json",
+      "sha256": "f6e09e40da651647e160675c7a6927d1fddcf3f531f0659ff0b706651a9f4103"
+    },
+    {
+      "source": "method-report-binding-golden.json",
+      "destination": "test/fixtures/lca-study-v6/database-binding-golden.json",
+      "sha256": "d83e1b5da9c521c3a7263cb29a1cc4452fb23b6ed98be7f386f78e73e207ec22"
+    },
+    {
+      "source": "method-rpc-signatures.json",
+      "destination": "test/fixtures/lca-study-v6/database-rpc-signatures.json",
+      "sha256": "3b5c3671894a22f7af4c17406a0661689d0655ee4bb016b25276f348ff18e4ad"
+    }
+  ],
+  "reportContextBridge": {
+    "sourceCommit": "efc491018a30223dbceeb60030c38c64e6f95246",
+    "migrationSha256": "13abd3002447980d21655d63ca3946a6c2760b62c9882eeb54d8f351d4973972",
+    "destination": "test/fixtures/lca-study-v6/database-report-contexts.json",
+    "sha256": "3579d25269976382176ef9ee37f6768736f5f6a94c4694590ff6066f753a0e48",
+    "qualification": "actual captured report/review metadata from prior candidate; owner verified laterdc8 change onlymethodactionhelper and no private/public DTOshapechange; not currenttimeauthority"
+  }
+}

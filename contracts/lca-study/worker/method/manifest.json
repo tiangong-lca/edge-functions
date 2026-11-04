@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "lca.study-worker-method-contract-consumption.v1",
+  "sourceRepository": "tiangong-lca/worker",
+  "sourceCommit": "13a749e619d7ef348e9298bb049e8c01c60e9086",
+  "interfaceMilestoneSha256": "f8424556058b985a3c9bf19ce9952a6117b85d9ebb520270acbdf1f3d8f2e91e",
+  "classification": "committed owner interface candidate; no actor/service/scientific authority",
+  "schemas": {
+    "contracts/lca-study/worker/method/study-method-assessment-config.v1.schema.json": "8b7f1bf14c1904a24e869b07b8000435953091f649dc3ef1f021b0f764e06920",
+    "contracts/lca-study/worker/method/study-method-assessment-facts.v1.schema.json": "091a3f5462fce0758c24d0292672066eade2e28852b3ad8fa8c91816ee107e00",
+    "contracts/lca-study/worker/method/study-method-assessment-input.v1.schema.json": "293b42a9dc38d1d331e23d7846703f910b8fcb9f9c723a9e9b0f02cb25ffa710",
+    "contracts/lca-study/worker/method/study-method-assessment-record.v1.schema.json": "c7228ce92614940716e1ebbc507a8d499d80e55a0ead9d33cdbc285359960e9c",
+    "contracts/lca-study/worker/method/study-method-candidate-input.v1.schema.json": "e5fe66d2a75f4c8ed05e3fb20dbdeb0fe04f16f13e5fedb57f832b85530dfd1f",
+    "contracts/lca-study/worker/method/study-method-completion.v1.schema.json": "ee4d3c8251a42cd24305eaf6343e08b4aee709b95fa5da289b2b19be2a4d245e",
+    "contracts/lca-study/worker/method/study-method-evidence-record.v1.schema.json": "d04e745179b3c4a31d67b87ce4cdb6f43457487e25bc54f35a8ad71694a38fac",
+    "contracts/lca-study/worker/method/study-method-evidence.v1.schema.json": "babefe8d4bedaaf0ecbbc865b59178a62e57825a753b657e7979a2e60d7451b6",
+    "contracts/lca-study/worker/method/study-method-fact-catalog-entry.v1.schema.json": "09fdfc369ff79639ec4305f0d99664d3c72d33c04f007e249ee2fe55c366eeee",
+    "contracts/lca-study/worker/method/study-method-failure-request.v1.schema.json": "5cbac70704b22e3c996a4f5109f51ddd1bdbbdc363be8708b01a2f4769869d82",
+    "contracts/lca-study/worker/method/study-method-job-context.v1.schema.json": "fd046103b342ce35e293db42b6c316756352c2b0abe4e13731f12b5d62cfc444",
+    "contracts/lca-study/worker/method/study-method-job-request.v1.schema.json": "007ed2c157018aab138b57d9ef58a2ba22ce25a1ac5c813beb83b7c3a0d13a9f",
+    "contracts/lca-study/worker/method/study-method-reconcile-request.v1.schema.json": "5053885d6ba2277ff17a60232728b0997f9c0cf3bd1b28477a7f4b200a7b7d80",
+    "contracts/lca-study/worker/method/study-method-reconcile-result.v1.schema.json": "877c93478a09f3bba1c5709c808c19ef921bd19406d673c80fd40b8017d49550"
+  },
+  "fixtures": {
+    "test/fixtures/lca-study-v6/worker-service-seams.json": "186d4b406aa27fb4e9f290d02f5dc7aeca041824597214e416473bfc7d008d48",
+    "test/fixtures/lca-study-v6/facts.synthetic.json": "f779f432bcf1cf1d256352b4c5b9454dd84bbb2e69773591759c18fd96c4d039",
+    "test/fixtures/lca-study-v6/arithmetic.native.json": "7ebe5fa613242a9520085a62557fdd199130377541ca515946667e544b077540"
+  },
+  "sourceInputs": [
+    {
+      "path": "docs/agents/contracts/study-method-assessment-config.v1.schema.json",
+      "byteSize": 431,
+      "sha256": "8b7f1bf14c1904a24e869b07b8000435953091f649dc3ef1f021b0f764e06920"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-assessment-facts.v1.schema.json",
+      "byteSize": 66795,
+      "sha256": "091a3f5462fce0758c24d0292672066eade2e28852b3ad8fa8c91816ee107e00"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-assessment-input.v1.schema.json",
+      "byteSize": 436,
+      "sha256": "293b42a9dc38d1d331e23d7846703f910b8fcb9f9c723a9e9b0f02cb25ffa710"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-assessment-record.v1.schema.json",
+      "byteSize": 8398,
+      "sha256": "c7228ce92614940716e1ebbc507a8d499d80e55a0ead9d33cdbc285359960e9c"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-candidate-input.v1.schema.json",
+      "byteSize": 437,
+      "sha256": "e5fe66d2a75f4c8ed05e3fb20dbdeb0fe04f16f13e5fedb57f832b85530dfd1f"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-completion.v1.schema.json",
+      "byteSize": 2235,
+      "sha256": "ee4d3c8251a42cd24305eaf6343e08b4aee709b95fa5da289b2b19be2a4d245e"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-evidence-record.v1.schema.json",
+      "byteSize": 2542,
+      "sha256": "d04e745179b3c4a31d67b87ce4cdb6f43457487e25bc54f35a8ad71694a38fac"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-evidence.v1.schema.json",
+      "byteSize": 3554,
+      "sha256": "babefe8d4bedaaf0ecbbc865b59178a62e57825a753b657e7979a2e60d7451b6"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-fact-catalog-entry.v1.schema.json",
+      "byteSize": 10896,
+      "sha256": "09fdfc369ff79639ec4305f0d99664d3c72d33c04f007e249ee2fe55c366eeee"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-failure-request.v1.schema.json",
+      "byteSize": 1763,
+      "sha256": "5cbac70704b22e3c996a4f5109f51ddd1bdbbdc363be8708b01a2f4769869d82"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-job-context.v1.schema.json",
+      "byteSize": 12699,
+      "sha256": "fd046103b342ce35e293db42b6c316756352c2b0abe4e13731f12b5d62cfc444"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-job-request.v1.schema.json",
+      "byteSize": 924,
+      "sha256": "007ed2c157018aab138b57d9ef58a2ba22ce25a1ac5c813beb83b7c3a0d13a9f"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-reconcile-request.v1.schema.json",
+      "byteSize": 1583,
+      "sha256": "5053885d6ba2277ff17a60232728b0997f9c0cf3bd1b28477a7f4b200a7b7d80"
+    },
+    {
+      "path": "docs/agents/contracts/study-method-reconcile-result.v1.schema.json",
+      "byteSize": 9573,
+      "sha256": "877c93478a09f3bba1c5709c808c19ef921bd19406d673c80fd40b8017d49550"
+    },
+    {
+      "path": "crates/solver-worker/src/study/method_runtime_contracts.rs",
+      "byteSize": 5522,
+      "sha256": "bf21040b4ae7cc1864dfc0203c04d8af4efc5fc4396eaa204790eb2b655f02f0"
+    },
+    {
+      "path": "crates/solver-worker/tests/fixtures/study-method-assessment/service-seams.json",
+      "byteSize": 190828,
+      "sha256": "186d4b406aa27fb4e9f290d02f5dc7aeca041824597214e416473bfc7d008d48"
+    },
+    {
+      "path": "crates/solver-worker/tests/fixtures/study-method-assessment/facts.synthetic.json",
+      "byteSize": 129906,
+      "sha256": "f779f432bcf1cf1d256352b4c5b9454dd84bbb2e69773591759c18fd96c4d039"
+    },
+    {
+      "path": "crates/solver-worker/tests/fixtures/study-method-assessment/arithmetic.json",
+      "byteSize": 25823,
+      "sha256": "7ebe5fa613242a9520085a62557fdd199130377541ca515946667e544b077540",
+      "classification": "isolated_arithmetic_not_a_study_or_conformance_case; supplemental relation oracle"
+    }
+  ],
+  "moduleMetadata": {
+    "path": "contracts/lca-study/worker/method/module-metadata.json",
+    "sha256": "ac1b81a20d9e67f7e8807bcb86ff7cbb47a69772df5e093aa5cb445a43d2492b",
+    "rawPackageSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+    "rawPackageByteSize": 153035,
+    "payloadSha256": "407314bc364e5cfeddc8a44696118ee20cc696db5e9ef93812fd02516097a0a1",
+    "projectionSha256": "44059325552effddecf1a5d4acae3d1258996598cfabc2c1d6ef38c1be488c9e",
+    "sourceWorkerPath": "crates/solver-worker/src/study/method_assets/method.pef-2021-ef31.0.1.0.json",
+    "extractionScript": "scripts/build-study-method-module.mjs"
+  }
+}

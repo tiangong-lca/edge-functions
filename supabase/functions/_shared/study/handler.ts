@@ -1,4 +1,6 @@
 import { executeAdvanced, type AdvancedOptions } from './advanced_dispatch.ts';
+import { executeMethod, type MethodOptions } from './method_dispatch.ts';
+import { API_SCHEMA as METHOD_SCHEMA } from '../../../../contracts/lca-study/v6/authoring.ts';
 import { API_SCHEMA as ADVANCED_SCHEMA } from '../../../../contracts/lca-study/v5/advanced.ts';
 import {
   API_SCHEMA,
@@ -52,6 +54,7 @@ export type HandlerOptions = {
   reporting?: ReportingOptions;
   review?: ReviewOptions;
   advanced?: AdvancedOptions;
+  method?: MethodOptions;
 };
 const MAX_BODY_BYTES = 256 * 1024;
 function response(requestId: string, data: unknown): StudyApiResponse {
@@ -64,13 +67,15 @@ export function createStudyHandler(options: HandlerOptions = {}) {
     let requestId = crypto.randomUUID() as string;
     const wireHeader = req.headers.get('x-study-schema');
     let responseVersion: string =
-      wireHeader === ADVANCED_SCHEMA
-        ? ADVANCED_SCHEMA
-        : wireHeader === REVIEW_SCHEMA
-          ? REVIEW_SCHEMA
-          : wireHeader === REPORTING_SCHEMA
-            ? REPORTING_SCHEMA
-            : API_SCHEMA;
+      wireHeader === METHOD_SCHEMA
+        ? METHOD_SCHEMA
+        : wireHeader === ADVANCED_SCHEMA
+          ? ADVANCED_SCHEMA
+          : wireHeader === REVIEW_SCHEMA
+            ? REVIEW_SCHEMA
+            : wireHeader === REPORTING_SCHEMA
+              ? REPORTING_SCHEMA
+              : API_SCHEMA;
     const controller = new AbortController();
     const abort = () => controller.abort(req.signal.reason);
     req.signal.addEventListener('abort', abort, { once: true });
@@ -134,6 +139,21 @@ export function createStudyHandler(options: HandlerOptions = {}) {
           input.schemaVersion !== wireHeader)
       )
         throw new StudyFailure('INVALID_REQUEST', 400, 'schema.header_binding');
+      if (
+        input &&
+        typeof input === 'object' &&
+        'schemaVersion' in input &&
+        input.schemaVersion === METHOD_SCHEMA
+      ) {
+        responseVersion = METHOD_SCHEMA;
+        return await executeMethod(
+          input,
+          actor.value,
+          controller.signal,
+          assertActive,
+          options.method,
+        );
+      }
       if (
         input &&
         typeof input === 'object' &&
