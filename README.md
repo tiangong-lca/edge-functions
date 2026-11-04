@@ -24,8 +24,8 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-11-03
-lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
-lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
+lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
+lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -121,6 +121,8 @@ Credential contract:
 - Portal Hybrid provider variables are likewise independent of generic OpenAI, SageMaker, and AWS values. Missing, partial, whitespace-bearing, malformed, or unsafe Portal provider configuration fails before Redis, model, AWS, or database calls; an exact-false/unset kill switch returns before that provider configuration is read.
 - `portal_data_product_results_v1` uses only the matching project publishable key for its downstream `api.portal_get_published_lcia_values_v1` call. It must never receive or construct a service-role/secret-key client.
 - `portal_hybrid_search_v1` uses the same once-resolved dedicated current-project publishable key only for the explicitly selected `api.portal_hybrid_search_v1` or `api.portal_hybrid_search_v2`. It never calls `hybrid_search_processes`, `hybrid_search_flows`, another raw/login Hybrid RPC, or a service client.
+
+Study V4 review/finalization/named-share admission uses the separate default-off `STUDY_REVIEW_CONFIG` example in `supabase/.env.example`. Its [reporting contract](docs/agents/lca-study-reporting-contract.md#v4-review-finalization-and-named-shares) owns exact operations, profiles and signing-key requirements; source availability does not admit a hosted client.
 
 ### Real Upstash guard fixture
 

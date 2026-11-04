@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
-lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -50,7 +50,7 @@ related:
 
 ## Study runtime entrypoint
 
-W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); review/share remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); V4 review/finalization/named-share adapters have a separate default-off gate and require Database and installed-consumer qualification. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 ## Default Baseline
 
@@ -323,3 +323,11 @@ The opt-in Release `final-result-readiness-database.test.mjs`, with `RELEASE_QUE
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.
 
 Run `node --test scripts/study-contract-build.test.cjs` and `deno test --config supabase/functions/deno.json --allow-env --allow-read test/study_codec_test.ts test/study_export_signature_test.ts`, then the canonical full gate. The build test loads the packed ESM in isolated Node and Deno without source/npm resolution. New build tooling keeps authoritative Deno/TypeScript unchanged; `pnpm install --frozen-lockfile` and the exact Zod map/build pin comparison remain mandatory.
+
+## P3 review and named-share proof
+
+Run `test/study_review_contract_test.ts` and `test/study_review_runtime_test.ts` with exact Deno, plus `scripts/study-contract-build.test.cjs`, then the canonical baseline. Preserve actual renderer HTML/projection/finalization bindings, strict version discrimination and old P2 signature verification; exact pending and committed recovery; actor/client/hash/state failures; default-off admission; and denial or state change around every Storage read/upload. The shared P2 report fixture still executes the unchanged P2 assertions. Database owns actual SQL/RLS role, review-chain, non-author, delegation expiry/revoke/one-use, cursor, source-disclosure and share-race proof. Those tests plus owned OAuth, installed CLI/browser and exact cross-repository qualification are required separately; local adapter tests do not establish them or hosted readiness.
+
+V4 owner-download corrections require exact export/bundle selection, the real SDK query route and actor/service split, current authorization around I/O and locator-free bounded bytes. Replay fixtures must retain original outcome IDs alongside refreshed review/finalization state and revoked/expired shares or consumed/revoked delegation metadata. Validate personal reviewer-only and team member-role choices from `resource.actions.allowedMemberRoles`; consumers must not infer those choices from role strings.
+
+Core Study permissions in V4 actions require exact strict boolean projection, false values on non-Study targets and unchanged actor/api forwarding. Database actual tests own owner/editor/viewer/reviewer, read-only OAuth, archive and live team/client revocation checks through existing core authorization. Edge adapter tests prove that available V4 actions do not substitute for these flags. The projection does not grant per-source/target access or a cancellation action.

@@ -70,7 +70,7 @@ function config(): RuntimeConfig {
   const text = Deno.env.get('STUDY_REPORTING_CONFIG');
   return text ? capabilitiesSchema.parse(JSON.parse(text)) : DISABLED_CAPABILITIES;
 }
-async function configuredSigner(
+export async function configuredSigner(
   profile: NonNullable<ReportContext['exportProfile']>,
 ): Promise<SigningKey> {
   try {

@@ -17,9 +17,9 @@ checkPaths:
   - supabase/functions/_shared/study/**
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: c8784576377b4ab156e89dc4eac81014a87880f6
-lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - lca-study-api-contract.md
   - repo-validation.md
@@ -105,3 +105,7 @@ Run each phase with exact Deno and `--config supabase/functions/deno.json`, loop
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.
+
+## V4 narrow report review and disclosure
+
+The [reporting contract](lca-study-reporting-contract.md#v4-review-finalization-and-named-shares) owns the additive `lca.study-api.v4` / `STUDY_REVIEW_CONFIG` boundary. The same handler authenticates first and applies the existing byte/deadline/cancellation limits. V4 uses separate actor and service RPCs, retaining V2/V3 semantics. Reviewer report-only access and exact named-share access do not grant V2 source, model, Run or artifact rights. Current authority and immutable finalization are separate; no runtime allowlist is enabled by source or synthetic tests.
