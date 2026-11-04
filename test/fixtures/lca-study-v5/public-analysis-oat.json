@@ -1,0 +1,33 @@
+{
+  "analysisId": "10000000-0000-4000-8000-000000000004",
+  "studyId": "10000000-0000-4000-8000-000000000001",
+  "profileId": "lca.study-sensitivity-oat.v1",
+  "config": {
+    "kind": "sensitivityOat",
+    "schemaVersion": "lca.study-analysis-config.v2",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "parameters": [
+      {
+        "path": "/instances/a/exchanges/e/amount",
+        "unit": "kg",
+        "baselineAmount": "10",
+        "low": "9",
+        "high": "11"
+      }
+    ]
+  },
+  "configHash": "b4223a3c658b034710ba3611b3f987651c2d80de2d9ada4dd881955721441609",
+  "execution": {
+    "jobId": "10000000-0000-4000-8000-000000000005",
+    "status": "completed"
+  },
+  "factsRef": {
+    "type": "analysisFacts",
+    "id": "10000000-0000-4000-8000-000000000084",
+    "contentHash": "426f89276623e1abf9fbecae0b35ad70734385bfab523b8d0782a0e60926701b",
+    "digestScope": "artifact_bytes_sha256",
+    "byteSize": 10554,
+    "mediaType": "application/json",
+    "schemaVersion": "lca.study-analysis-facts.v2"
+  }
+}

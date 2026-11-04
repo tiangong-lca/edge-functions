@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "lca.study-worker-contract-consumption.v1",
+  "sourceRepository": "tiangong-lca/worker",
+  "sourceCommit": "e39b20fe99173ea95d072273bdd06ce1ec3ce840",
+  "schemas": {
+    "contracts/lca-study/worker/analysis-config.v2.schema.json": "dfa0dc7fc5813bc2708a9101ca383fd143055f5879eb5412ebf0b06c2c818bd9",
+    "contracts/lca-study/worker/analysis-input.v2.schema.json": "08a5d6ea3b5dd9aeffba13cd6b163fe7907314467521903bf28c9697f4c674c0",
+    "contracts/lca-study/worker/analysis-facts.v2.schema.json": "c22df95fb1210113b56b869e124c1e5ef330b2da6d10ff398d4232c568ca3eb1",
+    "contracts/lca-study/worker/analysis-failure.v2.schema.json": "b152e0ba5a965fb25231d7b233570e3235e7bdc7a03cf0e44a3715351abb64ed",
+    "contracts/lca-study/worker/analysis-completion.v2.schema.json": "4b4c3cf72a003933daad827ff7fbdea24f01e5f8a6a585e2904d99846daba7bb",
+    "contracts/lca-study/worker/analysis-record.v2.schema.json": "be80cec36397b5cb058f9d06ffa9e429cd688e5eccf4f11d689af22a8d5cd876"
+  }
+}

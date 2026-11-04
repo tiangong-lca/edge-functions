@@ -160,3 +160,5 @@ The top-level test imports the pure contract modules, so the existing Deno graph
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+
+V5 advanced profiles are governed by [the advanced contract](lca-study-advanced-contract.md). Older version literals and historical artifacts are retained; new numerical schemas and report families require explicit negotiation.

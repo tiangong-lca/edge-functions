@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "lca.study-analysis-input.v2",
+  "analysis": {
+    "analysisId": "10000000-0000-4000-8000-000000000004",
+    "studyId": "10000000-0000-4000-8000-000000000001",
+    "profileId": "lca.study-uncertainty-bounded.v1",
+    "config": {
+      "kind": "uncertainty",
+      "schemaVersion": "lca.study-analysis-config.v2",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "parameters": [
+        {
+          "path": "/instances/a/exchanges/e/amount",
+          "unit": "kg",
+          "baselineAmount": "2",
+          "low": "1",
+          "high": "3"
+        }
+      ],
+      "design": {
+        "kind": "jointEmpirical",
+        "rows": [
+          [
+            "1"
+          ],
+          [
+            "3"
+          ]
+        ]
+      },
+      "sampleCount": 16,
+      "seedHex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "generator": "study.uncertainty.hmac-drbg-sha256.v1"
+    },
+    "configHash": "fa0ce3b8bf3c008d55bf33773682ee4b969a35ad6201b2c56089467f2e33a4b7",
+    "execution": {
+      "jobId": "10000000-0000-4000-8000-000000000005",
+      "status": "running"
+    }
+  },
+  "baseline": {
+    "run": {
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "40002f1de748504cd46c93cae91cc1b204907fadf1ac720f3528d240740e2e39"
+      },
+      "effectiveModelRef": {
+        "contentHash": "8780e818f2e45f3e493841348f5e6118382fc62f13a33c0838e5a95a3201a8cf",
+        "digestScope": "worker_prepared_model",
+        "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+        "type": "modelRevision"
+      },
+      "engineId": "solver-worker",
+      "execution": {
+        "jobId": "10000000-0000-4000-8000-000000000090",
+        "status": "completed"
+      },
+      "inputHash": "6b4cd567051fe121f0dc1ceacf508023b8b34d365fef69b29a87d7a8612d764e",
+      "modelPreparationId": "10000000-0000-4000-8000-000000000040",
+      "profileId": "lca.study-explicit-v1",
+      "resultRef": {
+        "byteSize": 775,
+        "contentHash": "eb7b92a0cab5b81e20b970e5271b5969d8b1d4c12e80ed5d13a1d3382cdb4519",
+        "digestScope": "artifact_bytes_sha256",
+        "id": "10000000-0000-4000-8000-000000000060",
+        "mediaType": "application/json",
+        "schemaVersion": "lca.study-result.v1",
+        "type": "runResult"
+      },
+      "runId": "10000000-0000-4000-8000-000000000010",
+      "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "studyRevisionId": "10000000-0000-4000-8000-000000000002",
+      "validity": {
+        "checkedAt": "2026-11-03T00:00:00Z",
+        "reasonCodes": [],
+        "status": "current"
+      }
+    },
+    "revision": {
+      "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "definition": {
+        "assumptions": [],
+        "functionalUnit": {
+          "amount": "1",
+          "referenceFlowId": "product-a",
+          "unit": "kg"
+        },
+        "goal": "Bounded numerical fixture",
+        "methodRefs": [
+          {
+            "datasetType": "lciamethod",
+            "id": "method",
+            "type": "datasetRevision",
+            "version": "01.00.000"
+          }
+        ],
+        "systemBoundary": "explicit"
+      },
+      "modelPreparationId": "10000000-0000-4000-8000-000000000003",
+      "modelRef": {
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model",
+        "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+        "type": "modelRevision"
+      },
+      "parentRevisionId": null,
+      "revision": 2,
+      "revisionId": "10000000-0000-4000-8000-000000000002",
+      "status": "frozen",
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "validation": "passed"
+    },
+    "scenario": {
+      "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "effectiveModelRef": {
+        "contentHash": "8780e818f2e45f3e493841348f5e6118382fc62f13a33c0838e5a95a3201a8cf",
+        "digestScope": "worker_prepared_model",
+        "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+        "type": "modelRevision"
+      },
+      "modelPreparationId": "10000000-0000-4000-8000-000000000040",
+      "overrides": [],
+      "parentScenarioRevisionId": null,
+      "revision": 2,
+      "scenarioId": "10000000-0000-4000-8000-000000000100",
+      "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+      "status": "frozen",
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "studyRevisionId": "10000000-0000-4000-8000-000000000002"
+    },
+    "preparation": {
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "40002f1de748504cd46c93cae91cc1b204907fadf1ac720f3528d240740e2e39"
+      },
+      "execution": {
+        "jobId": "10000000-0000-4000-8000-000000000110",
+        "status": "completed"
+      },
+      "inputArtifactRef": {
+        "byteSize": 5293,
+        "contentHash": "14675d0ec8de85591706b5a7afe34ec7dde9c7b47d0003636c06d1b25bf7cc63",
+        "digestScope": "artifact_bytes_sha256",
+        "id": "10000000-0000-4000-8000-000000000050",
+        "mediaType": "application/json",
+        "schemaVersion": "lca.study-prepared-input.v1",
+        "type": "modelInput"
+      },
+      "inputHash": "6b4cd567051fe121f0dc1ceacf508023b8b34d365fef69b29a87d7a8612d764e",
+      "methodRefs": [
+        {
+          "datasetType": "lciamethod",
+          "id": "method",
+          "type": "datasetRevision",
+          "version": "01.00.000"
+        }
+      ],
+      "modelRef": {
+        "contentHash": "8780e818f2e45f3e493841348f5e6118382fc62f13a33c0838e5a95a3201a8cf",
+        "digestScope": "worker_prepared_model",
+        "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+        "type": "modelRevision"
+      },
+      "preparationId": "10000000-0000-4000-8000-000000000040",
+      "profileId": "lca.study-explicit-v1",
+      "source": {
+        "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expectedRevision": 1,
+        "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+        "type": "scenarioRevision"
+      },
+      "studyId": "10000000-0000-4000-8000-000000000001"
+    },
+    "preparedArtifact": {
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "artifactRef": {
+        "type": "modelInput",
+        "id": "10000000-0000-4000-8000-000000000050",
+        "contentHash": "14675d0ec8de85591706b5a7afe34ec7dde9c7b47d0003636c06d1b25bf7cc63",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 5293,
+        "mediaType": "application/json",
+        "schemaVersion": "lca.study-prepared-input.v1"
+      },
+      "storageBucket": "study-artifacts",
+      "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000050/example.json"
+    },
+    "resultArtifact": {
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "artifactRef": {
+        "type": "runResult",
+        "id": "10000000-0000-4000-8000-000000000060",
+        "contentHash": "eb7b92a0cab5b81e20b970e5271b5969d8b1d4c12e80ed5d13a1d3382cdb4519",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 775,
+        "mediaType": "application/json",
+        "schemaVersion": "lca.study-result.v1"
+      },
+      "storageBucket": "study-artifacts",
+      "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000060/example.json"
+    }
+  },
+  "sourceSnapshot": {
+    "snapshotId": "10000000-0000-4000-8000-000000000081",
+    "studyId": "10000000-0000-4000-8000-000000000001",
+    "originRef": {
+      "type": "datasetRevision",
+      "datasetType": "lifecyclemodel",
+      "id": "model",
+      "version": "01.00.000"
+    },
+    "sourceArtifactRef": {
+      "type": "modelSource",
+      "id": "10000000-0000-4000-8000-000000000080",
+      "contentHash": "0d347991e9d351efa4f51ab602dc942def0a98a1f5c0aed634e972ea3798d2ca",
+      "digestScope": "artifact_bytes_sha256",
+      "byteSize": 6850,
+      "mediaType": "application/json",
+      "schemaVersion": "lca.study-source-snapshot.v1"
+    },
+    "digestScope": "artifact_bytes_sha256",
+    "licenseRef": "synthetic-not-a-license",
+    "issuerId": "synthetic-owner-fixture",
+    "observedAt": "2026-11-04T00:00:00Z"
+  },
+  "sourceArtifact": {
+    "studyId": "10000000-0000-4000-8000-000000000001",
+    "artifactRef": {
+      "type": "modelSource",
+      "id": "10000000-0000-4000-8000-000000000080",
+      "contentHash": "0d347991e9d351efa4f51ab602dc942def0a98a1f5c0aed634e972ea3798d2ca",
+      "digestScope": "artifact_bytes_sha256",
+      "byteSize": 6850,
+      "mediaType": "application/json",
+      "schemaVersion": "lca.study-source-snapshot.v1"
+    },
+    "storageBucket": "study-artifacts",
+    "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000080/source.json"
+  }
+}

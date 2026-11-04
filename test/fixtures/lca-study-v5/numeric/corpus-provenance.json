@@ -1,0 +1,8 @@
+{
+  "workerCommit": "e39b20fe99173ea95d072273bdd06ce1ec3ce840",
+  "generator": "deterministic xorshift64 shifts13/7/17 seed0x6c63612d73747564, finiteIEEEbitpatterns only",
+  "harnessSha256": "d8221bba339311cbb5f37bd6ae454f1cc3f88a7e5a23eadcd82694c24f8e70f7",
+  "vectorsSha256": "dedccd4369be935d67eed3ad5bdd8fcaadf8ef3dc1786a71b64c091ac7c982f3",
+  "count": 4096,
+  "method": "verbatim owner canonical_number + exact same compiled deps"
+}

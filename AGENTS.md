@@ -227,3 +227,5 @@ The `pre-push` hook runs `scripts/docpact-gate.sh`, which delegates CLI lookup t
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+
+V5 advanced Study analysis and report production are separately negotiated and default-off; [the advanced contract](docs/agents/lca-study-advanced-contract.md) owns Worker v2 schema consumption, source-bound parameter catalogs and renderer2.0/export3 compatibility. Actual runtime and source integration qualification remain separate.
