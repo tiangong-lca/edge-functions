@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
-lastReviewedNote: 'Edge #553: reviewed separate V5 advanced analysis/catalog/report/review boundaries, explicit view2/renderer2/export3 and rollback-safe current-authorized historical reads; retained V1–V4 wire and artifact meanings stay strict. Actual integration and hosted admission require separate evidence.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md

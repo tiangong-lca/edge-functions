@@ -18,8 +18,8 @@ checkPaths:
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
-lastReviewedNote: 'Edge #553: reviewed separate V5 advanced analysis/catalog/report/review boundaries, explicit view2/renderer2/export3 and rollback-safe current-authorized historical reads; retained V1–V4 wire and artifact meanings stay strict. Actual integration and hosted admission require separate evidence.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - lca-study-api-contract.md
   - repo-validation.md
@@ -45,6 +45,8 @@ P1 supports Study/Revision/Scenario/source acquisition/preparation/Run recovery 
 ## RPC and producer boundaries
 
 Actor reads use `api.qry_study_v1(p_request)`; writes use `api.cmd_study_v1(p_request)`. Their internal function version is independent of the public wire. The SDK forwards the original verified actor Bearer and selects `api`; no actor ID or producer evidence is accepted in public requests. RPC replies are `{ok:true,data:<variant>}` or `{ok:false,code:<fixed Study code>}`. Database owns live permissions, cursor binding, content identity, idempotency, locking, CAS and worker-job transactions. Edge validates the returned variant and its selected identities before disclosure. Reads never submit jobs.
+
+A successful `study.archive` response must bind the exact requested Study, `status: archived` and the safe integer successor `expectedRevision + 1`. The handler and contained V2 consumer enforce this same existing SQL postcondition; exact original receipt replay retains that successor. A wrong-state or wrong-generation success is `REFERENCE_MISMATCH`, not proof that the mutation had no effect. Current rights and same-key recovery remain server-owned. This validation correction retains the V2 wire and bundle contract version; new consumer builds have distinct immutable source/manifest identities and do not rewrite prior artifacts.
 
 `revision.freeze` obtains a database-minted short-lived `{kind: revisionValidationIntent, intentId, expiresAt, revision, preparation}`. Edge compares the exact CAS/hash/model/definition/preparation and qualified profile. Its server validator obtains the prepared input through an actor-authorized artifact capability, verifies the original bytes and strict Worker `lca.study-prepared-input.v1` wire, and checks model/profile/calculation identities, exact method ID/version membership, reference flow/unit and bounded positive functional amount. Worker owns model compilation and fingerprints; Edge does not recompute them. `PreparedInput.sourceHash` binds exact Worker SourceInput bundle bytes, not the exporter snapshot bytes; W06 owned-task provenance must bind those distinct domains. Normalized source identities retain only eligibility state 0 or 100, not actor/owner IDs, and explicit amount overrides remain in model provenance. Base preparation has no study binding; adoption of a prior Scenario preserves its historical binding. A new Scenario compilation binds its frozen Study definition and selected order.
 

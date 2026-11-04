@@ -55,6 +55,43 @@ test('portable owner codec packs exact deterministic bytes and executes without 
     assert.equal(codec.operationMetadata['study.create'].kind, 'mutation');
     assert.equal(codec.operationMetadata['task.read'].kind, 'query');
     assert.equal(codec.operationMetadata['task.cancel'].kind, 'mutation');
+    const archive = codec.parseRequest({
+      schemaVersion: codec.API_SCHEMA,
+      requestId: 'archive-request',
+      idempotencyKey: 'original-archive-key',
+      operation: 'study.archive',
+      target: { type: 'study', id: 'study', expectedRevision: 7 },
+    });
+    const archiveReply = (patch = {}) =>
+      codec.parseResponse({
+        schemaVersion: codec.API_SCHEMA,
+        requestId: archive.requestId,
+        ok: true,
+        data: {
+          type: 'study',
+          value: {
+            studyId: 'study',
+            revision: 8,
+            scope: { kind: 'user', id: 'owner' },
+            title: 'Study',
+            status: 'archived',
+            currentRevisionId: null,
+            ...patch,
+          },
+        },
+      });
+    assert.doesNotThrow(() => codec.validateResponseForRequest(archive, archiveReply()));
+    for (const patch of [
+      { status: 'active', revision: 1 },
+      { status: 'active' },
+      { revision: 7 },
+      { revision: 9 },
+      { studyId: 'other' },
+    ]) {
+      assert.throws(() => codec.validateResponseForRequest(archive, archiveReply(patch)), {
+        code: 'REFERENCE_MISMATCH',
+      });
+    }
     // A fresh Deno process loads only the artifact; imports must not resolve a source tree or npm.
     const deno = execFileSync(
       'deno',
