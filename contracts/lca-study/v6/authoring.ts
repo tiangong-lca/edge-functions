@@ -20,6 +20,7 @@ import {
   METHOD_PROFILE,
 } from './schemas.ts';
 import { methodEvidenceRefSchema } from './evidence_contract.ts';
+import { hasOnlyUnicodeScalars } from './owner_json.ts';
 
 export const API_SCHEMA = 'lca.study-api.v6' as const;
 export const CONTRACT_VERSION = '6.0.0' as const;
@@ -102,6 +103,10 @@ export const reportContentSchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
+    if (!hasOnlyUnicodeScalars(value)) {
+      ctx.addIssue({ code: 'custom', message: 'Unicode scalar authored content required' });
+      return;
+    }
     const claims = new Set(value.claims.map((c) => c.claimId));
     if (claims.size !== value.claims.length)
       ctx.addIssue({ code: 'custom', message: 'unique method claims required' });

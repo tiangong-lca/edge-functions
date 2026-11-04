@@ -1,4 +1,5 @@
-import { assert, assertEquals } from 'jsr:@std/assert';
+import { assert, assertEquals, assertThrows } from 'jsr:@std/assert';
+import { parseRequest } from '../contracts/lca-study/v6/codec.ts';
 import { methodRuntimeFixture, methodId } from './study_method_runtime_fixture.ts';
 import { DISABLED_CAPABILITIES as disabledAuthoring } from '../contracts/lca-study/v6/authoring.ts';
 import { DISABLED_CAPABILITIES as disabledReview } from '../contracts/lca-study/v6/review.ts';
@@ -364,5 +365,69 @@ Deno.test(
       assertEquals(f.flags.uploads, 0);
       assertEquals(f.flags.consumes, 0);
     }
+  },
+);
+
+Deno.test(
+  'V6 authored drafts reject isolated surrogates permanently before any repository I/O',
+  async () => {
+    for (const operation of ['report.create', 'report.save'])
+      for (const field of ['title', 'paragraph', 'unit'])
+        for (const bad of ['\ud800', '\udfff']) {
+          const f = await methodRuntimeFixture(),
+            content = structuredClone(f.create.content);
+          if (field === 'title') content.title = bad;
+          else if (field === 'paragraph') content.sections[0].paragraphs = [bad];
+          else content.claims[0].unit = bad;
+          const request =
+            operation === 'report.create'
+              ? { ...f.create, content }
+              : f.request('report.save', {
+                  idempotencyKey: methodId(975),
+                  target: {
+                    type: 'reportRevision',
+                    id: f.f.context.reportRevisionId,
+                    expectedRevision: 1,
+                  },
+                  content,
+                });
+          assertThrows(() => parseRequest(request));
+          const result = await f.call(request);
+          assertEquals(result.status, 400, `${operation}/${field}`);
+          assertEquals(result.body.code, 'INVALID_REQUEST');
+          assertEquals(result.body.retryable, false);
+          assertEquals(
+            [
+              f.flags.dispatches,
+              f.flags.resolves,
+              f.flags.reads,
+              f.flags.uploads,
+              f.flags.consumes,
+            ],
+            [0, 0, 0, 0, 0],
+          );
+        }
+  },
+);
+Deno.test(
+  'V6 authored drafts preserve valid astral scalar text and code-point limits',
+  async () => {
+    const f = await methodRuntimeFixture(),
+      request = structuredClone(f.create);
+    request.content.title = '😀'.repeat(256);
+    request.content.sections[0].paragraphs = ['完整声明 🌍 retains scalar text'];
+    assertEquals(parseRequest(request), request);
+    const result = await f.call(request);
+    assertEquals(result.status, 200);
+    const stored = parseCanonicalBytes(
+      f.storage.get(f.getContentArtifact().artifactRef.id)!,
+    ) as any;
+    assertEquals(stored.content, request.content);
+    const tooLong = structuredClone(request);
+    tooLong.content.title += '😀';
+    assertThrows(() => parseRequest(tooLong));
+    const unicodeUnit = structuredClone(request);
+    unicodeUnit.content.claims[0].unit = 'μg 🌍';
+    assertEquals(parseRequest(unicodeUnit), unicodeUnit);
   },
 );

@@ -19,8 +19,8 @@ checkPaths:
   - scripts/build-study-method-*.mjs
   - scripts/study-method-*.test.cjs
 lastReviewedAt: 2026-11-05
-lastReviewedCommit: a33a5fbcc8f76f2cf29f68792d7124d6cce94615
-lastReviewedNote: 'Edge #557: reviewed V6 default-off handler, original actor/service intent and bounded immutable I/O, mandatory method content/view3/export4, owner artifact readers and generated types. Full local SDK, lifecycle, byte integrity, revocation and recovery tests pass. Actual installed runtime, hosted admission, independent final backend review and scientific qualification remain pending; prior protocol/renderer/component bytes are unchanged.'
+lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
+lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
 related:
   - lca-study-runtime-contract.md
   - lca-study-reporting-contract.md
@@ -58,7 +58,7 @@ The factsBindingHash domain is UTF-8 `lca.study-method-report-facts-binding.v1`,
 
 Report contentHash is SHA256 of exact canonical stored UTF-8 bytes, no newline and **no semantic/domain prefix**. The new content schema supplies family separation. This supersedes the older design proposal's tentative content-prefix wording; historical content hash algorithms are not altered. Validation has exactly11 keys: schemaVersion=`lca.study-method-report-validation.v1`, profileId=`lca.study-method-report-claims.v1`, reportRevisionId,contentHash,claimCount,factsBindingHash,methodAssessmentId,configHash,requirementCount20,categoryCount25,factCount58.
 
-Stored content is exactly `{schemaVersion:'lca.study-method-report-content.v1',reportRevisionId,studyId,templateId:'lca.study-method-report.v1',runIds,methodAssessmentIds,factsRefs,factsBindingHash,content,claims,methodAssessment}`. Draft retains the closed authored fields of V5 under `lca.study-method-report-draft.v1`, replacing analysisFacts references with exact methodAssessmentFacts. Mandatory method evidence is generated separately and cannot be removed or rewritten by authored paragraphs or fake numerical0/1 status facts.
+Stored content is exactly `{schemaVersion:'lca.study-method-report-content.v1',reportRevisionId,studyId,templateId:'lca.study-method-report.v1',runIds,methodAssessmentIds,factsRefs,factsBindingHash,content,claims,methodAssessment}`. Draft retains the closed authored fields of V5 under `lca.study-method-report-draft.v1`, replacing analysisFacts references with exact methodAssessmentFacts. Its V6-only recursive Unicode-scalar refinement rejects isolated UTF16 surrogates in every authored string as permanent INVALID_REQUEST before repository I/O, preserving valid astral scalars and code-point length limits. This is an executable codec refinement; structural request/response JSON schemas and valid operations remain unchanged, so consumers must execute the owner parser. Mandatory method evidence is generated separately and cannot be removed or rewritten by authored paragraphs or fake numerical0/1 status facts.
 
 # Mandatory method summary and view3
 

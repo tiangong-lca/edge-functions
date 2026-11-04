@@ -117,6 +117,40 @@ test('V6 portable consumer is deterministic, source-bound and usable outside sou
       await codec.parseMethodReportContentForRevision(storedBytes, report),
       component.stored,
     );
+    const authoredRequest = {
+      schemaVersion: codec.API_SCHEMA,
+      requestId: 'portable-unicode',
+      idempotencyKey: 'portable-unicode',
+      operation: 'report.create',
+      studyId: component.stored.studyId,
+      parentReportRevisionId: null,
+      runIds: component.stored.runIds,
+      methodAssessmentIds: component.stored.methodAssessmentIds,
+      templateId: component.stored.templateId,
+      content: component.stored.content,
+    };
+    for (const field of ['title', 'paragraph', 'unit'])
+      for (const invalid of ['\ud800', '\udfff']) {
+        const malformed = structuredClone(authoredRequest);
+        if (field === 'title') malformed.content.title = invalid;
+        else if (field === 'unit') malformed.content.claims[0].unit = invalid;
+        else
+          malformed.content.sections = [
+            {
+              sectionId: 'unicode-section',
+              title: 'Scalar statement',
+              paragraphs: [invalid],
+              claimIds: [],
+            },
+          ];
+        assert.throws(() => codec.parseRequest(malformed), {
+          code: 'INVALID_REQUEST',
+          ruleId: 'request.structure',
+        });
+      }
+    const astral = structuredClone(authoredRequest);
+    astral.content.title = '😀'.repeat(256);
+    assert.deepEqual(codec.parseRequest(astral), astral);
     await assert.rejects(
       codec.parseMethodReportContentForRevision(storedBytes, {
         ...report,

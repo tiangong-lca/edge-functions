@@ -1,8 +1,8 @@
 version: 1
 layout: repo
 lastReviewedAt: '2026-11-05'
-lastReviewedCommit: 'a33a5fbcc8f76f2cf29f68792d7124d6cce94615'
-lastReviewedNote: 'Edge #557: reviewed V6 default-off handler, original actor/service intent and bounded immutable I/O, mandatory method content/view3/export4, owner artifact readers and generated types. Full local SDK, lifecycle, byte integrity, revocation and recovery tests pass. Actual installed runtime, hosted admission, independent final backend review and scientific qualification remain pending; prior protocol/renderer/component bytes are unchanged.'
+lastReviewedCommit: '47fa6ab6d9ba221f77f18552de081570994b8f50'
+lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
