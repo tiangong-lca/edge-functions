@@ -266,7 +266,12 @@ export async function methodRuntimeFixture() {
       const c = [...pending.values()].find((c) => c.intentId === id)!,
         x = completion as Row;
       let result: unknown;
-      if (kind === 'evidence')
+      if (kind === 'evidence') {
+        if (
+          canonicalJson(Object.keys(x.artifact).sort()) !==
+          canonicalJson(Object.keys(service.evidenceCompletion.artifact).sort())
+        )
+          return { ok: false, code: 'REFERENCE_MISMATCH' };
         result = {
           type: 'methodEvidence',
           value: {
@@ -280,8 +285,13 @@ export async function methodRuntimeFixture() {
             recordedAt: c.recordedAt,
           },
         };
-      else if (kind === 'report') {
+      } else if (kind === 'report') {
         if (x.kind === 'validatedContent') {
+          if (
+            canonicalJson(Object.keys(x.contentArtifact).sort()) !==
+            canonicalJson(Object.keys(service.reportCompletion.contentArtifact).sort())
+          )
+            return { ok: false, code: 'REFERENCE_MISMATCH' };
           contentArtifact = x.contentArtifact;
           report = {
             ...structuredClone(service.reportRecord.data.value),
@@ -302,6 +312,12 @@ export async function methodRuntimeFixture() {
         } else report = { ...report, revision: report!.revision + 1, status: 'frozen' };
         result = { type: 'reportRevision', value: report };
       } else {
+        for (const field of ['projectionArtifact', 'resourcesArtifact', 'bundleArtifact'] as const)
+          if (
+            canonicalJson(Object.keys(x[field]).sort()) !==
+            canonicalJson(Object.keys(service.exportCompletion[field]).sort())
+          )
+            return { ok: false, code: 'REFERENCE_MISMATCH' };
         exported = {
           studyId: base.studyId,
           exportId: c.producerContext.exportId,

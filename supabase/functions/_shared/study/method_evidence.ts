@@ -99,8 +99,22 @@ export async function executeMethodEvidence(
   if (after.completed) return after.completed;
   // SQL consume repeats current original actor/client/Study/source checks and
   // binds exact immutable body registration. Unknown outcomes retain bytes.
+  // Evidence consume has a distinct three-key Database DTO. Keep Study binding
+  // on private upload/readback only; report/export artifacts retain their DTOs.
+  const completionArtifact = {
+    artifactRef: artifact.artifactRef,
+    storageBucket: artifact.storageBucket,
+    storageObjectPath: artifact.storageObjectPath,
+  };
   const result = record(
-    unpack(await repository.consumeIntent('evidence', intent.intentId, { artifact }, signal)),
+    unpack(
+      await repository.consumeIntent(
+        'evidence',
+        intent.intentId,
+        { artifact: completionArtifact },
+        signal,
+      ),
+    ),
   );
   assertActive();
   if (

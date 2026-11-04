@@ -5,6 +5,120 @@ import { parseRequest } from '../contracts/lca-study/v6/codec.ts';
 import { sha256 } from '../contracts/lca-study/v3/canonical.ts';
 import contexts from './fixtures/lca-study-v6/database-report-contexts.json' with { type: 'json' };
 import signatures from './fixtures/lca-study-v6/database-rpc-signatures.json' with { type: 'json' };
+import { createStudyHandler } from '../supabase/functions/_shared/study/handler.ts';
+import { capabilitiesSchema } from '../contracts/lca-study/v6/authoring.ts';
+import type { ActorContext } from '../supabase/functions/_shared/command_runtime/actor_context.ts';
+import publicDtos from './fixtures/lca-study-v6/database-public-dtos.json' with { type: 'json' };
+
+Deno.test(
+  'V6 evidence handler sends the exact Database golden three-key completion through real SDK transport',
+  async () => {
+    const context = contexts.evidenceContext.data;
+    let stored = new Uint8Array(),
+      completion: unknown;
+    const calls: Array<{ name: string; bearer: string | null }> = [];
+    const transport: typeof fetch = async (input, init) => {
+      const request = new Request(input, init);
+      if (request.url.includes('/storage/v1/object/')) {
+        assertEquals(request.headers.get('authorization'), 'Bearer synthetic-evidence-service');
+        if (request.method === 'POST') {
+          stored = new Uint8Array(await request.arrayBuffer());
+          return Response.json({ Key: 'fixture' });
+        }
+        return new Response(stored);
+      }
+      const name = new URL(request.url).pathname.split('/').at(-1)!;
+      calls.push({ name, bearer: request.headers.get('authorization') });
+      const body = await request.json();
+      if (name === 'cmd_study_method_v1') {
+        assertEquals(body, { p_request: context.request });
+        // Preserve this captured service context's exact identities; the
+        // separate public-DTO capture is a different synthetic invocation.
+        return Response.json({
+          ok: true,
+          data: {
+            kind: 'methodEvidenceCommandIntent',
+            intentId: context.intentId,
+            expiresAt: context.expiresAt,
+            operation: 'method.evidence.create',
+          },
+        });
+      }
+      if (name === 'svc_study_method_evidence_intent_resolve_v1') {
+        assertEquals(body, { p_intent_id: context.intentId });
+        return Response.json({ ok: true, data: context });
+      }
+      assertEquals(name, 'svc_study_method_evidence_intent_consume_v1');
+      completion = body.p_completion;
+      // Exact dc8 SQL study_keys predicate, independently grounded in its actual
+      // captured completion. This is a transport/shape test, not live SQL proof.
+      const valid =
+        JSON.stringify(Object.keys(body.p_completion).sort()) ===
+          JSON.stringify(Object.keys(contexts.evidenceCompletion).sort()) &&
+        JSON.stringify(Object.keys(body.p_completion.artifact).sort()) ===
+          JSON.stringify(Object.keys(contexts.evidenceCompletion.artifact).sort());
+      return Response.json(
+        valid
+          ? { ok: true, data: contexts.evidenceRecord.data }
+          : { ok: false, code: 'REFERENCE_MISMATCH' },
+      );
+    };
+    const client = (key: string, bearer?: string) =>
+      createClient('https://method-evidence-sdk.invalid', key, {
+        db: { schema: 'api' },
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: {
+          fetch: transport,
+          ...(bearer ? { headers: { Authorization: `Bearer ${bearer}` } } : {}),
+        },
+      }) as unknown as SupabaseClient;
+    const actorClient = client('synthetic-publishable', 'exact-evidence-actor');
+    const repository = createMethodRepository(actorClient, () =>
+      client('synthetic-evidence-service'),
+    );
+    const actor = {
+      userId: context.actorId,
+      clientId: context.clientId,
+      supabase: actorClient,
+    } as unknown as ActorContext;
+    const handler = createStudyHandler({
+      resolveActor: () => Promise.resolve({ ok: true, value: actor }),
+      method: {
+        config: () => capabilitiesSchema.parse(publicDtos.responses.authoringCapability),
+        repository: () => repository,
+      },
+    });
+    const response = await handler(
+      new Request('http://127.0.0.1/method-evidence', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-study-schema': 'lca.study-api.v6' },
+        body: JSON.stringify(context.request),
+      }),
+    );
+    assertEquals(completion, contexts.evidenceCompletion);
+    assertEquals(response.status, 200);
+    assertEquals((await response.json()).data, contexts.evidenceRecord.data);
+    assertEquals(await sha256(stored), context.contentHash);
+    assertEquals(
+      calls.map((c) => c.name),
+      [
+        'cmd_study_method_v1',
+        'svc_study_method_evidence_intent_resolve_v1',
+        'svc_study_method_evidence_intent_resolve_v1',
+        'svc_study_method_evidence_intent_consume_v1',
+      ],
+    );
+    assertEquals(
+      calls.map((c) => c.bearer),
+      [
+        'Bearer exact-evidence-actor',
+        'Bearer synthetic-evidence-service',
+        'Bearer synthetic-evidence-service',
+        'Bearer synthetic-evidence-service',
+      ],
+    );
+  },
+);
 Deno.test(
   'V6 real Supabase SDK uses fixed actor/service API RPCs and immutable bounded Storage without authority fallback',
   async () => {
