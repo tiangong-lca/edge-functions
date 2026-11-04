@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
+lastReviewedNote: 'Edge #553: reviewed separate V5 advanced analysis/catalog/report/review boundaries, explicit view2/renderer2/export3 and rollback-safe current-authorized historical reads; retained V1–V4 wire and artifact meanings stay strict. Actual integration and hosted admission require separate evidence.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md

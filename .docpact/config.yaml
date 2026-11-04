@@ -383,6 +383,8 @@ rules:
         kind: advanced-source-identity
       - path: supabase/functions/_shared/study/advanced_*.ts
         kind: advanced-runtime
+      - path: supabase/functions/_shared/study/vendor/renderer-v2/**
+        kind: advanced-renderer-artifact
       - path: test/study_advanced*
         kind: advanced-proof
       - path: test/fixtures/lca-study-v5/**

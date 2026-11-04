@@ -248,6 +248,16 @@ export const requestSchema = z.union(variants).superRefine((v, c) => {
 });
 export const OPERATIONS = variants.map((v) => v.shape.operation.value);
 export type AdvancedRequest = z.infer<typeof requestSchema>;
+export const HISTORICAL_OPERATIONS = [
+  'capability.read',
+  'analysis.read',
+  'analysis.parameters.read',
+  'report.read',
+  'study.resources.list',
+  'artifact.read',
+  'task.read',
+  'task.cancel',
+] as const;
 export const capabilitiesSchema = z
   .object({
     type: z.literal('capabilities'),
@@ -263,7 +273,7 @@ export const capabilitiesSchema = z
       v.operations.includes('capability.read') &&
       new Set(v.operations).size === v.operations.length &&
       (v.runtimeEnabled ||
-        (v.operations.length === 1 &&
+        (v.operations.every((op) => (HISTORICAL_OPERATIONS as readonly string[]).includes(op)) &&
           v.analysisProfiles.length === 0 &&
           v.reportTemplates.length === 0)),
     'explicit disabled admission required',

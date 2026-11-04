@@ -15,6 +15,8 @@ export const parameterIntentSchema = z
     kind: z.literal('advancedParameterIntent'),
     intentId: idSchema,
     expiresAt: timestampSchema,
+    studyId: idSchema,
+    baselineRunId: idSchema,
   })
   .strict();
 export const parameterContextSchema = z

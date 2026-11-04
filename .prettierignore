@@ -20,3 +20,6 @@ test/fixtures/lca-study-api/v3/native/
 contracts/lca-study/worker/analysis-*.v2.schema.json
 contracts/lca-study/worker/analysis-*.v2.d.ts
 test/fixtures/lca-study-v5/
+
+# Independently produced P4 view2/renderer2 package bytes.
+supabase/functions/_shared/study/vendor/renderer-v2/

@@ -23,8 +23,8 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
 lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
 ---
 
