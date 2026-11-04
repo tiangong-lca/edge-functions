@@ -148,3 +148,78 @@ Deno.test(
     assertEquals(fixture.context.bundleArtifactId, null);
   },
 );
+
+Deno.test(
+  'V6 public artifact readers use exact owner schemas and byte/record identities without issuing authority',
+  async () => {
+    const {
+      parseMethodFactsForAssessment,
+      parseMethodEvidenceForRecord,
+      parseMethodReportContentForRevision,
+    } = await import('../contracts/lca-study/v6/codec.ts');
+    const fixture = await methodFixture(),
+      row = fixture.context.methodAssessments[0];
+    const bytes = fixture.bytes.get(row.factsArtifact.artifactRef.id)!;
+    assertEquals<unknown>(await parseMethodFactsForAssessment(bytes, row.assessment), facts);
+    for (const changed of [
+      { ...row.assessment, studyId: '10000000-0000-4000-8000-000000000999' },
+      { ...row.assessment, factsRef: { ...row.assessment.factsRef!, byteSize: bytes.length + 1 } },
+    ])
+      await assertRejects(() => parseMethodFactsForAssessment(bytes, changed));
+    await assertRejects(() =>
+      parseMethodFactsForAssessment(new Uint8Array(4194305), row.assessment),
+    );
+    const input = await validateMethodReportInputs(fixture.context, fixture.bytes),
+      content = makeMethodContent(input, fixture.content),
+      contentBytes = canonicalBytes(content);
+    const service = (
+      await import('./fixtures/lca-study-v6/database-report-contexts.json', {
+        with: { type: 'json' },
+      })
+    ).default;
+    const original = service.reportRecord.data.value;
+    const report = {
+      ...original,
+      studyId: content.studyId,
+      reportRevisionId: content.reportRevisionId,
+      runIds: content.runIds,
+      methodAssessmentIds: content.methodAssessmentIds,
+      factsRefs: content.factsRefs,
+      contentHash: await sha256(contentBytes),
+      contentRef: {
+        ...original.contentRef,
+        contentHash: await sha256(contentBytes),
+        byteSize: contentBytes.length,
+      },
+    };
+    assertEquals(await parseMethodReportContentForRevision(contentBytes, report), content);
+    assertEquals<unknown>(
+      (await parseMethodReportContentForRevision(contentBytes, report)).content,
+      fixture.content,
+    );
+    await assertRejects(() =>
+      parseMethodReportContentForRevision(contentBytes, {
+        ...report,
+        studyId: '10000000-0000-4000-8000-000000000999',
+      }),
+    );
+    const altered = structuredClone(content);
+    altered.claims[0].fact.canonicalValue = '999';
+    const bad = canonicalBytes(altered),
+      ref = {
+        ...report,
+        contentHash: await sha256(bad),
+        contentRef: { ...report.contentRef, contentHash: await sha256(bad), byteSize: bad.length },
+      };
+    await assertRejects(() => parseMethodReportContentForRevision(bad, ref));
+    const body = service.evidenceContext.data.request.content,
+      evidence = service.evidenceRecord.data.value;
+    assertEquals<unknown>(await parseMethodEvidenceForRecord(canonicalBytes(body), evidence), body);
+    await assertRejects(() =>
+      parseMethodEvidenceForRecord(canonicalBytes(body), { ...evidence, requirementId: 'PEF-02' }),
+    );
+    await assertRejects(() =>
+      parseMethodEvidenceForRecord(new TextEncoder().encode('private-sentinel'), evidence),
+    );
+  },
+);

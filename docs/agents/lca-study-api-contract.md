@@ -19,8 +19,8 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-05
-lastReviewedCommit: 3a1996fa19554d11903c9afecd974df65a8c2def
-lastReviewedNote: 'Edge #557: reviewed early strict portable V6 request/response, exact export CAS binding, generated schemas/types, immutable Worker/component and renderer3 input hashes, actor/service DTO seams and bounded producer/view tests. The source-bound consumer interface does not complete the unfinished handler/executors, actual installed runtime, hosted admission or scientific qualification; old protocols/renderers remain exact.'
+lastReviewedCommit: a33a5fbcc8f76f2cf29f68792d7124d6cce94615
+lastReviewedNote: 'Edge #557: reviewed V6 default-off handler, original actor/service intent and bounded immutable I/O, mandatory method content/view3/export4, owner artifact readers and generated types. Full local SDK, lifecycle, byte integrity, revocation and recovery tests pass. Actual installed runtime, hosted admission, independent final backend review and scientific qualification remain pending; prior protocol/renderer/component bytes are unchanged.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md

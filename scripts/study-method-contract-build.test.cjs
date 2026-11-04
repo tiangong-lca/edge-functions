@@ -75,6 +75,55 @@ test('V6 portable consumer is deterministic, source-bound and usable outside sou
       data: service.evidenceRecord.data,
     });
     await codec.validateResponseContentForRequest(evidenceQ, evidenceR);
+    assert.deepEqual(
+      await codec.parseMethodEvidenceForRecord(
+        codec.canonicalBytes(evidenceQ.content),
+        evidenceR.data.value,
+      ),
+      evidenceQ.content,
+    );
+    const seams = await json('test/fixtures/lca-study-v6/worker-service-seams.json');
+    const factsBytes = new Uint8Array(
+      await readFile(path.join(root, 'test/fixtures/lca-study-v6/facts.synthetic.json')),
+    );
+    const parsedFacts = await codec.parseMethodFactsForAssessment(factsBytes, seams.record);
+    assert.equal(parsedFacts.factCatalog.length, 58);
+    await assert.rejects(
+      codec.parseMethodFactsForAssessment(factsBytes, {
+        ...seams.record,
+        studyId: '10000000-0000-4000-8000-000000000999',
+      }),
+      { ruleId: 'response.method_facts' },
+    );
+    const component = await json(
+      'supabase/functions/_shared/study/vendor/renderer-v3/methodProtocol.fixture.json',
+    );
+    const storedBytes = codec.canonicalBytes(component.stored);
+    const report = {
+      ...service.reportRecord.data.value,
+      studyId: component.stored.studyId,
+      reportRevisionId: component.stored.reportRevisionId,
+      runIds: component.stored.runIds,
+      methodAssessmentIds: component.stored.methodAssessmentIds,
+      factsRefs: component.stored.factsRefs,
+      contentHash: digest(storedBytes),
+      contentRef: {
+        ...service.reportRecord.data.value.contentRef,
+        contentHash: digest(storedBytes),
+        byteSize: storedBytes.length,
+      },
+    };
+    assert.deepEqual(
+      await codec.parseMethodReportContentForRevision(storedBytes, report),
+      component.stored,
+    );
+    await assert.rejects(
+      codec.parseMethodReportContentForRevision(storedBytes, {
+        ...report,
+        runIds: ['10000000-0000-4000-8000-000000000999'],
+      }),
+      { ruleId: 'response.method_report_content' },
+    );
     assert.equal(
       codec.canonicalBytes(evidenceQ.content).byteLength,
       evidenceR.data.value.artifactRef.byteSize,
@@ -140,6 +189,8 @@ test('V6 portable consumer is deterministic, source-bound and usable outside sou
       declarations,
       /function validateResponseContentForRequest\(request:StudyApiRequest,response:StudyApiResponse\):Promise<void>/,
     );
+    for (const name of ['MethodFacts', 'MethodEvidence', 'MethodReportContent'])
+      assert.match(declarations, new RegExp(`export type ${name} =`));
     await writeFile(
       path.join(output, 'types.ts'),
       `import type {StudyApiRequest,StudyApiResponse,ExportManifest,HistoricalExportManifest} from './index.d.ts';\nconst q:StudyApiRequest=${JSON.stringify(q)};\nconst operation:'method.assessment.read'=q.operation;\nlet response:StudyApiResponse|undefined;let current:ExportManifest|undefined;let retained:HistoricalExportManifest|undefined;void [operation,response,current,retained];\n// @ts-expect-error no old-version fallback\nconst old:StudyApiRequest={schemaVersion:'lca.study-api.v5',requestId:'x',operation:'capability.read'};\nvoid old;\n`,

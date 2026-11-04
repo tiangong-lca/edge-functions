@@ -29,21 +29,9 @@ export type MethodReportInput = {
   prepared: z.infer<typeof preparedInputSchema>;
   facts: MethodFacts;
 };
-export type MethodStoredContent = {
-  schemaVersion: 'lca.study-method-report-content.v1';
-  reportRevisionId: string;
-  studyId: string;
-  templateId: typeof REPORT_TEMPLATE;
-  runIds: string[];
-  methodAssessmentIds: string[];
-  factsRefs: MethodFactsRef[];
-  factsBindingHash: string;
-  content: z.infer<typeof reportContentSchema>;
-  claims: Array<
-    z.infer<typeof reportContentSchema>['claims'][number] & { fact: MethodCatalogFact }
-  >;
-  methodAssessment: MethodReportSummary;
-};
+export type MethodStoredContent =
+  import('../../../../contracts/lca-study/v6/report_content.ts').MethodReportContent;
+
 function fail(rule: string): never {
   throw new StudyFailure('REFERENCE_MISMATCH', 409, rule);
 }
@@ -145,7 +133,7 @@ export function assertMethodReportContext(c: MethodReportContext, request: unkno
       method.factsArtifact.studyId,
     ].some((id) => id !== c.studyId) ||
     r.execution.status !== 'completed' ||
-    r.validity.status !== 'current' ||
+    (q.operation !== 'report.view' && r.validity.status !== 'current') ||
     v.status !== 'frozen' ||
     s.status !== 'frozen' ||
     p.execution.status !== 'completed' ||

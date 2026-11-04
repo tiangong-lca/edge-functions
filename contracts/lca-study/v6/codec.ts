@@ -18,6 +18,14 @@ export { API_SCHEMA, CONTRACT_VERSION, OPERATIONS, StudyCodecError };
 export { methodConfigHash } from './schemas.ts';
 export { methodEvidenceHash } from './evidence_contract.ts';
 export * from './export.ts';
+export { parseMethodFactsForAssessment } from './facts_reader.ts';
+export type { MethodFacts } from './schemas.ts';
+export {
+  parseMethodEvidenceForRecord,
+  parseMethodReportContentForRevision,
+} from './artifact_readers.ts';
+export type { MethodEvidence } from './schemas.ts';
+export type { MethodReportContent } from './report_content.ts';
 export type { MethodRequest as StudyApiRequest, MethodResponse as StudyApiResponse };
 export function parseRequest(input: unknown): MethodRequest {
   if (
