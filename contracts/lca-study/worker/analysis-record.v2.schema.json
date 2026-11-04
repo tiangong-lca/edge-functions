@@ -1,0 +1,775 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-record.v2",
+  "$comment": "Worker interface proposal for Edge-owned V5 publication. Exact profile/config family; factsRef iff completed; no comparison/ranking assertion.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "profileId": {
+          "type": "string",
+          "enum": [
+            "lca.study-sensitivity-oat.v1"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "sensitivityOat"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "queued",
+                "running",
+                "waiting",
+                "blocked",
+                "stale",
+                "failed",
+                "cancelled"
+              ]
+            }
+          },
+          "required": [
+            "jobId",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "factsRef": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "analysisId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution",
+        "factsRef"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "profileId": {
+          "type": "string",
+          "enum": [
+            "lca.study-sensitivity-oat.v1"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "sensitivityOat"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "completed"
+              ]
+            }
+          },
+          "required": [
+            "jobId",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "factsRef": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "analysisFacts"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "digestScope": {
+              "type": "string",
+              "enum": [
+                "artifact_bytes_sha256"
+              ]
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mediaType": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-facts.v2"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "analysisId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution",
+        "factsRef"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "profileId": {
+          "type": "string",
+          "enum": [
+            "lca.study-uncertainty-bounded.v1"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "uncertainty"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "design": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "independentUniform"
+                      ]
+                    },
+                    "independenceDeclared": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "independenceDeclared"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "jointEmpirical"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        "minItems": 1
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "sampleCount": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 4294967295
+            },
+            "seedHex": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "generator": {
+              "type": "string",
+              "enum": [
+                "study.uncertainty.hmac-drbg-sha256.v1"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters",
+            "design",
+            "sampleCount",
+            "seedHex",
+            "generator"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "queued",
+                "running",
+                "waiting",
+                "blocked",
+                "stale",
+                "failed",
+                "cancelled"
+              ]
+            }
+          },
+          "required": [
+            "jobId",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "factsRef": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "analysisId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution",
+        "factsRef"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "profileId": {
+          "type": "string",
+          "enum": [
+            "lca.study-uncertainty-bounded.v1"
+          ]
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "uncertainty"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "design": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "independentUniform"
+                      ]
+                    },
+                    "independenceDeclared": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "independenceDeclared"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "jointEmpirical"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        "minItems": 1
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "sampleCount": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 4294967295
+            },
+            "seedHex": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "generator": {
+              "type": "string",
+              "enum": [
+                "study.uncertainty.hmac-drbg-sha256.v1"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters",
+            "design",
+            "sampleCount",
+            "seedHex",
+            "generator"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "completed"
+              ]
+            }
+          },
+          "required": [
+            "jobId",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "factsRef": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "analysisFacts"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "digestScope": {
+              "type": "string",
+              "enum": [
+                "artifact_bytes_sha256"
+              ]
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mediaType": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-facts.v2"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "analysisId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution",
+        "factsRef"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

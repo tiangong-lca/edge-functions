@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-config.v2",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "sensitivityOat"
+          ]
+        },
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "lca.study-analysis-config.v2"
+          ]
+        },
+        "baselineRunId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "maxLength": 256,
+                "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "baselineAmount": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              },
+              "low": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              },
+              "high": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "path",
+              "unit",
+              "baselineAmount",
+              "low",
+              "high"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "baselineRunId",
+        "parameters"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "uncertainty"
+          ]
+        },
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "lca.study-analysis-config.v2"
+          ]
+        },
+        "baselineRunId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "maxLength": 256,
+                "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "baselineAmount": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              },
+              "low": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              },
+              "high": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "path",
+              "unit",
+              "baselineAmount",
+              "low",
+              "high"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "design": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "independentUniform"
+                  ]
+                },
+                "independenceDeclared": {
+                  "const": true
+                }
+              },
+              "required": [
+                "kind",
+                "independenceDeclared"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "jointEmpirical"
+                  ]
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                    },
+                    "minItems": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "kind",
+                "rows"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 4294967295
+        },
+        "seedHex": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "generator": {
+          "type": "string",
+          "enum": [
+            "study.uncertainty.hmac-drbg-sha256.v1"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "baselineRunId",
+        "parameters",
+        "design",
+        "sampleCount",
+        "seedHex",
+        "generator"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

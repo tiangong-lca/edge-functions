@@ -1,0 +1,931 @@
+{
+  "schemaVersion": "lca.study-analysis-facts.v2",
+  "profileId": "lca.study-uncertainty-bounded.v1",
+  "producerVersion": "study.analysis.advanced.v1",
+  "studyId": "10000000-0000-4000-8000-000000000001",
+  "analysisId": "10000000-0000-4000-8000-000000000004",
+  "config": {
+    "kind": "uncertainty",
+    "schemaVersion": "lca.study-analysis-config.v2",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "parameters": [
+      {
+        "path": "/instances/a/exchanges/e/amount",
+        "unit": "kg",
+        "baselineAmount": "2",
+        "low": "1",
+        "high": "3"
+      }
+    ],
+    "design": {
+      "kind": "jointEmpirical",
+      "rows": [
+        [
+          "1"
+        ],
+        [
+          "3"
+        ]
+      ]
+    },
+    "sampleCount": 16,
+    "seedHex": "0000000000000000000000000000000000000000000000000000000000000000",
+    "generator": "study.uncertainty.hmac-drbg-sha256.v1"
+  },
+  "configHash": "fa0ce3b8bf3c008d55bf33773682ee4b969a35ad6201b2c56089467f2e33a4b7",
+  "executionLimits": {
+    "batch": {
+      "maxParameters": 4096,
+      "maxEvaluations": 20000
+    },
+    "native": {
+      "maxSourceBytes": 4194304,
+      "maxDocuments": 512,
+      "maxInstances": 64,
+      "maxViews": 128,
+      "maxExchanges": 4096,
+      "maxMethods": 25,
+      "maxNonzeros": 32768,
+      "maxDenseCells": 131072,
+      "maxArtifactBytes": 4194304,
+      "maxElapsedMillis": 30000,
+      "maxOwnedBytes": 268435456,
+      "maxFunctionalUnitAmount": "1000000000000"
+    }
+  },
+  "baseline": {
+    "runId": "10000000-0000-4000-8000-000000000010",
+    "studyRevisionId": "10000000-0000-4000-8000-000000000002",
+    "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+    "modelPreparationId": "10000000-0000-4000-8000-000000000040",
+    "inputHash": "6b4cd567051fe121f0dc1ceacf508023b8b34d365fef69b29a87d7a8612d764e",
+    "effectiveModelRef": {
+      "contentHash": "8780e818f2e45f3e493841348f5e6118382fc62f13a33c0838e5a95a3201a8cf",
+      "digestScope": "worker_prepared_model",
+      "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+      "type": "modelRevision"
+    },
+    "preparedArtifactRef": {
+      "type": "modelInput",
+      "id": "10000000-0000-4000-8000-000000000050",
+      "contentHash": "14675d0ec8de85591706b5a7afe34ec7dde9c7b47d0003636c06d1b25bf7cc63",
+      "digestScope": "artifact_bytes_sha256",
+      "byteSize": 5293,
+      "mediaType": "application/json",
+      "schemaVersion": "lca.study-prepared-input.v1"
+    },
+    "resultRef": {
+      "type": "runResult",
+      "id": "10000000-0000-4000-8000-000000000060",
+      "contentHash": "eb7b92a0cab5b81e20b970e5271b5969d8b1d4c12e80ed5d13a1d3382cdb4519",
+      "digestScope": "artifact_bytes_sha256",
+      "byteSize": 775,
+      "mediaType": "application/json",
+      "schemaVersion": "lca.study-result.v1"
+    },
+    "calculationContractRef": {
+      "kind": "calculation_contract",
+      "schema": "lca.calculation-contract.v1",
+      "sha256": "40002f1de748504cd46c93cae91cc1b204907fadf1ac720f3528d240740e2e39"
+    },
+    "methodSourceHash": "1434acbbf4d87d25141d94d9e7b9fe9a7180f5616d7e53770b16045474e7ce71",
+    "validity": {
+      "checkedAt": "2026-11-03T00:00:00Z",
+      "reasonCodes": [],
+      "status": "current"
+    }
+  },
+  "sourceSnapshotRef": {
+    "type": "modelSource",
+    "id": "10000000-0000-4000-8000-000000000080",
+    "contentHash": "0d347991e9d351efa4f51ab602dc942def0a98a1f5c0aed634e972ea3798d2ca",
+    "digestScope": "artifact_bytes_sha256",
+    "byteSize": 6850,
+    "mediaType": "application/json",
+    "schemaVersion": "lca.study-source-snapshot.v1"
+  },
+  "resolvedParameters": [
+    {
+      "parameterIndex": 0,
+      "path": "/instances/a/exchanges/e/amount",
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ],
+      "baselineAmount": "2"
+    }
+  ],
+  "coverageGaps": [],
+  "qualityFindings": [],
+  "baselineEvaluation": {
+    "evaluationId": "baseline",
+    "kind": "baseline",
+    "parameterIndex": null,
+    "empiricalRowIndex": null,
+    "amounts": [
+      "2"
+    ],
+    "inputHash": "6b4cd567051fe121f0dc1ceacf508023b8b34d365fef69b29a87d7a8612d764e",
+    "modelHash": "8780e818f2e45f3e493841348f5e6118382fc62f13a33c0838e5a95a3201a8cf",
+    "preparedSha256": "14675d0ec8de85591706b5a7afe34ec7dde9c7b47d0003636c06d1b25bf7cc63",
+    "resultSha256": "eb7b92a0cab5b81e20b970e5271b5969d8b1d4c12e80ed5d13a1d3382cdb4519",
+    "outputs": [
+      {
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact",
+        "canonicalValue": "5.306122448979592",
+        "coverage": "complete"
+      }
+    ],
+    "maxResidual": "2.7755575615628914e-17"
+  },
+  "evaluations": [
+    {
+      "evaluationId": "evaluation-0",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-1",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-2",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-3",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-4",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-5",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-6",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-7",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-8",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-9",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-10",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-11",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 1,
+      "amounts": [
+        "3"
+      ],
+      "inputHash": "ef72f0188fee8afeb2607ee4f80a683fe30698cc9ac4e73f44f3d3bd8112f7c9",
+      "modelHash": "0589809dcae9cc2502ea6a2e53e3d485baa594487b3126a3be1442aac6cf1d10",
+      "preparedSha256": "b40b4eb18e8894a3c0d2c02e29702f5ada5453f7ed62787f292c3723506cf734",
+      "resultSha256": "4c63f34c5433b799cf2aeb276d3fd25419fb2fb4296ff5e3dbe8e71da11d13ef",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "7.346938775510205",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-12",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-13",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-14",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    },
+    {
+      "evaluationId": "evaluation-15",
+      "kind": "sample",
+      "parameterIndex": null,
+      "empiricalRowIndex": 0,
+      "amounts": [
+        "1"
+      ],
+      "inputHash": "2d5a8050e6cdf37de840a9b2ce34661de97dc612ac8fa45f247337e29a60ad5f",
+      "modelHash": "6d4667777b2f845b69b9ee1e59fcc8d302938a4d2e4c8b5572d7777f0a24b469",
+      "preparedSha256": "1e305cdd8fcb799ceed0e5fd753c024fd1a3649ead41f65cdf0b4664f95aa828",
+      "resultSha256": "3778a8a7c8ee9958d20b1a2b47ce8174a609fd9e1b972ce7b7f0c0ef9f18821e",
+      "outputs": [
+        {
+          "methodRef": {
+            "id": "method",
+            "version": "01.00.000"
+          },
+          "unit": "impact",
+          "canonicalValue": "3.2653061224489797",
+          "coverage": "complete"
+        }
+      ],
+      "maxResidual": "2.7755575615628914e-17"
+    }
+  ],
+  "oatEffects": [],
+  "statistics": [
+    {
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact",
+      "coverage": "complete",
+      "mean": "5.306122448979592",
+      "sampleStandardDeviation": "2.107746038752336",
+      "meanMcse": "0.526936509688084",
+      "minimum": "3.2653061224489797",
+      "maximum": "7.346938775510205",
+      "quantiles": [
+        {
+          "probability": "0.025",
+          "value": "3.2653061224489797"
+        },
+        {
+          "probability": "0.5",
+          "value": "5.306122448979592"
+        },
+        {
+          "probability": "0.975",
+          "value": "7.346938775510205"
+        }
+      ]
+    }
+  ],
+  "factCatalog": [
+    {
+      "factId": "parameter:0:baseline",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "parameterAmount",
+        "parameterIndex": 0,
+        "role": "baseline"
+      },
+      "methodRef": null,
+      "canonicalValue": "2",
+      "unit": "kg",
+      "unitIdentity": {
+        "kind": "exchangeAmount",
+        "parameterIndex": 0,
+        "flow": {
+          "id": "emission",
+          "version": "01.00.000"
+        },
+        "direction": "Output",
+        "unit": "kg",
+        "support": [
+          {
+            "id": "mass",
+            "version": "01.00.000"
+          },
+          {
+            "id": "kg",
+            "version": "01.00.000"
+          }
+        ]
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "parameter:0:low",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "parameterAmount",
+        "parameterIndex": 0,
+        "role": "low"
+      },
+      "methodRef": null,
+      "canonicalValue": "1",
+      "unit": "kg",
+      "unitIdentity": {
+        "kind": "exchangeAmount",
+        "parameterIndex": 0,
+        "flow": {
+          "id": "emission",
+          "version": "01.00.000"
+        },
+        "direction": "Output",
+        "unit": "kg",
+        "support": [
+          {
+            "id": "mass",
+            "version": "01.00.000"
+          },
+          {
+            "id": "kg",
+            "version": "01.00.000"
+          }
+        ]
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "parameter:0:high",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "parameterAmount",
+        "parameterIndex": 0,
+        "role": "high"
+      },
+      "methodRef": null,
+      "canonicalValue": "3",
+      "unit": "kg",
+      "unitIdentity": {
+        "kind": "exchangeAmount",
+        "parameterIndex": 0,
+        "flow": {
+          "id": "emission",
+          "version": "01.00.000"
+        },
+        "direction": "Output",
+        "unit": "kg",
+        "support": [
+          {
+            "id": "mass",
+            "version": "01.00.000"
+          },
+          {
+            "id": "kg",
+            "version": "01.00.000"
+          }
+        ]
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "baseline:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "baselineOutput",
+        "methodIndex": 0
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "5.306122448979592",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:mean:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyStatistic",
+        "methodIndex": 0,
+        "statistic": "mean"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "5.306122448979592",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:sampleStandardDeviation:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyStatistic",
+        "methodIndex": 0,
+        "statistic": "sampleStandardDeviation"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "2.107746038752336",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:meanMcse:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyStatistic",
+        "methodIndex": 0,
+        "statistic": "meanMcse"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "0.526936509688084",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:minimum:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyStatistic",
+        "methodIndex": 0,
+        "statistic": "minimum"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "3.2653061224489797",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:maximum:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyStatistic",
+        "methodIndex": 0,
+        "statistic": "maximum"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "7.346938775510205",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:quantile:0.025:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyQuantile",
+        "methodIndex": 0,
+        "probability": "0.025"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "3.2653061224489797",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:quantile:0.5:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyQuantile",
+        "methodIndex": 0,
+        "probability": "0.5"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "5.306122448979592",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    },
+    {
+      "factId": "uncertainty:quantile:0.975:method:0",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "context": {
+        "kind": "uncertaintyQuantile",
+        "methodIndex": 0,
+        "probability": "0.975"
+      },
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "7.346938775510205",
+      "unit": "impact",
+      "unitIdentity": {
+        "kind": "methodQuantity",
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "coverage": "complete",
+      "reasonCodes": []
+    }
+  ],
+  "counts": {
+    "requested": 16,
+    "attempted": 16,
+    "valid": 16,
+    "invalid": 0,
+    "stopReason": "fixed_budget_complete"
+  },
+  "limitations": [
+    "caller_declared_ranges_not_source_uncertainty",
+    "no_scientific_ranking_or_recommendation",
+    "fixed_budget_not_convergence_or_tail_precision"
+  ],
+  "scientificRankingQualified": false,
+  "businessPilotQualified": false
+}

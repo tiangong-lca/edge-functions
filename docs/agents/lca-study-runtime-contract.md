@@ -18,8 +18,8 @@ checkPaths:
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
+lastReviewedNote: 'Edge #553: reviewed separate V5 advanced analysis/catalog/report/review boundaries, explicit view2/renderer2/export3 and rollback-safe current-authorized historical reads; retained V1–V4 wire and artifact meanings stay strict. Actual integration and hosted admission require separate evidence.'
 related:
   - lca-study-api-contract.md
   - repo-validation.md
@@ -109,3 +109,5 @@ The [reporting and portable consumer contract](lca-study-reporting-contract.md) 
 ## V4 narrow report review and disclosure
 
 The [reporting contract](lca-study-reporting-contract.md#v4-review-finalization-and-named-shares) owns the additive `lca.study-api.v4` / `STUDY_REVIEW_CONFIG` boundary. The same handler authenticates first and applies the existing byte/deadline/cancellation limits. V4 uses separate actor and service RPCs, retaining V2/V3 semantics. Reviewer report-only access and exact named-share access do not grant V2 source, model, Run or artifact rights. Current authority and immutable finalization are separate; no runtime allowlist is enabled by source or synthetic tests.
+
+V5 advanced analysis/report admission is separately default-off. Its distinct actor/service DTOs, parameter byte projection and current-source fences are specified in [the advanced contract](lca-study-advanced-contract.md); no P1 numerical identity or generic job authority changes.

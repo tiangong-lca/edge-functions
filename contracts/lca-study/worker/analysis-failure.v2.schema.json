@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-failure.v2",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": "lca.study-analysis-failure.v2"
+    },
+    "code": {
+      "const": "study_advanced_invalid_evaluation"
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "requested": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invalid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stopReason": {
+          "const": "invalid_evaluation"
+        },
+        "evaluationId": {
+          "type": "string",
+          "pattern": "^evaluation-[0-9]+$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "requested",
+        "attempted",
+        "valid",
+        "invalid",
+        "stopReason",
+        "evaluationId"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "code",
+    "counts"
+  ],
+  "additionalProperties": false
+}

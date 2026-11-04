@@ -1,0 +1,2 @@
+// Generated from exact Worker e39b20f owner JSON Schema.
+export type AdvancedCompletion = { "profileId": "lca.study-sensitivity-oat.v1" | "lca.study-uncertainty-bounded.v1"; "configHash": string; "factsRef": { "type": "analysisFacts"; "id": string; "contentHash": string; "digestScope": "artifact_bytes_sha256"; "byteSize": number; "mediaType": "application/json"; "schemaVersion": "lca.study-analysis-facts.v2"; }; "storageBucket": "study-artifacts"; "storageObjectPath": string; };

@@ -1,0 +1,342 @@
+{
+  "schemaVersion": "lca.study-advanced-service-seams.v1",
+  "classification": "Worker-owned numerical contract and proposed Edge/Database seams; synthetic component examples, no database issuance, authorization, daemon registration or hosted admission",
+  "job": {
+    "kind": "study.analysis_advanced",
+    "queue": "solver",
+    "payloadSchemaVersion": "study.analysis_advanced.request.v1",
+    "payload": {
+      "schemaVersion": "study.analysis_advanced.request.v1",
+      "studyId": "10000000-0000-4000-8000-000000000001",
+      "analysisId": "10000000-0000-4000-8000-000000000004"
+    }
+  },
+  "resourceType": "analysis",
+  "functions": [
+    {
+      "schema": "api",
+      "name": "svc_study_analysis_advanced_read_input_v1",
+      "argumentNames": [
+        "p_analysis_id",
+        "p_job_id",
+        "p_lease_token"
+      ],
+      "argumentTypes": [
+        "uuid",
+        "uuid",
+        "uuid"
+      ],
+      "returns": "jsonb",
+      "serviceExecute": true,
+      "actorExecute": false
+    },
+    {
+      "schema": "api",
+      "name": "svc_study_analysis_advanced_complete_v1",
+      "argumentNames": [
+        "p_analysis_id",
+        "p_job_id",
+        "p_lease_token",
+        "p_completion",
+        "p_idempotency_key"
+      ],
+      "argumentTypes": [
+        "uuid",
+        "uuid",
+        "uuid",
+        "jsonb",
+        "text"
+      ],
+      "returns": "jsonb",
+      "serviceExecute": true,
+      "actorExecute": false
+    }
+  ],
+  "readInputResponse": {
+    "ok": true,
+    "data": {
+      "schemaVersion": "lca.study-analysis-input.v2",
+      "analysis": {
+        "analysisId": "10000000-0000-4000-8000-000000000004",
+        "studyId": "10000000-0000-4000-8000-000000000001",
+        "profileId": "lca.study-sensitivity-oat.v1",
+        "config": {
+          "kind": "sensitivityOat",
+          "schemaVersion": "lca.study-analysis-config.v2",
+          "baselineRunId": "10000000-0000-4000-8000-000000000010",
+          "parameters": [
+            {
+              "path": "/instances/a/exchanges/e/amount",
+              "unit": "kg",
+              "baselineAmount": "10",
+              "low": "9",
+              "high": "11"
+            }
+          ]
+        },
+        "configHash": "b4223a3c658b034710ba3611b3f987651c2d80de2d9ada4dd881955721441609",
+        "execution": {
+          "jobId": "10000000-0000-4000-8000-000000000005",
+          "status": "running"
+        }
+      },
+      "baseline": {
+        "run": {
+          "calculationContractRef": {
+            "kind": "calculation_contract",
+            "schema": "lca.calculation-contract.v1",
+            "sha256": "40002f1de748504cd46c93cae91cc1b204907fadf1ac720f3528d240740e2e39"
+          },
+          "effectiveModelRef": {
+            "contentHash": "964715ea811de81e82003d87535e05c4a90ea890d32fdf6bd70f63193e693ed4",
+            "digestScope": "worker_prepared_model",
+            "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+            "type": "modelRevision"
+          },
+          "engineId": "solver-worker",
+          "execution": {
+            "jobId": "10000000-0000-4000-8000-000000000090",
+            "status": "completed"
+          },
+          "inputHash": "73f081fe3c879addda849cf5afd41d19ce8e13a30ccd56297ac78a2dad144720",
+          "modelPreparationId": "10000000-0000-4000-8000-000000000040",
+          "profileId": "lca.study-explicit-v1",
+          "resultRef": {
+            "byteSize": 694,
+            "contentHash": "d74d787dbfd2a5cf4243f4c5dcc51560bb7d1eca7bf0907a776db0ca43868d14",
+            "digestScope": "artifact_bytes_sha256",
+            "id": "10000000-0000-4000-8000-000000000060",
+            "mediaType": "application/json",
+            "schemaVersion": "lca.study-result.v1",
+            "type": "runResult"
+          },
+          "runId": "10000000-0000-4000-8000-000000000010",
+          "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+          "studyId": "10000000-0000-4000-8000-000000000001",
+          "studyRevisionId": "10000000-0000-4000-8000-000000000002",
+          "validity": {
+            "checkedAt": "2026-11-03T00:00:00Z",
+            "reasonCodes": [],
+            "status": "current"
+          }
+        },
+        "revision": {
+          "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "definition": {
+            "assumptions": [],
+            "functionalUnit": {
+              "amount": "1",
+              "referenceFlowId": "product",
+              "unit": "kg"
+            },
+            "goal": "Bounded numerical fixture",
+            "methodRefs": [
+              {
+                "datasetType": "lciamethod",
+                "id": "method",
+                "type": "datasetRevision",
+                "version": "01.00.000"
+              }
+            ],
+            "systemBoundary": "explicit"
+          },
+          "modelPreparationId": "10000000-0000-4000-8000-000000000003",
+          "modelRef": {
+            "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "digestScope": "worker_prepared_model",
+            "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+            "type": "modelRevision"
+          },
+          "parentRevisionId": null,
+          "revision": 2,
+          "revisionId": "10000000-0000-4000-8000-000000000002",
+          "status": "frozen",
+          "studyId": "10000000-0000-4000-8000-000000000001",
+          "validation": "passed"
+        },
+        "scenario": {
+          "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "effectiveModelRef": {
+            "contentHash": "964715ea811de81e82003d87535e05c4a90ea890d32fdf6bd70f63193e693ed4",
+            "digestScope": "worker_prepared_model",
+            "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+            "type": "modelRevision"
+          },
+          "modelPreparationId": "10000000-0000-4000-8000-000000000040",
+          "overrides": [],
+          "parentScenarioRevisionId": null,
+          "revision": 2,
+          "scenarioId": "10000000-0000-4000-8000-000000000100",
+          "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+          "status": "frozen",
+          "studyId": "10000000-0000-4000-8000-000000000001",
+          "studyRevisionId": "10000000-0000-4000-8000-000000000002"
+        },
+        "preparation": {
+          "calculationContractRef": {
+            "kind": "calculation_contract",
+            "schema": "lca.calculation-contract.v1",
+            "sha256": "40002f1de748504cd46c93cae91cc1b204907fadf1ac720f3528d240740e2e39"
+          },
+          "execution": {
+            "jobId": "10000000-0000-4000-8000-000000000110",
+            "status": "completed"
+          },
+          "inputArtifactRef": {
+            "byteSize": 3621,
+            "contentHash": "bed2f6cc5e5a3934e53b7b48b8c9bda2e6ee9000c7dd30523349b8f58fe27e11",
+            "digestScope": "artifact_bytes_sha256",
+            "id": "10000000-0000-4000-8000-000000000050",
+            "mediaType": "application/json",
+            "schemaVersion": "lca.study-prepared-input.v1",
+            "type": "modelInput"
+          },
+          "inputHash": "73f081fe3c879addda849cf5afd41d19ce8e13a30ccd56297ac78a2dad144720",
+          "methodRefs": [
+            {
+              "datasetType": "lciamethod",
+              "id": "method",
+              "type": "datasetRevision",
+              "version": "01.00.000"
+            }
+          ],
+          "modelRef": {
+            "contentHash": "964715ea811de81e82003d87535e05c4a90ea890d32fdf6bd70f63193e693ed4",
+            "digestScope": "worker_prepared_model",
+            "modelRevisionId": "10000000-0000-4000-8000-000000000070",
+            "type": "modelRevision"
+          },
+          "preparationId": "10000000-0000-4000-8000-000000000040",
+          "profileId": "lca.study-explicit-v1",
+          "source": {
+            "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "expectedRevision": 1,
+            "scenarioRevisionId": "10000000-0000-4000-8000-000000000030",
+            "type": "scenarioRevision"
+          },
+          "studyId": "10000000-0000-4000-8000-000000000001"
+        },
+        "preparedArtifact": {
+          "studyId": "10000000-0000-4000-8000-000000000001",
+          "artifactRef": {
+            "type": "modelInput",
+            "id": "10000000-0000-4000-8000-000000000050",
+            "contentHash": "bed2f6cc5e5a3934e53b7b48b8c9bda2e6ee9000c7dd30523349b8f58fe27e11",
+            "digestScope": "artifact_bytes_sha256",
+            "byteSize": 3621,
+            "mediaType": "application/json",
+            "schemaVersion": "lca.study-prepared-input.v1"
+          },
+          "storageBucket": "study-artifacts",
+          "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000050/example.json"
+        },
+        "resultArtifact": {
+          "studyId": "10000000-0000-4000-8000-000000000001",
+          "artifactRef": {
+            "type": "runResult",
+            "id": "10000000-0000-4000-8000-000000000060",
+            "contentHash": "d74d787dbfd2a5cf4243f4c5dcc51560bb7d1eca7bf0907a776db0ca43868d14",
+            "digestScope": "artifact_bytes_sha256",
+            "byteSize": 694,
+            "mediaType": "application/json",
+            "schemaVersion": "lca.study-result.v1"
+          },
+          "storageBucket": "study-artifacts",
+          "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000060/example.json"
+        }
+      },
+      "sourceSnapshot": {
+        "snapshotId": "10000000-0000-4000-8000-000000000081",
+        "studyId": "10000000-0000-4000-8000-000000000001",
+        "originRef": {
+          "type": "datasetRevision",
+          "datasetType": "lifecyclemodel",
+          "id": "model",
+          "version": "01.00.000"
+        },
+        "sourceArtifactRef": {
+          "type": "modelSource",
+          "id": "10000000-0000-4000-8000-000000000080",
+          "contentHash": "1a896c0023816ad9f7d67c36fecb215b127c52b81517c295a64206ab2e439eef",
+          "digestScope": "artifact_bytes_sha256",
+          "byteSize": 4527,
+          "mediaType": "application/json",
+          "schemaVersion": "lca.study-source-snapshot.v1"
+        },
+        "digestScope": "artifact_bytes_sha256",
+        "licenseRef": "synthetic-not-a-license",
+        "issuerId": "synthetic-owner-fixture",
+        "observedAt": "2026-11-04T00:00:00Z"
+      },
+      "sourceArtifact": {
+        "studyId": "10000000-0000-4000-8000-000000000001",
+        "artifactRef": {
+          "type": "modelSource",
+          "id": "10000000-0000-4000-8000-000000000080",
+          "contentHash": "1a896c0023816ad9f7d67c36fecb215b127c52b81517c295a64206ab2e439eef",
+          "digestScope": "artifact_bytes_sha256",
+          "byteSize": 4527,
+          "mediaType": "application/json",
+          "schemaVersion": "lca.study-source-snapshot.v1"
+        },
+        "storageBucket": "study-artifacts",
+        "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000080/source.json"
+      }
+    }
+  },
+  "completionArguments": {
+    "p_analysis_id": "10000000-0000-4000-8000-000000000004",
+    "p_job_id": "10000000-0000-4000-8000-000000000005",
+    "p_lease_token": "10000000-0000-4000-8000-000000000085",
+    "p_completion": {
+      "profileId": "lca.study-sensitivity-oat.v1",
+      "configHash": "b4223a3c658b034710ba3611b3f987651c2d80de2d9ada4dd881955721441609",
+      "factsRef": {
+        "type": "analysisFacts",
+        "id": "10000000-0000-4000-8000-000000000084",
+        "contentHash": "426f89276623e1abf9fbecae0b35ad70734385bfab523b8d0782a0e60926701b",
+        "digestScope": "artifact_bytes_sha256",
+        "byteSize": 10554,
+        "mediaType": "application/json",
+        "schemaVersion": "lca.study-analysis-facts.v2"
+      },
+      "storageBucket": "study-artifacts",
+      "storageObjectPath": "study/10000000-0000-4000-8000-000000000001/10000000-0000-4000-8000-000000000084/job_10000000-0000-4000-8000-000000000005_attempt_1.json"
+    },
+    "p_idempotency_key": "study:10000000-0000-4000-8000-000000000005:10000000-0000-4000-8000-000000000085"
+  },
+  "publicCompletedRecord": {
+    "analysisId": "10000000-0000-4000-8000-000000000004",
+    "studyId": "10000000-0000-4000-8000-000000000001",
+    "profileId": "lca.study-sensitivity-oat.v1",
+    "config": {
+      "kind": "sensitivityOat",
+      "schemaVersion": "lca.study-analysis-config.v2",
+      "baselineRunId": "10000000-0000-4000-8000-000000000010",
+      "parameters": [
+        {
+          "path": "/instances/a/exchanges/e/amount",
+          "unit": "kg",
+          "baselineAmount": "10",
+          "low": "9",
+          "high": "11"
+        }
+      ]
+    },
+    "configHash": "b4223a3c658b034710ba3611b3f987651c2d80de2d9ada4dd881955721441609",
+    "execution": {
+      "jobId": "10000000-0000-4000-8000-000000000005",
+      "status": "completed"
+    },
+    "factsRef": {
+      "type": "analysisFacts",
+      "id": "10000000-0000-4000-8000-000000000084",
+      "contentHash": "426f89276623e1abf9fbecae0b35ad70734385bfab523b8d0782a0e60926701b",
+      "digestScope": "artifact_bytes_sha256",
+      "byteSize": 10554,
+      "mediaType": "application/json",
+      "schemaVersion": "lca.study-analysis-facts.v2"
+    }
+  },
+  "admission": "All new runtime dispatch remains off until each owner qualifies exact current source/actor/client/lease and platform limits; capabilities advertise only explicit V5 profiles after admission."
+}
