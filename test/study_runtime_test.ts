@@ -111,6 +111,40 @@ async function code(response: Response) {
   return body.code;
 }
 
+Deno.test(
+  'Study archive handler rejects non-archived or wrong-generation RPC successes',
+  async () => {
+    const request = {
+      ...write,
+      operation: 'study.archive',
+      target: { type: 'study', id: graph.studies[0].studyId, expectedRevision: 7 },
+    };
+    for (const patch of [
+      { status: 'active', revision: 1 },
+      { status: 'active', revision: 8 },
+      { status: 'archived', revision: 7 },
+      { status: 'archived', revision: 9 },
+      { status: 'archived', revision: 8 },
+    ]) {
+      const f = fixture({
+        dispatch: async () => ({
+          ok: true,
+          data: { type: 'study', value: { ...graph.studies[0], ...patch } },
+        }),
+      });
+      const result = await f.send(request);
+      if (patch.status === 'archived' && patch.revision === 8) {
+        assertEquals(result.status, 200);
+        const body = await result.json();
+        assertEquals(body.data.value.revision, 8);
+        assertEquals(body.data.value.status, 'archived');
+      } else {
+        assertEquals(await code(result), 'REFERENCE_MISMATCH');
+      }
+    }
+  },
+);
+
 Deno.test('Study runtime authenticates before parsing body or reaching repository', async () => {
   const f = fixture(
     {},
