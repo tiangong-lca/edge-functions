@@ -62,6 +62,7 @@ export async function executeMethodEvidence(
     const context = evidenceContextSchema.parse(raw);
     if (
       context.intentId !== intent.intentId ||
+      context.expiresAt !== intent.expiresAt ||
       context.actorId !== actor.userId ||
       context.clientId !== (actor.clientId ?? null) ||
       context.studyId !== request.studyId ||

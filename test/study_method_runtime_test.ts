@@ -342,3 +342,27 @@ Deno.test(
     assertEquals((await f.call(f.request('share.view', { shareId: id }))).status, 502);
   },
 );
+
+Deno.test(
+  'V6 evidence/report service contexts retain the exact issued intent lifetime before protected I/O',
+  async () => {
+    for (const evidence of [false, true]) {
+      const f = await methodRuntimeFixture();
+      f.flags.mutateContext = (c) => {
+        c.expiresAt = '2030-01-01T00:00:00Z';
+      };
+      const q = evidence
+        ? f.request('method.evidence.create', {
+            idempotencyKey: methodId(970),
+            studyId: f.f.context.studyId,
+            content: actual.evidenceContext.data.request.content,
+          })
+        : f.create;
+      const result = await f.call(q);
+      assertEquals(result.status, 502);
+      assertEquals(f.flags.reads, 0);
+      assertEquals(f.flags.uploads, 0);
+      assertEquals(f.flags.consumes, 0);
+    }
+  },
+);

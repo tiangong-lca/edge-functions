@@ -184,6 +184,7 @@ export async function executeMethodAuthoring(
     const ctx = parsed.data;
     if (
       ctx.intentId !== intent.intentId ||
+      ctx.expiresAt !== intent.expiresAt ||
       ctx.actorId !== actor.userId ||
       (ctx.clientId ?? null) !== (actor.clientId ?? null)
     )
