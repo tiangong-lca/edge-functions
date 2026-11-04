@@ -23,3 +23,9 @@ test/fixtures/lca-study-v5/
 
 # Independently produced P4 view2/renderer2 package bytes.
 supabase/functions/_shared/study/vendor/renderer-v2/
+
+# Exact Worker method contracts, generated declarations and owner fixtures.
+contracts/lca-study/worker/method/*.schema.json
+contracts/lca-study/worker/method/*.d.ts
+test/fixtures/lca-study-v6/facts.synthetic.json
+test/fixtures/lca-study-v6/worker-service-seams.json

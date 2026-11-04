@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
-lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
+lastReviewedCommit: dba8318a266af644829c0398056498920e9be8b6
+lastReviewedNote: 'Edge #557: reviewed exact Worker13a method schemas, contained reference/Unicode conversion, mandatory method summary/View3, pure validator build and byte/source qualification boundaries. This initial component milestone enables no actor facade, deployment, permission or scientific approval; V2-V5 and retained renderer bytes stay unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -55,6 +55,8 @@ related:
 W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](docs/agents/lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](docs/agents/lca-study-reporting-contract.md); V4 review/finalization/named-share adapters have a separate default-off gate and require Database and installed-consumer qualification. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 W06 adds typed Study task recovery/cancellation and service-resolved artifact read intents. The owned local runtime qualifier remains opt-in; private Study/source authority is rechecked by Database before and after bounded artifact I/O, and generic job endpoints do not grant Study access. Exact source/queue/native/Storage evidence and hosted admission remain separate gates.
+
+V6 method assessments, registered declared evidence and mandatory method reports use the separate [method contract](docs/agents/lca-study-method-contract.md). Exact Worker schema/source pins, method summary, actor/service contexts and view3/renderer3/export4 are independent from V5. All actual admission, current rights, source eligibility and scientific qualification remain evidence-bound.
 
 ## Repo Contract
 

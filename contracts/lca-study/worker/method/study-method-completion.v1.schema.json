@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-method-completion.v1",
+  "$comment": "Worker-owned closed method interface. Schema checks never establish professional approval, current actor/source/lease authority or byte identity.",
+  "$ref": "#/$defs/methodCompletion",
+  "$defs": {
+    "methodCompletion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "configHash",
+        "selectedFactorRecordCount",
+        "factsRef",
+        "storageBucket",
+        "storageObjectPath"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "selectedFactorRecordCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "factsRef": {
+          "$ref": "#/$defs/methodFactsRef"
+        },
+        "storageBucket": {
+          "const": "study-artifacts"
+        },
+        "storageObjectPath": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^study/[a-f0-9-]{36}/[a-f0-9-]{36}/[A-Za-z0-9_.-]+\\.json$"
+        }
+      }
+    },
+    "methodFactsRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "const": "methodAssessmentFacts"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-facts.v1"
+        }
+      }
+    }
+  }
+}

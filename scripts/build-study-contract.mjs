@@ -28,7 +28,14 @@ export function declaration(schema, document = schema, depth = 0) {
   if (schema.enum) return schema.enum.map((value) => JSON.stringify(value)).join(' | ');
   if (schema.anyOf || schema.oneOf)
     return (schema.anyOf ?? schema.oneOf).map((value) => `(${next(value)})`).join(' | ');
-  if (schema.allOf) return schema.allOf.map((value) => `(${next(value)})`).join(' & ');
+  if (schema.allOf) {
+    // JSON Schema siblings are conjunctive. In particular, a string with an
+    // allOf nonblank assertion must retain its string type in declarations.
+    const base = { ...schema };
+    delete base.allOf;
+    const parts = [next(base), ...schema.allOf.map(next)].filter((part) => part !== 'unknown');
+    return parts.length ? parts.map((part) => `(${part})`).join(' & ') : 'unknown';
+  }
   if (Array.isArray(schema.type))
     return schema.type.map((type) => next({ ...schema, type })).join(' | ');
   switch (schema.type) {

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Closed new assessment records; retained P1 projections keep their owner shape. Byte/config/source verification and current actor/job/disclosure authority remain independently required. No validation implies scientific approval.",
+  "$id": "lca.study-method-candidate-input.v1",
+  "$ref": "study-method-assessment-facts.v1.schema.json#/$defs/candidateInput"
+}

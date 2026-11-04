@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-method-evidence-record.v1",
+  "$comment": "Worker-owned closed method interface. Schema checks never establish professional approval, current actor/source/lease authority or byte identity.",
+  "$ref": "#/$defs/evidenceRecord",
+  "$defs": {
+    "evidenceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "evidenceId",
+        "studyId",
+        "requirementId",
+        "declaredKind",
+        "artifactRef",
+        "recordedAt",
+        "status"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-evidence-record.v1"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(?:0[1-9]|1[0-9]|20)$"
+        },
+        "declaredKind": {
+          "enum": [
+            "sourceRecord",
+            "applicabilityRecord",
+            "professionalRecord"
+          ]
+        },
+        "artifactRef": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "properties": {
+            "type": {
+              "const": "methodEvidence"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "digestScope": {
+              "const": "artifact_bytes_sha256"
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65536
+            },
+            "mediaType": {
+              "const": "application/json"
+            },
+            "schemaVersion": {
+              "const": "lca.study-method-evidence.v1"
+            }
+          }
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "const": "recorded_unverified"
+        }
+      }
+    }
+  }
+}

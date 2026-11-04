@@ -1,0 +1,2613 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Closed new assessment records; retained P1 projections keep their owner shape. Byte/config/source verification and current actor/job/disclosure authority remain independently required. No validation implies scientific approval.",
+  "$id": "lca.study-method-assessment-facts.v1",
+  "$ref": "#/$defs/factsBundle",
+  "$defs": {
+    "datasetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "calculationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema",
+        "sha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "calculation_contract"
+        },
+        "schema": {
+          "const": "lca.calculation-contract.v1"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "modelInput",
+            "runResult",
+            "modelSource",
+            "methodEvidence"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jobId",
+        "status"
+      ],
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "runInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run",
+        "revision",
+        "scenario",
+        "preparation",
+        "preparedArtifact",
+        "resultArtifact"
+      ],
+      "properties": {
+        "run": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "revision": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "scenario": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "preparation": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "preparedArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        },
+        "resultArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        }
+      }
+    },
+    "privateArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "studyId",
+        "artifactRef",
+        "storageBucket",
+        "storageObjectPath"
+      ],
+      "properties": {
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "artifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "storageBucket": {
+          "const": "study-artifacts"
+        },
+        "storageObjectPath": {
+          "type": "string",
+          "pattern": "^study/[a-f0-9-]{36}/[a-f0-9-]{36}/[a-zA-Z0-9_.-]+\\.json$",
+          "maxLength": 400
+        }
+      }
+    },
+    "coverageGap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "inventoryIndex"
+      ],
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "inventoryIndex": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "functionalUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "unit",
+        "referenceFlowId"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "referenceFlowId": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "methodAxis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "unit"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "productRole": {
+      "const": "finishedCementIntermediate"
+    },
+    "studyPhase": {
+      "enum": [
+        "screening",
+        "finalStudy"
+      ]
+    },
+    "unitBasis": {
+      "const": "declaredMass"
+    },
+    "declaredEvidenceKind": {
+      "enum": [
+        "sourceRecord",
+        "applicabilityRecord",
+        "professionalRecord"
+      ]
+    },
+    "categoryRuleDeclaration": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "noneEstablished"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "referenceId",
+            "version",
+            "evidenceId"
+          ],
+          "properties": {
+            "kind": {
+              "const": "commissionDeveloped"
+            },
+            "referenceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "evidenceId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            }
+          }
+        }
+      ]
+    },
+    "machineStatus": {
+      "enum": [
+        "verified",
+        "violated",
+        "not_verified",
+        "unsupported",
+        "not_assessed"
+      ]
+    },
+    "professionalStatus": {
+      "enum": [
+        "pending",
+        "references_recorded_unverified",
+        "not_required_for_source_machine_predicate"
+      ]
+    },
+    "moduleRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "sourceCommit",
+        "moduleId",
+        "moduleVersion",
+        "artifactSha256",
+        "reviewBasisSha256",
+        "sourceBindingsSha256"
+      ],
+      "properties": {
+        "repository": {
+          "const": "tiangong-lca/pcr"
+        },
+        "sourceCommit": {
+          "const": "51c0842c67b14ba886e2edee2846e26eefac030f"
+        },
+        "moduleId": {
+          "const": "method.pef-2021-ef31"
+        },
+        "moduleVersion": {
+          "const": "0.1.0"
+        },
+        "artifactSha256": {
+          "const": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad"
+        },
+        "reviewBasisSha256": {
+          "const": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165"
+        },
+        "sourceBindingsSha256": {
+          "const": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+        }
+      }
+    },
+    "declarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productRole",
+        "studyPhase",
+        "referenceUnitBasis",
+        "categoryRule"
+      ],
+      "properties": {
+        "productRole": {
+          "$ref": "#/$defs/productRole"
+        },
+        "studyPhase": {
+          "$ref": "#/$defs/studyPhase"
+        },
+        "referenceUnitBasis": {
+          "$ref": "#/$defs/unitBasis"
+        },
+        "categoryRule": {
+          "$ref": "#/$defs/categoryRuleDeclaration"
+        }
+      }
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "declaredKind",
+        "artifactRef"
+      ],
+      "properties": {
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(0[1-9]|1[0-9]|20)$"
+        },
+        "declaredKind": {
+          "$ref": "#/$defs/declaredEvidenceKind"
+        },
+        "artifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "baselineRunId",
+        "moduleRef",
+        "declarations",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-config.v1"
+        },
+        "baselineRunId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "moduleRef": {
+          "$ref": "#/$defs/moduleRef"
+        },
+        "declarations": {
+          "$ref": "#/$defs/declarations"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceReference"
+          },
+          "maxItems": 128
+        }
+      }
+    },
+    "assessmentRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessmentId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution"
+      ],
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "config": {
+          "$ref": "#/$defs/config"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "execution": {
+          "$ref": "#/$defs/execution"
+        }
+      }
+    },
+    "candidateInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "candidateId",
+        "studyId",
+        "config",
+        "configHash",
+        "baseline",
+        "sourceSnapshot",
+        "sourceArtifactRef"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-candidate-input.v1"
+        },
+        "candidateId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "config": {
+          "$ref": "#/$defs/config"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "baseline": {
+          "$ref": "#/$defs/runInput"
+        },
+        "sourceSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "snapshotId",
+            "studyId",
+            "originRef",
+            "sourceArtifactRef",
+            "digestScope",
+            "licenseRef",
+            "issuerId",
+            "observedAt"
+          ],
+          "properties": {
+            "snapshotId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "studyId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "originRef": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "datasetType",
+                "id",
+                "version"
+              ],
+              "properties": {
+                "type": {
+                  "const": "datasetRevision"
+                },
+                "datasetType": {
+                  "const": "lifecyclemodel"
+                },
+                "id": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "version": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "sourceArtifactRef": {
+              "$ref": "#/$defs/artifactRef"
+            },
+            "digestScope": {
+              "const": "artifact_bytes_sha256"
+            },
+            "licenseRef": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "issuerId": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "sourceArtifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        }
+      }
+    },
+    "serviceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "assessment",
+        "baseline",
+        "sourceSnapshot",
+        "sourceArtifact"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-input.v1"
+        },
+        "assessment": {
+          "$ref": "#/$defs/assessmentRecord"
+        },
+        "baseline": {
+          "$ref": "#/$defs/runInput"
+        },
+        "sourceSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "snapshotId",
+            "studyId",
+            "originRef",
+            "sourceArtifactRef",
+            "digestScope",
+            "licenseRef",
+            "issuerId",
+            "observedAt"
+          ],
+          "properties": {
+            "snapshotId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "studyId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "originRef": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "datasetType",
+                "id",
+                "version"
+              ],
+              "properties": {
+                "type": {
+                  "const": "datasetRevision"
+                },
+                "datasetType": {
+                  "const": "lifecyclemodel"
+                },
+                "id": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "version": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "sourceArtifactRef": {
+              "$ref": "#/$defs/artifactRef"
+            },
+            "digestScope": {
+              "const": "artifact_bytes_sha256"
+            },
+            "licenseRef": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "issuerId": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "sourceArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        }
+      }
+    },
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "modelRevisionId",
+        "contentHash",
+        "digestScope"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "modelRevisionId": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "contentHash": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "digestScope": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checkedAt",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "checkedAt": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "baselineBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "studyRevisionId",
+        "scenarioRevisionId",
+        "modelPreparationId",
+        "inputHash",
+        "effectiveModelRef",
+        "preparedArtifactRef",
+        "resultRef",
+        "sourceSnapshotRef",
+        "sourceOrigin",
+        "calculationContractRef",
+        "methodSourceHash",
+        "validity"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "studyRevisionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "scenarioRevisionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "modelPreparationId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "inputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "effectiveModelRef": {
+          "$ref": "#/$defs/modelRef"
+        },
+        "preparedArtifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "resultRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "sourceSnapshotRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "sourceOrigin": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "calculationContractRef": {
+          "$ref": "#/$defs/calculationRef"
+        },
+        "methodSourceHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "validity": {
+          "$ref": "#/$defs/validity"
+        }
+      }
+    },
+    "machineCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predicateId",
+        "status",
+        "reasonCodes"
+      ],
+      "properties": {
+        "predicateId": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "status": {
+          "$ref": "#/$defs/machineStatus"
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "machineAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scope",
+        "checks"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/machineStatus"
+        },
+        "scope": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/machineCheck"
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "professionalAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "evidenceRefs",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/professionalStatus"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceReference"
+          },
+          "maxItems": 8192
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "requirementAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "sourceApplicability",
+        "sourceCheckKind",
+        "sourceCitations",
+        "declarationState",
+        "machine",
+        "professional"
+      ],
+      "properties": {
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(0[1-9]|1[0-9]|20)$"
+        },
+        "sourceApplicability": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceCheckKind": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceCitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        },
+        "declarationState": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "machine": {
+          "$ref": "#/$defs/machineAssessment"
+        },
+        "professional": {
+          "$ref": "#/$defs/professionalAssessment"
+        }
+      }
+    },
+    "categoryAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodRef",
+        "name",
+        "role",
+        "parentMethodId",
+        "referenceQuantityId",
+        "unit",
+        "selected",
+        "sourceCompatible",
+        "coverage",
+        "canonicalCharacterisedValue",
+        "missingInventoryIndices",
+        "normalisationWeightingIncluded",
+        "reasonCodes"
+      ],
+      "properties": {
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "subcategory"
+          ]
+        },
+        "parentMethodId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "referenceQuantityId": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "sourceCompatible": {
+          "type": "boolean"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown",
+            "not_selected"
+          ]
+        },
+        "canonicalCharacterisedValue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingInventoryIndices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxItems": 8192
+        },
+        "normalisationWeightingIncluded": {
+          "type": "boolean"
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "sourceLocationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "originalValue",
+        "sourceRecordOrdinal",
+        "sourceRecordSha256"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "originalValue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceRecordOrdinal": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceRecordSha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "selectedFactorEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodRef",
+        "inventoryIndex",
+        "flow",
+        "direction",
+        "frozenUnit",
+        "frozenUnitSupport",
+        "canonicalEffectiveFactor",
+        "rawFactorValueBits",
+        "alternativeCount",
+        "location",
+        "status"
+      ],
+      "properties": {
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "inventoryIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flow": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "direction": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "frozenUnit": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "frozenUnitSupport": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/datasetRef"
+          },
+          "maxItems": 8192
+        },
+        "canonicalEffectiveFactor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rawFactorValueBits": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "alternativeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "location": {
+          "$ref": "#/$defs/sourceLocationEvidence"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "sourceBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodRef",
+        "officialXmlSha256",
+        "localXmlSha256",
+        "equivalenceKind",
+        "equivalenceEvidenceSha256"
+      ],
+      "properties": {
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "officialXmlSha256": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "localXmlSha256": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "equivalenceKind": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "equivalenceEvidenceSha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "methodSourceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "staticSourceSnapshot",
+        "normativeVersion",
+        "factorPackageVersion",
+        "interimGuidanceSnapshot",
+        "sourceCatalogSha256",
+        "nonregionalPolicy",
+        "nonregionalDefaultsSha256",
+        "officialFactorPackageSha256",
+        "normalisationWeightingSourceSha256",
+        "frozenCMatchesVerifiedBundle",
+        "geographicalSuitability",
+        "sourceBridges",
+        "selectedFactors",
+        "limitations"
+      ],
+      "properties": {
+        "staticSourceSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bundle_manifest_path",
+            "bundle_manifest_sha256",
+            "bundle_version",
+            "factor_manifest_sha256",
+            "method_count",
+            "method_identity_manifest_sha256",
+            "method_manifest_sha256",
+            "schema_version",
+            "source_kind",
+            "source_snapshot_sha256"
+          ],
+          "properties": {
+            "bundle_manifest_path": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "bundle_manifest_sha256": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "bundle_version": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "factor_manifest_sha256": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "method_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "method_identity_manifest_sha256": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "method_manifest_sha256": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "schema_version": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "source_kind": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "source_snapshot_sha256": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          }
+        },
+        "normativeVersion": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "factorPackageVersion": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "interimGuidanceSnapshot": {
+          "const": {
+            "announcement_date": "2026-07-14",
+            "manuscript_month": "2026-05",
+            "validity_condition": "until the next EF database is available; expected 2028 is not a fixed expiry date",
+            "with_commission_pefcr_section": "2.2",
+            "without_commission_pefcr_section": "2.1"
+          }
+        },
+        "sourceCatalogSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "nonregionalPolicy": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "nonregionalDefaultsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "officialFactorPackageSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "normalisationWeightingSourceSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "frozenCMatchesVerifiedBundle": {
+          "type": "boolean"
+        },
+        "geographicalSuitability": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceBridges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceBridge"
+          },
+          "maxItems": 8192
+        },
+        "selectedFactors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectedFactorEvidence"
+          },
+          "maxItems": 8192
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "normalisationWeightingCategory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodRef",
+        "referenceQuantityId",
+        "characterisedUnit",
+        "canonicalCharacterisedValue",
+        "sourceNormalisationFactor",
+        "sourceWeightFraction",
+        "sourceUnitLabel",
+        "sourceShortDescription",
+        "canonicalNormalisedValue",
+        "normalisedUnit",
+        "canonicalWeightedValue",
+        "weightedUnit"
+      ],
+      "properties": {
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "referenceQuantityId": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "characterisedUnit": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "canonicalCharacterisedValue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceNormalisationFactor": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceWeightFraction": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceUnitLabel": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "sourceShortDescription": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "canonicalNormalisedValue": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+          "maxLength": 32
+        },
+        "normalisedUnit": {
+          "const": "1"
+        },
+        "canonicalWeightedValue": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+          "maxLength": 32
+        },
+        "weightedUnit": {
+          "const": "Pt"
+        }
+      }
+    },
+    "candidateNormalisationWeighting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "scope",
+        "basis",
+        "weightRepresentation",
+        "pointDefinition",
+        "scalingFactor",
+        "categories",
+        "canonicalCandidateSingleScore",
+        "scoreUnit",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "candidate_arithmetic_available",
+            "unavailable"
+          ]
+        },
+        "scope": {
+          "const": "candidate_arithmetic_only_not_pef_qualification"
+        },
+        "basis": {
+          "const": "source_global_per_capita_reference_impacts"
+        },
+        "weightRepresentation": {
+          "const": "source_fraction_no_additional_division_by_100"
+        },
+        "pointDefinition": {
+          "const": "1 Pt = sum of characterised_i / source_NF_i times source_weight_fraction_i over exactly sixteen primary categories"
+        },
+        "scalingFactor": {
+          "const": "1"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/normalisationWeightingCategory"
+          },
+          "maxItems": 16
+        },
+        "canonicalCandidateSingleScore": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[0-9]+)?$",
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scoreUnit": {
+          "const": "Pt"
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "frozenEvidenceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "functionalUnit",
+        "declaredSystemBoundary",
+        "processInstances",
+        "sourceDocumentCount",
+        "methodAxes",
+        "exchanges",
+        "inventoryAxes",
+        "declaredCutoffs",
+        "coverageGaps",
+        "qualityFindings"
+      ],
+      "properties": {
+        "functionalUnit": {
+          "$ref": "#/$defs/functionalUnit"
+        },
+        "declaredSystemBoundary": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "processInstances": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceDocumentCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "methodAxes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/methodAxis"
+          },
+          "maxItems": 8192
+        },
+        "exchanges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inventoryAxes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "declaredCutoffs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coverageGaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverageGap"
+          },
+          "maxItems": 8192
+        },
+        "qualityFindings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        }
+      }
+    },
+    "factsBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "assessorVersion",
+        "identityKind",
+        "studyId",
+        "assessmentId",
+        "config",
+        "configHash",
+        "moduleRef",
+        "moduleSourceStatus",
+        "baseline",
+        "frozenEvidence",
+        "methodSourceEvidence",
+        "categories",
+        "requirements",
+        "candidateNormalisationWeighting",
+        "factCatalog",
+        "outcome",
+        "limitations",
+        "pefConformityQualified",
+        "scientificRankingQualified",
+        "businessPilotQualified"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-facts.v1"
+        },
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "assessorVersion": {
+          "const": "study.method-assessment.v1"
+        },
+        "identityKind": {
+          "enum": [
+            "offline_candidate_not_registered_or_authorized",
+            "private_job_metadata_not_an_authorization_receipt"
+          ]
+        },
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "assessmentId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "config": {
+          "$ref": "#/$defs/config"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "moduleRef": {
+          "$ref": "#/$defs/moduleRef"
+        },
+        "moduleSourceStatus": {
+          "const": "candidate_source_module_exact_main_adoption_not_study_approval"
+        },
+        "baseline": {
+          "$ref": "#/$defs/baselineBinding"
+        },
+        "frozenEvidence": {
+          "$ref": "#/$defs/frozenEvidenceSummary"
+        },
+        "methodSourceEvidence": {
+          "$ref": "#/$defs/methodSourceEvidence"
+        },
+        "categories": {
+          "type": "array",
+          "minItems": 25,
+          "maxItems": 25,
+          "items": {
+            "$ref": "#/$defs/categoryAssessment"
+          }
+        },
+        "requirements": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/requirementAssessment"
+          }
+        },
+        "candidateNormalisationWeighting": {
+          "$ref": "#/$defs/candidateNormalisationWeighting"
+        },
+        "outcome": {
+          "const": "not_qualified_professional_and_actual_study_evidence_pending"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "maxItems": 8192
+        },
+        "pefConformityQualified": {
+          "const": false
+        },
+        "scientificRankingQualified": {
+          "const": false
+        },
+        "businessPilotQualified": {
+          "const": false
+        },
+        "factCatalog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/methodReportFact"
+          },
+          "minItems": 58,
+          "maxItems": 58
+        }
+      }
+    },
+    "methodFactsRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "const": "methodAssessmentFacts"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-facts.v1"
+        }
+      }
+    },
+    "publicAssessmentRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessmentId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution",
+        "factsRef"
+      ],
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "config": {
+          "$ref": "#/$defs/config"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "jobId",
+            "status"
+          ],
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "status": {
+              "enum": [
+                "queued",
+                "running",
+                "waiting",
+                "completed",
+                "blocked",
+                "stale",
+                "failed",
+                "cancelled"
+              ]
+            }
+          }
+        },
+        "factsRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/methodFactsRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "jobRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "studyId",
+        "assessmentId"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "study.method_assessment.request.v1"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "assessmentId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        }
+      }
+    },
+    "methodBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxSelectedFactorRecords",
+        "maxFactsBytes"
+      ],
+      "properties": {
+        "maxSelectedFactorRecords": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "maxFactsBytes": {
+          "const": 4194304
+        }
+      }
+    },
+    "jobContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "input",
+        "budget"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-job-context.v1"
+        },
+        "input": {
+          "$ref": "#/$defs/serviceInput"
+        },
+        "budget": {
+          "$ref": "#/$defs/methodBudget"
+        }
+      }
+    },
+    "methodCompletion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileId",
+        "configHash",
+        "selectedFactorRecordCount",
+        "factsRef",
+        "storageBucket",
+        "storageObjectPath"
+      ],
+      "properties": {
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "selectedFactorRecordCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8192
+        },
+        "factsRef": {
+          "$ref": "#/$defs/methodFactsRef"
+        },
+        "storageBucket": {
+          "const": "study-artifacts"
+        },
+        "storageObjectPath": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^study/[a-f0-9-]{36}/[a-f0-9-]{36}/[A-Za-z0-9_.-]+\\.json$"
+        }
+      }
+    },
+    "failureRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceType",
+        "resourceId",
+        "jobId",
+        "leaseToken",
+        "errorCode",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "resourceType": {
+          "const": "methodAssessment"
+        },
+        "resourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "jobId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "leaseToken": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "errorCode": {
+          "enum": [
+            "source_invalid",
+            "boundary_undeclared",
+            "normalization_underflow",
+            "normalization_overflow",
+            "numeric_invalid",
+            "resource_limit",
+            "model_not_solvable",
+            "native_execution_failed",
+            "job_timeout",
+            "job_lease_lost",
+            "runtime_unavailable",
+            "runtime_failed"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        }
+      }
+    },
+    "reconcileRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceType",
+        "resourceId",
+        "jobId",
+        "leaseToken",
+        "idempotencyKey",
+        "artifactId"
+      ],
+      "properties": {
+        "resourceType": {
+          "const": "methodAssessment"
+        },
+        "resourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "jobId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "leaseToken": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "artifactId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "reconcileResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "resource",
+        "jobStatus"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "committed",
+            "referenced",
+            "unreferenced",
+            "pending"
+          ]
+        },
+        "resource": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "value"
+              ],
+              "properties": {
+                "type": {
+                  "const": "methodAssessment"
+                },
+                "value": {
+                  "$ref": "#/$defs/publicAssessmentRecord"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "jobStatus": {
+          "enum": [
+            "queued",
+            "running",
+            "waiting",
+            "completed",
+            "blocked",
+            "stale",
+            "failed",
+            "cancelled"
+          ]
+        }
+      }
+    },
+    "declaredCitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "identity",
+        "version",
+        "contentHash",
+        "locator"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "normativeSource",
+            "datasetRevision",
+            "document",
+            "professionalRecord",
+            "otherDeclaredSource"
+          ]
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        },
+        "contentHash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        }
+      }
+    },
+    "evidenceBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "requirementId",
+        "declaredKind",
+        "title",
+        "statement",
+        "citations"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-evidence.v1"
+        },
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(?:0[1-9]|1[0-9]|20)$"
+        },
+        "declaredKind": {
+          "enum": [
+            "sourceRecord",
+            "applicabilityRecord",
+            "professionalRecord"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/declaredCitation"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        }
+      }
+    },
+    "evidenceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "evidenceId",
+        "studyId",
+        "requirementId",
+        "declaredKind",
+        "artifactRef",
+        "recordedAt",
+        "status"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-evidence-record.v1"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(?:0[1-9]|1[0-9]|20)$"
+        },
+        "declaredKind": {
+          "enum": [
+            "sourceRecord",
+            "applicabilityRecord",
+            "professionalRecord"
+          ]
+        },
+        "artifactRef": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "properties": {
+            "type": {
+              "const": "methodEvidence"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "digestScope": {
+              "const": "artifact_bytes_sha256"
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65536
+            },
+            "mediaType": {
+              "const": "application/json"
+            },
+            "schemaVersion": {
+              "const": "lca.study-method-evidence.v1"
+            }
+          }
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "const": "recorded_unverified"
+        }
+      }
+    },
+    "methodFactContext": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef",
+            "categoryRole"
+          ],
+          "properties": {
+            "kind": {
+              "const": "characterisedCategory"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            },
+            "categoryRole": {
+              "enum": [
+                "primary",
+                "subcategory"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef"
+          ],
+          "properties": {
+            "kind": {
+              "const": "normalisedCategory"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weightedCategory"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "primaryMethods"
+          ],
+          "properties": {
+            "kind": {
+              "const": "candidateSingleScore"
+            },
+            "primaryMethods": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/datasetRef"
+              },
+              "minItems": 16,
+              "maxItems": 16
+            }
+          }
+        }
+      ]
+    },
+    "methodUnitIdentity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef",
+            "referenceQuantityId",
+            "unit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "characterised"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            },
+            "referenceQuantityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef",
+            "referenceQuantityId",
+            "unit",
+            "sourceNormalisationFactor",
+            "moduleArtifactSha256"
+          ],
+          "properties": {
+            "kind": {
+              "const": "normalised"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            },
+            "referenceQuantityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "unit": {
+              "const": "1"
+            },
+            "sourceNormalisationFactor": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            },
+            "moduleArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "methodRef",
+            "referenceQuantityId",
+            "unit",
+            "sourceNormalisationFactor",
+            "sourceWeightFraction",
+            "pointDefinition",
+            "scalingFactor",
+            "moduleArtifactSha256"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weighted"
+            },
+            "methodRef": {
+              "$ref": "#/$defs/datasetRef"
+            },
+            "referenceQuantityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+            },
+            "unit": {
+              "const": "Pt"
+            },
+            "sourceNormalisationFactor": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            },
+            "sourceWeightFraction": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            },
+            "pointDefinition": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            },
+            "scalingFactor": {
+              "const": "1"
+            },
+            "moduleArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "primaryMethods",
+            "unit",
+            "pointDefinition",
+            "scalingFactor",
+            "moduleArtifactSha256"
+          ],
+          "properties": {
+            "kind": {
+              "const": "candidateScore"
+            },
+            "primaryMethods": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/datasetRef"
+              },
+              "minItems": 16,
+              "maxItems": 16
+            },
+            "unit": {
+              "const": "Pt"
+            },
+            "pointDefinition": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+              "allOf": [
+                {
+                  "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+                }
+              ]
+            },
+            "scalingFactor": {
+              "const": "1"
+            },
+            "moduleArtifactSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "methodReportFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factId",
+        "assessmentId",
+        "baselineRunId",
+        "context",
+        "methodRef",
+        "canonicalValue",
+        "unit",
+        "unitIdentity",
+        "coverage",
+        "reasonCodes"
+      ],
+      "properties": {
+        "factId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "assessmentId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "baselineRunId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "context": {
+          "$ref": "#/$defs/methodFactContext"
+        },
+        "methodRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonicalValue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]*[1-9])?(?:e-?[1-9][0-9]{0,2})?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+          "allOf": [
+            {
+              "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+            }
+          ]
+        },
+        "unitIdentity": {
+          "$ref": "#/$defs/methodUnitIdentity"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f<>]+$",
+            "allOf": [
+              {
+                "pattern": "[^\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]"
+              }
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 32
+        }
+      }
+    }
+  }
+}

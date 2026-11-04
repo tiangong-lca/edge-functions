@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
-lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
+lastReviewedCommit: dba8318a266af644829c0398056498920e9be8b6
+lastReviewedNote: 'Edge #557: reviewed exact Worker13a method schemas, contained reference/Unicode conversion, mandatory method summary/View3, pure validator build and byte/source qualification boundaries. This initial component milestone enables no actor facade, deployment, permission or scientific approval; V2-V5 and retained renderer bytes stay unchanged.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md

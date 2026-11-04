@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-method-failure-request.v1",
+  "$comment": "Worker-owned closed method interface. Schema checks never establish professional approval, current actor/source/lease authority or byte identity.",
+  "$ref": "#/$defs/failureRequest",
+  "$defs": {
+    "failureRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceType",
+        "resourceId",
+        "jobId",
+        "leaseToken",
+        "errorCode",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "resourceType": {
+          "const": "methodAssessment"
+        },
+        "resourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "jobId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "leaseToken": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "errorCode": {
+          "enum": [
+            "source_invalid",
+            "boundary_undeclared",
+            "normalization_underflow",
+            "normalization_overflow",
+            "numeric_invalid",
+            "resource_limit",
+            "model_not_solvable",
+            "native_execution_failed",
+            "job_timeout",
+            "job_lease_lost",
+            "runtime_unavailable",
+            "runtime_failed"
+          ]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        }
+      }
+    }
+  }
+}
