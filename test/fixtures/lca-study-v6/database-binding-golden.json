@@ -1,0 +1,87 @@
+{
+  "domain": "lca.study-method-report-facts-binding.v1",
+  "payload": {
+    "studyId": "89400000-0000-4000-8000-000000000010",
+    "runIds": [
+      "90400000-0000-4000-8000-000000000012"
+    ],
+    "methodAssessmentIds": [
+      "1bbeb001-bfe0-4c1a-b537-43bbe053b763"
+    ],
+    "factsRefs": [
+      {
+        "id": "91200000-0000-4000-8000-000000000060",
+        "type": "methodAssessmentFacts",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-method-assessment-facts.v1"
+      }
+    ],
+    "baseline": {
+      "runId": "90400000-0000-4000-8000-000000000012",
+      "studyId": "89400000-0000-4000-8000-000000000010",
+      "studyRevisionId": "90400000-0000-4000-8000-000000000001",
+      "scenarioRevisionId": "90400000-0000-4000-8000-000000000002",
+      "effectiveModelRef": {
+        "type": "modelRevision",
+        "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "digestScope": "worker_prepared_model",
+        "modelRevisionId": "model-894"
+      },
+      "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "profileId": "lca.study-explicit-v1",
+      "engineId": "solver-worker",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117"
+      },
+      "resultRef": {
+        "id": "90400000-0000-4000-8000-000000000020",
+        "type": "runResult",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-result.v1"
+      },
+      "preparedArtifactRef": {
+        "id": "89400000-0000-4000-8000-000000000061",
+        "type": "modelInput",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-prepared-input.v1"
+      },
+      "sourceSnapshotRef": {
+        "id": "89400000-0000-4000-8000-000000000060",
+        "type": "modelSource",
+        "byteSize": 2,
+        "mediaType": "application/json",
+        "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "digestScope": "artifact_bytes_sha256",
+        "schemaVersion": "lca.study-source-snapshot.v1"
+      }
+    },
+    "assessment": {
+      "assessmentId": "1bbeb001-bfe0-4c1a-b537-43bbe053b763",
+      "profileId": "lca.study-method-pef-2021-ef31-cement-intermediate.v1",
+      "configHash": "a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755",
+      "moduleRef": {
+        "moduleId": "method.pef-2021-ef31",
+        "repository": "tiangong-lca/pcr",
+        "sourceCommit": "51c0842c67b14ba886e2edee2846e26eefac030f",
+        "moduleVersion": "0.1.0",
+        "artifactSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+        "reviewBasisSha256": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165",
+        "sourceBindingsSha256": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+      }
+    }
+  },
+  "canonicalUtf8": "{\"assessment\":{\"assessmentId\":\"1bbeb001-bfe0-4c1a-b537-43bbe053b763\",\"configHash\":\"a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755\",\"moduleRef\":{\"artifactSha256\":\"b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad\",\"moduleId\":\"method.pef-2021-ef31\",\"moduleVersion\":\"0.1.0\",\"repository\":\"tiangong-lca/pcr\",\"reviewBasisSha256\":\"989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165\",\"sourceBindingsSha256\":\"3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2\",\"sourceCommit\":\"51c0842c67b14ba886e2edee2846e26eefac030f\"},\"profileId\":\"lca.study-method-pef-2021-ef31-cement-intermediate.v1\"},\"baseline\":{\"calculationContractRef\":{\"kind\":\"calculation_contract\",\"schema\":\"lca.calculation-contract.v1\",\"sha256\":\"b76f401227d41f3679462940caa249b0a2b4401f26f4024abd27d28f4140e117\"},\"effectiveModelRef\":{\"contentHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"digestScope\":\"worker_prepared_model\",\"modelRevisionId\":\"model-894\",\"type\":\"modelRevision\"},\"engineId\":\"solver-worker\",\"inputHash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"preparedArtifactRef\":{\"byteSize\":2,\"contentHash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"digestScope\":\"artifact_bytes_sha256\",\"id\":\"89400000-0000-4000-8000-000000000061\",\"mediaType\":\"application/json\",\"schemaVersion\":\"lca.study-prepared-input.v1\",\"type\":\"modelInput\"},\"profileId\":\"lca.study-explicit-v1\",\"resultRef\":{\"byteSize\":2,\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"digestScope\":\"artifact_bytes_sha256\",\"id\":\"90400000-0000-4000-8000-000000000020\",\"mediaType\":\"application/json\",\"schemaVersion\":\"lca.study-result.v1\",\"type\":\"runResult\"},\"runId\":\"90400000-0000-4000-8000-000000000012\",\"scenarioRevisionId\":\"90400000-0000-4000-8000-000000000002\",\"sourceSnapshotRef\":{\"byteSize\":2,\"contentHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"digestScope\":\"artifact_bytes_sha256\",\"id\":\"89400000-0000-4000-8000-000000000060\",\"mediaType\":\"application/json\",\"schemaVersion\":\"lca.study-source-snapshot.v1\",\"type\":\"modelSource\"},\"studyId\":\"89400000-0000-4000-8000-000000000010\",\"studyRevisionId\":\"90400000-0000-4000-8000-000000000001\"},\"factsRefs\":[{\"byteSize\":2,\"contentHash\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"digestScope\":\"artifact_bytes_sha256\",\"id\":\"91200000-0000-4000-8000-000000000060\",\"mediaType\":\"application/json\",\"schemaVersion\":\"lca.study-method-assessment-facts.v1\",\"type\":\"methodAssessmentFacts\"}],\"methodAssessmentIds\":[\"1bbeb001-bfe0-4c1a-b537-43bbe053b763\"],\"runIds\":[\"90400000-0000-4000-8000-000000000012\"],\"studyId\":\"89400000-0000-4000-8000-000000000010\"}",
+  "sha256": "58fb150520c32b8441807688ad2885a70f886cd19a889b0e6475c8e62aa43305",
+  "sqlMatchesIndependentPython": true
+}

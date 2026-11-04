@@ -1,0 +1,30 @@
+{
+  "name": "@tiangong-lca/study-report-renderer",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Dependency-free frozen LCA Study report view",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./view": {
+      "types": "./viewModel.d.ts",
+      "import": "./viewModel.js"
+    },
+    "./manifest.json": "./manifest.json"
+  },
+  "files": [
+    "*.js",
+    "*.mjs",
+    "*.d.ts",
+    "*.d.mts",
+    "*.json",
+    "*.css",
+    "manifest.json",
+    "README.md",
+    "LICENSE",
+    "LICENSE.*"
+  ]
+}

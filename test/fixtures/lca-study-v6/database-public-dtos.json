@@ -1,0 +1,193 @@
+{
+  "project": "study912",
+  "classification": "actualPostgRESTFixtureJWTMetadata_notEdgePublicWireOrAuthorizationReceipt",
+  "migrationSha256": "0034086fb21e8f17a7a36b432a8678f3ea75ec9fe70eed7051897d44c42bddae",
+  "responses": {
+    "authoringCapability": {
+      "type": "capabilities",
+      "limits": {
+        "maxFactsBytes": 4194304,
+        "maxEvidenceRefs": 128,
+        "maxProjectionBytes": 2000000,
+        "maxSelectedFactorRecords": 8192
+      },
+      "operations": [
+        "capability.read",
+        "method.assessment.read",
+        "method.evidence.read",
+        "task.read",
+        "report.read",
+        "study.resources.list",
+        "resource.actions",
+        "task.cancel",
+        "method.evidence.create",
+        "artifact.read",
+        "method.assessment.request",
+        "report.create",
+        "report.save",
+        "report.freeze"
+      ],
+      "methodProfiles": [
+        "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+      ],
+      "runtimeEnabled": true,
+      "contractVersion": "6.0.0",
+      "reportTemplates": [
+        "lca.study-method-report.v1"
+      ]
+    },
+    "reviewCapability": {
+      "type": "capabilities",
+      "operations": [
+        "capability.read",
+        "resource.actions",
+        "comment.list",
+        "review.list",
+        "review.delegation.list",
+        "report.current",
+        "report.view",
+        "export.read",
+        "export.download",
+        "share.read",
+        "share.view",
+        "share.download",
+        "share.list",
+        "comment.append",
+        "review.record",
+        "report.finalize",
+        "export.request",
+        "share.create",
+        "share.revoke",
+        "review.delegation.issue",
+        "review.delegation.revoke"
+      ],
+      "reviewClasses": [
+        "internal"
+      ],
+      "runtimeEnabled": true,
+      "contractVersion": "6.0.0",
+      "disclosurePolicies": [
+        "lca.study-report-summary-share.v1"
+      ],
+      "finalizationProfiles": [
+        "lca.study-report-unreviewed.v1",
+        "lca.study-report-internal-review.v1"
+      ]
+    },
+    "methodTask": {
+      "type": "task",
+      "value": {
+        "studyId": "89400000-0000-4000-8000-000000000010",
+        "resource": {
+          "id": "6679bcb1-6ec8-4db9-9d86-9983dd06a579",
+          "type": "methodAssessment"
+        },
+        "errorCode": null,
+        "execution": {
+          "jobId": "338c2565-8136-432b-875b-96f6c9950b27",
+          "phase": null,
+          "status": "completed",
+          "progress": 1
+        }
+      }
+    },
+    "assessmentActions": {
+      "type": "actions",
+      "actions": [
+        "task.read",
+        "task.cancel",
+        "method.assessment.read",
+        "artifact.read"
+      ],
+      "resource": {
+        "id": "6679bcb1-6ec8-4db9-9d86-9983dd06a579",
+        "type": "methodAssessment"
+      },
+      "corePermissions": {
+        "read": true,
+        "write": true
+      },
+      "allowedMemberRoles": []
+    },
+    "methodResourcePage": {
+      "kind": "methodAssessment",
+      "type": "resourcePage",
+      "items": [
+        {
+          "type": "methodAssessment",
+          "value": {
+            "config": {
+              "moduleRef": {
+                "moduleId": "method.pef-2021-ef31",
+                "repository": "tiangong-lca/pcr",
+                "sourceCommit": "51c0842c67b14ba886e2edee2846e26eefac030f",
+                "moduleVersion": "0.1.0",
+                "artifactSha256": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad",
+                "reviewBasisSha256": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165",
+                "sourceBindingsSha256": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+              },
+              "declarations": {
+                "studyPhase": "finalStudy",
+                "productRole": "finishedCementIntermediate",
+                "categoryRule": {
+                  "kind": "noneEstablished"
+                },
+                "referenceUnitBasis": "declaredMass"
+              },
+              "evidenceRefs": [],
+              "baselineRunId": "90400000-0000-4000-8000-000000000012",
+              "schemaVersion": "lca.study-method-assessment-config.v1"
+            },
+            "studyId": "89400000-0000-4000-8000-000000000010",
+            "factsRef": {
+              "id": "91200000-0000-4000-8000-000000000205",
+              "type": "methodAssessmentFacts",
+              "byteSize": 2,
+              "mediaType": "application/json",
+              "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "digestScope": "artifact_bytes_sha256",
+              "schemaVersion": "lca.study-method-assessment-facts.v1"
+            },
+            "execution": {
+              "jobId": "3e239f0d-3601-44b9-880f-a1458e47bc82",
+              "status": "completed"
+            },
+            "profileId": "lca.study-method-pef-2021-ef31-cement-intermediate.v1",
+            "configHash": "a9211343b7ff84319563d96264792d45d086e563e76261886fa721b7c2457755",
+            "assessmentId": "15f55266-b615-472c-9660-4ba7c2c96809"
+          }
+        }
+      ],
+      "studyId": "89400000-0000-4000-8000-000000000010",
+      "nextCursor": "5fa296ae-f441-41f9-8b14-ec2bcbcda031"
+    },
+    "evidenceActorIntent": {
+      "kind": "methodEvidenceCommandIntent",
+      "intentId": "74aa9003-cb25-48bd-93a7-6e774f5fa8ff",
+      "expiresAt": "2026-11-04T14:22:19.2399+00:00",
+      "operation": "method.evidence.create"
+    },
+    "reportActorIntent": {
+      "kind": "reportMethodCommandIntent",
+      "intentId": "820da5eb-e55f-4479-bca2-2c1e06593152",
+      "expiresAt": "2026-11-04T14:22:19.260932+00:00",
+      "operation": "report.create"
+    },
+    "shareActions": {
+      "type": "actions",
+      "actions": [
+        "share.read",
+        "share.revoke"
+      ],
+      "resource": {
+        "id": "8ab29c02-5180-468e-b3f7-f2e5f751aea4",
+        "type": "share"
+      },
+      "corePermissions": {
+        "read": false,
+        "write": false
+      },
+      "allowedMemberRoles": []
+    }
+  }
+}

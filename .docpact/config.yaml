@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-11-04'
-lastReviewedCommit: '6684c3fdf542fa624139cc8504b7730a527bd2de'
-lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
+lastReviewedAt: '2026-11-05'
+lastReviewedCommit: '47fa6ab6d9ba221f77f18552de081570994b8f50'
+lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -19,6 +19,7 @@ catalog:
         - docs/agents/lca-study-api-contract.md
         - docs/agents/lca-study-runtime-contract.md
         - docs/agents/lca-study-reporting-contract.md
+        - docs/agents/lca-study-method-contract.md
       workspaceIntegrationRequired: true
 
 ownership:
@@ -88,6 +89,7 @@ coverage:
     - docs/agents/lca-study-api-contract.md
     - docs/agents/lca-study-reporting-contract.md
     - docs/agents/lca-study-runtime-contract.md
+    - docs/agents/lca-study-method-contract.md
     - .github/PULL_REQUEST_TEMPLATE/*.md
     - .github/workflows/ai-doc-lint.yml
     - .github/workflows/ci.yml
@@ -355,6 +357,7 @@ routing:
 
 docInventory:
   include:
+    - docs/agents/lca-study-method-contract.md
     - AGENTS.md
     - README.md
     - .docpact/config.yaml
@@ -371,6 +374,32 @@ repo:
   owner: edge-functions
 
 rules:
+  - id: edge-functions-study-method
+    scope: repo
+    repo: edge-functions
+    triggers:
+      - path: docs/agents/lca-study-method-contract.md
+        kind: contract
+      - path: contracts/lca-study/v6/**
+        kind: public-contract
+      - path: contracts/lca-study/worker/method/**
+        kind: owner-contract-artifact
+      - path: supabase/functions/_shared/study/vendor/renderer-v3/**
+        kind: renderer-artifact
+      - path: supabase/functions/_shared/study/method_*.ts
+        kind: runtime
+      - path: test/study_method*
+        kind: validation
+      - path: test/fixtures/lca-study-v6/**
+        kind: fixture
+      - path: scripts/build-study-method-*.mjs
+        kind: tooling
+      - path: scripts/study-method-*.test.cjs
+        kind: validation
+    requiredDocs:
+      - path: docs/agents/lca-study-method-contract.md
+        mode: review_or_update
+    reason: Method assessment/evidence and mandatory reports have distinct owner schemas, current authorization, hashes, qualification states and rendering/export identities.
   - id: edge-functions-study-advanced
     scope: repo
     repo: edge-functions

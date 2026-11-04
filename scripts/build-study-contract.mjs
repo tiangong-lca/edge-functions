@@ -28,7 +28,14 @@ export function declaration(schema, document = schema, depth = 0) {
   if (schema.enum) return schema.enum.map((value) => JSON.stringify(value)).join(' | ');
   if (schema.anyOf || schema.oneOf)
     return (schema.anyOf ?? schema.oneOf).map((value) => `(${next(value)})`).join(' | ');
-  if (schema.allOf) return schema.allOf.map((value) => `(${next(value)})`).join(' & ');
+  if (schema.allOf) {
+    // JSON Schema siblings are conjunctive. In particular, a string with an
+    // allOf nonblank assertion must retain its string type in declarations.
+    const base = { ...schema };
+    delete base.allOf;
+    const parts = [next(base), ...schema.allOf.map(next)].filter((part) => part !== 'unknown');
+    return parts.length ? parts.map((part) => `(${part})`).join(' & ') : 'unknown';
+  }
   if (Array.isArray(schema.type))
     return schema.type.map((type) => next({ ...schema, type })).join(' | ');
   switch (schema.type) {
@@ -63,7 +70,7 @@ export async function buildStudyContract(
   outputDirectory,
   { allowDirty = false, apiVersion = 'v2' } = {},
 ) {
-  if (!['v2', 'v3', 'v4', 'v5'].includes(apiVersion)) throw new Error('study_api_version');
+  if (!['v2', 'v3', 'v4', 'v5', 'v6'].includes(apiVersion)) throw new Error('study_api_version');
   const output = path.resolve(outputDirectory);
   if (output === root || !path.isAbsolute(outputDirectory))
     throw new Error('study_output_absolute_directory_required');
@@ -78,9 +85,15 @@ export async function buildStudyContract(
   const dirty = git('status', '--porcelain', '--untracked-files=normal') !== '';
   if (dirty && !allowDirty) throw new Error('study_release_requires_clean_source');
   const sourceCommit = git('rev-parse', 'HEAD');
-  const rendererConsumer = apiVersion === 'v4' || apiVersion === 'v5';
-  const rendererRoot = `supabase/functions/_shared/study/vendor/${apiVersion === 'v5' ? 'renderer-v2' : 'renderer'}`;
-  const schemaEntry = { v2: 'requests', v3: 'report', v4: 'review', v5: 'requests' }[apiVersion];
+  const rendererConsumer = apiVersion === 'v4' || apiVersion === 'v5' || apiVersion === 'v6';
+  const rendererRoot = `supabase/functions/_shared/study/vendor/${apiVersion === 'v6' ? 'renderer-v3' : apiVersion === 'v5' ? 'renderer-v2' : 'renderer'}`;
+  const schemaEntry = {
+    v2: 'requests',
+    v3: 'report',
+    v4: 'review',
+    v5: 'requests',
+    v6: 'requests',
+  }[apiVersion];
   const options = {
     absWorkingDir: root,
     bundle: true,
@@ -100,7 +113,7 @@ export async function buildStudyContract(
   const schemaResult = await build({
     ...options,
     stdin: {
-      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/${apiVersion}/${schemaEntry}.ts'; import { responseSchema } from './contracts/lca-study/${apiVersion}/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' }); ${apiVersion !== 'v2' ? `import {exportManifestSchema,exportReceiptSchema,exportTrustAnchorSchema} from './contracts/lca-study/${apiVersion}/export.ts'; export const manifest=z.toJSONSchema(exportManifestSchema); export const receipt=z.toJSONSchema(exportReceiptSchema); export const anchor=z.toJSONSchema(exportTrustAnchorSchema); ${apiVersion === 'v4' ? "import {exportManifestSchema as historicalManifest} from './contracts/lca-study/v3/export.ts'; export const historical=z.toJSONSchema(historicalManifest);" : apiVersion === 'v5' ? "import {exportManifestSchema as v1Manifest} from './contracts/lca-study/v3/export.ts'; import {exportManifestSchema as v2Manifest} from './contracts/lca-study/v4/export.ts'; export const historical=z.toJSONSchema(z.union([v1Manifest,v2Manifest]));" : ''}` : ''}`,
+      contents: `import { z } from 'zod'; import { requestSchema } from './contracts/lca-study/${apiVersion}/${schemaEntry}.ts'; import { responseSchema } from './contracts/lca-study/${apiVersion}/responses.ts'; export const request = z.toJSONSchema(requestSchema, { target: 'draft-7' }); export const response = z.toJSONSchema(responseSchema, { target: 'draft-7' }); ${apiVersion === 'v6' ? "import {methodFactsSchema,methodEvidenceSchema} from './contracts/lca-study/v6/schemas.ts'; import {methodReportContentSchema} from './contracts/lca-study/v6/report_content.ts'; export const methodFacts=z.toJSONSchema(methodFactsSchema,{target:'draft-7'}); export const methodEvidence=z.toJSONSchema(methodEvidenceSchema,{target:'draft-7'}); export const methodReportContent=z.toJSONSchema(methodReportContentSchema,{target:'draft-7'});" : ''} ${apiVersion !== 'v2' ? `import {exportManifestSchema,exportReceiptSchema,exportTrustAnchorSchema} from './contracts/lca-study/${apiVersion}/export.ts'; export const manifest=z.toJSONSchema(exportManifestSchema); export const receipt=z.toJSONSchema(exportReceiptSchema); export const anchor=z.toJSONSchema(exportTrustAnchorSchema); ${apiVersion === 'v4' ? "import {exportManifestSchema as historicalManifest} from './contracts/lca-study/v3/export.ts'; export const historical=z.toJSONSchema(historicalManifest);" : apiVersion === 'v5' ? "import {exportManifestSchema as v1Manifest} from './contracts/lca-study/v3/export.ts'; import {exportManifestSchema as v2Manifest} from './contracts/lca-study/v4/export.ts'; export const historical=z.toJSONSchema(z.union([v1Manifest,v2Manifest]));" : apiVersion === 'v6' ? "import {exportManifestSchema as v1Manifest} from './contracts/lca-study/v3/export.ts'; import {exportManifestSchema as v2Manifest} from './contracts/lca-study/v4/export.ts'; import {exportManifestSchema as v3Manifest} from './contracts/lca-study/v5/export.ts'; export const historical=z.toJSONSchema(z.union([v1Manifest,v2Manifest,v3Manifest]));" : ''}` : ''}`,
       resolveDir: root,
       sourcefile: 'study-schema-build.ts',
       loader: 'ts',
@@ -117,6 +130,11 @@ export async function buildStudyContract(
     declarations += `export type ExportManifest = ${declaration(schema.manifest)};\nexport type ExportReceipt = ${declaration(schema.receipt)};\nexport type ExportTrustAnchor = ${declaration(schema.anchor)};\n${apiVersion === 'v3' || apiVersion === 'v5' ? 'export declare function analysisConfigHash(input: unknown): Promise<string>;\n' : ''}export declare function canonicalReceiptBytes(input:unknown):Uint8Array;\nexport declare function validateExportViewBindings(view:unknown,manifest:ExportManifest):void;\nexport declare function parseExportBundle(bytes:Uint8Array):{manifestBytes:Uint8Array;receipt:ExportReceipt;files:Array<{path:'report.html'|'projection.json';bytes:Uint8Array}>};\nexport declare function verifyExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest>;\n`;
   if (rendererConsumer)
     declarations += `export type HistoricalExportManifest = ${declaration(schema.historical)};\nexport declare function verifyVersionedExport(manifestBytes: Uint8Array, receipt: unknown, files: ReadonlyArray<{path:'report.html'|'projection.json'; bytes:Uint8Array}>, independentlyTrustedAnchors: ReadonlyArray<ExportTrustAnchor>, expected:{issuerId:string;exportId:string;studyId:string;reportRevisionId:string;reportContentHash:string}): Promise<ExportManifest | HistoricalExportManifest>;\n`;
+  if (apiVersion === 'v6') {
+    declarations += `export type MethodFacts = ${declaration(schema.methodFacts)};\nexport declare function parseMethodFactsForAssessment(bytes:Uint8Array,assessmentRecord:unknown):Promise<MethodFacts>;\nexport type MethodEvidence = ${declaration(schema.methodEvidence)};\nexport type MethodReportContent = ${declaration(schema.methodReportContent)};\nexport declare function parseMethodEvidenceForRecord(bytes:Uint8Array,evidenceRecord:unknown):Promise<MethodEvidence>;\nexport declare function parseMethodReportContentForRevision(bytes:Uint8Array,reportRevision:unknown):Promise<MethodReportContent>;\n`;
+    declarations +=
+      'export declare function methodConfigHash(input:unknown):Promise<string>;\nexport declare function methodEvidenceHash(input:unknown):Promise<string>;\nexport declare function canonicalBytes(input:unknown):Uint8Array;\nexport declare function validateResponseContentForRequest(request:StudyApiRequest,response:StudyApiResponse):Promise<void>;\n';
+  }
   const metadata = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
   const importMap = JSON.parse(
     await readFile(path.join(root, 'supabase/functions/deno.json'), 'utf8'),
@@ -149,16 +167,74 @@ export async function buildStudyContract(
             'utf8',
           ),
         )
-      : null;
+      : apiVersion === 'v6'
+        ? JSON.parse(
+            await readFile(
+              path.join(root, 'contracts/lca-study/worker/method/manifest.json'),
+              'utf8',
+            ),
+          )
+        : null;
   const inputs = [];
+  // New method consumers retain the actual independent renderer package and
+  // public module metadata as a bounded, fully byte-verified source input.
+  const methodRendererInputs = [];
+  if (apiVersion === 'v6') {
+    const bytes = await readFile(path.join(root, rendererRoot, 'manifest.json'));
+    const manifest = JSON.parse(bytes.toString('utf8'));
+    const consumption = JSON.parse(
+      await readFile(path.join(root, rendererRoot, 'consumption.json'), 'utf8'),
+    );
+    if (
+      digest(bytes) !== consumption.manifestSha256 ||
+      manifest.sourceCommit !== consumption.sourceCommit ||
+      manifest.sourceDirty !== false ||
+      consumption.sourceDirty !== false ||
+      manifest.rendererVersion !== '3.0.0' ||
+      manifest.viewModelVersion !== 'lca.study-report-view.v3' ||
+      !Array.isArray(manifest.files) ||
+      manifest.files.length > 64
+    )
+      throw new Error('study_method_renderer_identity');
+    const names = new Set();
+    let total = 0;
+    for (const file of manifest.files) {
+      if (
+        !/^[A-Za-z][A-Za-z0-9_.-]*$/u.test(file.path) ||
+        names.has(file.path) ||
+        file.byteSize > 4 * 1024 * 1024
+      )
+        throw new Error('study_method_renderer_file');
+      names.add(file.path);
+      const content = await readFile(path.join(root, rendererRoot, file.path));
+      total += content.length;
+      if (
+        content.length !== file.byteSize ||
+        digest(content) !== file.sha256 ||
+        total > 4 * 1024 * 1024
+      )
+        throw new Error('study_method_renderer_integrity');
+      methodRendererInputs.push(`${rendererRoot}/${file.path}`);
+    }
+    const metadataBytes = await readFile(path.join(root, workerInputs.moduleMetadata.path));
+    if (digest(metadataBytes) !== workerInputs.moduleMetadata.sha256)
+      throw new Error('study_method_module_metadata_drift');
+  }
   const sourcePaths = new Set([
     ...Object.keys(result.metafile.inputs).filter((name) => !name.startsWith('node_modules/')),
+    ...methodRendererInputs,
     'scripts/build-study-contract.mjs',
     'package.json',
     'pnpm-lock.yaml',
     'supabase/functions/deno.json',
     ...(workerInputs
-      ? ['contracts/lca-study/worker/advanced-manifest.json', ...Object.keys(workerInputs.schemas)]
+      ? [
+          apiVersion === 'v6'
+            ? 'contracts/lca-study/worker/method/manifest.json'
+            : 'contracts/lca-study/worker/advanced-manifest.json',
+          ...Object.keys(workerInputs.schemas),
+          ...(apiVersion === 'v6' ? [workerInputs.moduleMetadata.path] : []),
+        ]
       : []),
     ...(rendererConsumer
       ? [`${rendererRoot}/manifest.json`, `${rendererRoot}/consumption.json`]
@@ -209,7 +285,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
     else if (args[i] === '--allow-dirty' && !allowDirty) allowDirty = true;
     else
       throw new Error(
-        'usage: build-study-contract --out <new-absolute-directory> [--api-version v2|v3|v4|v5] [--allow-dirty]',
+        'usage: build-study-contract --out <new-absolute-directory> [--api-version v2|v3|v4|v5|v6] [--allow-dirty]',
       );
   }
   if (!output) throw new Error('study_output_required');

@@ -1,0 +1,487 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-method-job-context.v1",
+  "$comment": "Worker-owned closed method interface. Schema checks never establish professional approval, current actor/source/lease authority or byte identity.",
+  "$ref": "#/$defs/jobContext",
+  "$defs": {
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "modelInput",
+            "runResult",
+            "modelSource",
+            "methodEvidence"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "assessmentRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessmentId",
+        "studyId",
+        "profileId",
+        "config",
+        "configHash",
+        "execution"
+      ],
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "profileId": {
+          "const": "lca.study-method-pef-2021-ef31-cement-intermediate.v1"
+        },
+        "config": {
+          "$ref": "#/$defs/config"
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "execution": {
+          "$ref": "#/$defs/execution"
+        }
+      }
+    },
+    "categoryRuleDeclaration": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "noneEstablished"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "referenceId",
+            "version",
+            "evidenceId"
+          ],
+          "properties": {
+            "kind": {
+              "const": "commissionDeveloped"
+            },
+            "referenceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "evidenceId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            }
+          }
+        }
+      ]
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "baselineRunId",
+        "moduleRef",
+        "declarations",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-config.v1"
+        },
+        "baselineRunId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "moduleRef": {
+          "$ref": "#/$defs/moduleRef"
+        },
+        "declarations": {
+          "$ref": "#/$defs/declarations"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceReference"
+          },
+          "maxItems": 128
+        }
+      }
+    },
+    "declarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productRole",
+        "studyPhase",
+        "referenceUnitBasis",
+        "categoryRule"
+      ],
+      "properties": {
+        "productRole": {
+          "$ref": "#/$defs/productRole"
+        },
+        "studyPhase": {
+          "$ref": "#/$defs/studyPhase"
+        },
+        "referenceUnitBasis": {
+          "$ref": "#/$defs/unitBasis"
+        },
+        "categoryRule": {
+          "$ref": "#/$defs/categoryRuleDeclaration"
+        }
+      }
+    },
+    "declaredEvidenceKind": {
+      "enum": [
+        "sourceRecord",
+        "applicabilityRecord",
+        "professionalRecord"
+      ]
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "declaredKind",
+        "artifactRef"
+      ],
+      "properties": {
+        "requirementId": {
+          "type": "string",
+          "pattern": "^PEF-(0[1-9]|1[0-9]|20)$"
+        },
+        "declaredKind": {
+          "$ref": "#/$defs/declaredEvidenceKind"
+        },
+        "artifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jobId",
+        "status"
+      ],
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 4096
+        }
+      }
+    },
+    "jobContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "input",
+        "budget"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-job-context.v1"
+        },
+        "input": {
+          "$ref": "#/$defs/serviceInput"
+        },
+        "budget": {
+          "$ref": "#/$defs/methodBudget"
+        }
+      }
+    },
+    "methodBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxSelectedFactorRecords",
+        "maxFactsBytes"
+      ],
+      "properties": {
+        "maxSelectedFactorRecords": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "maxFactsBytes": {
+          "const": 4194304
+        }
+      }
+    },
+    "moduleRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "sourceCommit",
+        "moduleId",
+        "moduleVersion",
+        "artifactSha256",
+        "reviewBasisSha256",
+        "sourceBindingsSha256"
+      ],
+      "properties": {
+        "repository": {
+          "const": "tiangong-lca/pcr"
+        },
+        "sourceCommit": {
+          "const": "51c0842c67b14ba886e2edee2846e26eefac030f"
+        },
+        "moduleId": {
+          "const": "method.pef-2021-ef31"
+        },
+        "moduleVersion": {
+          "const": "0.1.0"
+        },
+        "artifactSha256": {
+          "const": "b19ba5754b0bc20c44c8c65966bafafd5984cd74636f2c805c0fa4373f5554ad"
+        },
+        "reviewBasisSha256": {
+          "const": "989391423c7f31bdf77e18ea4438fab1a27ff6708c0f44ecad8ab8813763a165"
+        },
+        "sourceBindingsSha256": {
+          "const": "3fd9b1dc68228db3e146b6d23daac853b27b9f504f9445a0cc5a971d53257ce2"
+        }
+      }
+    },
+    "privateArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "studyId",
+        "artifactRef",
+        "storageBucket",
+        "storageObjectPath"
+      ],
+      "properties": {
+        "studyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+        },
+        "artifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "storageBucket": {
+          "const": "study-artifacts"
+        },
+        "storageObjectPath": {
+          "type": "string",
+          "pattern": "^study/[a-f0-9-]{36}/[a-f0-9-]{36}/[a-zA-Z0-9_.-]+\\.json$",
+          "maxLength": 400
+        }
+      }
+    },
+    "productRole": {
+      "const": "finishedCementIntermediate"
+    },
+    "runInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run",
+        "revision",
+        "scenario",
+        "preparation",
+        "preparedArtifact",
+        "resultArtifact"
+      ],
+      "properties": {
+        "run": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "revision": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "scenario": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "preparation": {
+          "type": "object",
+          "$comment": "Retained frozen P1 owner projection. Exact required bindings are verified against original prepared/result/source bytes; this schema does not grant issuance or authority."
+        },
+        "preparedArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        },
+        "resultArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        }
+      }
+    },
+    "serviceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "assessment",
+        "baseline",
+        "sourceSnapshot",
+        "sourceArtifact"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "lca.study-method-assessment-input.v1"
+        },
+        "assessment": {
+          "$ref": "#/$defs/assessmentRecord"
+        },
+        "baseline": {
+          "$ref": "#/$defs/runInput"
+        },
+        "sourceSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "snapshotId",
+            "studyId",
+            "originRef",
+            "sourceArtifactRef",
+            "digestScope",
+            "licenseRef",
+            "issuerId",
+            "observedAt"
+          ],
+          "properties": {
+            "snapshotId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "studyId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$"
+            },
+            "originRef": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "datasetType",
+                "id",
+                "version"
+              ],
+              "properties": {
+                "type": {
+                  "const": "datasetRevision"
+                },
+                "datasetType": {
+                  "const": "lifecyclemodel"
+                },
+                "id": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "version": {
+                  "type": "string",
+                  "maxLength": 4096
+                }
+              }
+            },
+            "sourceArtifactRef": {
+              "$ref": "#/$defs/artifactRef"
+            },
+            "digestScope": {
+              "const": "artifact_bytes_sha256"
+            },
+            "licenseRef": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "issuerId": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "observedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "sourceArtifact": {
+          "$ref": "#/$defs/privateArtifact"
+        }
+      }
+    },
+    "studyPhase": {
+      "enum": [
+        "screening",
+        "finalStudy"
+      ]
+    },
+    "unitBasis": {
+      "const": "declaredMass"
+    }
+  }
+}

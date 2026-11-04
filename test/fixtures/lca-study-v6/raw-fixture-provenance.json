@@ -1,0 +1,20 @@
+{
+  "classification": "Exact outputs of unchanged Worker13a synthetic pipeline factory; additive fixture export only, not actual Study authority or scientific qualification.",
+  "files": {
+    "prepared.synthetic.json": {
+      "sha256": "d652f006e88c8bea3f8fc39e7623b4e8209f9896333907a425272003b5d420e7",
+      "byteSize": 3751
+    },
+    "result.synthetic.json": {
+      "sha256": "ffaf1b5f17e0d0d42db1223c9b0ddff857a8e53d516b959031398b89ae7e1df4",
+      "byteSize": 693
+    },
+    "source.synthetic.json": {
+      "sha256": "d91b5c2e9c4545dfcb8949ce345f1f9d284dd8bd5d02a43f9039e16f9fa702e8",
+      "byteSize": 4647
+    }
+  },
+  "ownerReceipt": "/tmp/lca-study-p4-2181-method-evidence/worker366/raw-fixture-export.json",
+  "runtimeSchemaSourceCommit": "13a749e619d7ef348e9298bb049e8c01c60e9086",
+  "fixtureExportSourceCommit": "6d33613e2ed969e76a9cb42ab7bf6e9a70b9e352"
+}
