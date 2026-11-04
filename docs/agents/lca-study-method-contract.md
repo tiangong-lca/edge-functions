@@ -19,8 +19,8 @@ checkPaths:
   - scripts/build-study-method-*.mjs
   - scripts/study-method-*.test.cjs
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 1fe8008b9aee5082647b4278770034d9684b9c90
-lastReviewedNote: 'Edge #557: reviewed source/primary eligibility and exact published module roster/parameters in the pure summary/View3 component. Owner JSON bytes remain unchanged; comparison adds no characterization/NW algorithm, permission or scientific approval. V2-V5 and retained renderer bytes remain exact; public V6 facade and actual qualification are still pending.'
+lastReviewedCommit: f1a36ceee7d6efb9499e0edecfdd5278c27ab8e2
+lastReviewedNote: 'Edge #557: reviewed early strict portable V6 request/response, exact export CAS binding, generated schemas/types, immutable Worker/component and renderer3 input hashes, actor/service DTO seams and bounded producer/view tests. The source-bound consumer interface does not complete the unfinished handler/executors, actual installed runtime, hosted admission or scientific qualification; old protocols/renderers remain exact.'
 related:
   - lca-study-runtime-contract.md
   - lca-study-reporting-contract.md
@@ -77,6 +77,8 @@ Missing or incompatible categories remain explicit null/unknown with exact produ
 Complete view projection is bounded to2,000,000 UTF-8 bytes and report/artifact/export to4MiB. A legal source artifact that cannot be represented faithfully within the complete report bounds fails explicitly; nothing is silently truncated, dropped or reclassified as reportable. Source rights and current authority are checked separately from frozen historical evidence.
 
 # Export/review qualification
+
+The early portable6 consumer is built with `pnpm build:study-contract --api-version v6 --out <new-absolute-directory>` from a clean committed source milestone. It contains dependency-contained `index.mjs`, generated self-contained `index.d.ts`, exact request/response JSON schemas, licenses and a manifest binding every output and its source inputs. The builder verifies the unchanged Worker schema pins, public module metadata and all31 files of the adopted renderer3 candidate. Structural schemas do not encode every relationship: consumers must also use `parseRequest`, `parseResponse` and `validateResponseForRequest`, including exact export finalization/review-state CAS binding. Deterministic outside-source Node/Deno, declaration and signed manifest/bundle1–4 tests are required. This artifact freezes a consumer interface; unfinished handler/executor work, current Database admission, installed consumers and actual runtime qualification remain separate and must not be advertised from its existence.
 
 New manifest4 and bundle4 bind actual renderer3/view3, exact HTML/projection files, report/facts/finalization and actor/client/grant/disclosure identities. Receipt.v2 and signature domain `lca.study-export-signature.v1` remain: the distinct canonical manifest schema/version is signed. New versioned verification retains exact old manifest/bundle validators, independently trusted keys and renderer pins; embedded flags cannot grant trust. Existing downloaded bytes cannot be recalled through later revocation.
 

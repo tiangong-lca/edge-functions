@@ -18,8 +18,8 @@ checkPaths:
   - test/study_runtime_test.ts
   - docs/agents/lca-study-runtime-contract.md
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 1fe8008b9aee5082647b4278770034d9684b9c90
-lastReviewedNote: 'Edge #557: reviewed source/primary eligibility and exact published module roster/parameters in the pure summary/View3 component. Owner JSON bytes remain unchanged; comparison adds no characterization/NW algorithm, permission or scientific approval. V2-V5 and retained renderer bytes remain exact; public V6 facade and actual qualification are still pending.'
+lastReviewedCommit: f1a36ceee7d6efb9499e0edecfdd5278c27ab8e2
+lastReviewedNote: 'Edge #557: reviewed early strict portable V6 request/response, exact export CAS binding, generated schemas/types, immutable Worker/component and renderer3 input hashes, actor/service DTO seams and bounded producer/view tests. The source-bound consumer interface does not complete the unfinished handler/executors, actual installed runtime, hosted admission or scientific qualification; old protocols/renderers remain exact.'
 related:
   - lca-study-api-contract.md
   - repo-validation.md

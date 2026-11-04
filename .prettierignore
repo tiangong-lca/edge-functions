@@ -32,3 +32,11 @@ test/fixtures/lca-study-v6/worker-service-seams.json
 test/fixtures/lca-study-v6/arithmetic.native.json
 # Reproducibly extracted public module metadata; exact file pin applies.
 contracts/lca-study/worker/method/module-metadata.json
+
+# Independently produced method view3/renderer3 candidate bytes.
+supabase/functions/_shared/study/vendor/renderer-v3/
+test/fixtures/lca-study-v6/prepared.synthetic.json
+test/fixtures/lca-study-v6/result.synthetic.json
+test/fixtures/lca-study-v6/source.synthetic.json
+# Captured actual Database candidate DTO bytes.
+test/fixtures/lca-study-v6/database-*.json

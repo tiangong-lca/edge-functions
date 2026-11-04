@@ -1,0 +1,97 @@
+[
+  {
+    "name": "cmd_study_method_review_v1",
+    "identity": "api.cmd_study_method_review_v1(jsonb)",
+    "arguments": "p_request jsonb"
+  },
+  {
+    "name": "cmd_study_method_v1",
+    "identity": "api.cmd_study_method_v1(jsonb)",
+    "arguments": "p_request jsonb"
+  },
+  {
+    "name": "qry_study_method_review_v1",
+    "identity": "api.qry_study_method_review_v1(jsonb)",
+    "arguments": "p_request jsonb"
+  },
+  {
+    "name": "qry_study_method_v1",
+    "identity": "api.qry_study_method_v1(jsonb)",
+    "arguments": "p_request jsonb"
+  },
+  {
+    "name": "svc_study_method_assessment_complete_v1",
+    "identity": "api.svc_study_method_assessment_complete_v1(uuid,uuid,uuid,jsonb,text)",
+    "arguments": "p_assessment_id uuid, p_job_id uuid, p_lease_token uuid, p_completion jsonb, p_idempotency_key text"
+  },
+  {
+    "name": "svc_study_method_assessment_fail_v1",
+    "identity": "api.svc_study_method_assessment_fail_v1(text,uuid,uuid,uuid,text,text)",
+    "arguments": "p_resource_type text, p_resource_id uuid, p_job_id uuid, p_lease_token uuid, p_error_code text, p_idempotency_key text"
+  },
+  {
+    "name": "svc_study_method_assessment_read_input_v1",
+    "identity": "api.svc_study_method_assessment_read_input_v1(uuid,uuid,uuid)",
+    "arguments": "p_assessment_id uuid, p_job_id uuid, p_lease_token uuid"
+  },
+  {
+    "name": "svc_study_method_assessment_reconcile_v1",
+    "identity": "api.svc_study_method_assessment_reconcile_v1(text,uuid,uuid,uuid,text,uuid)",
+    "arguments": "p_resource_type text, p_resource_id uuid, p_job_id uuid, p_lease_token uuid, p_idempotency_key text, p_artifact_id uuid DEFAULT NULL::uuid"
+  },
+  {
+    "name": "svc_study_method_configure_v1",
+    "identity": "api.svc_study_method_configure_v1(bigint,jsonb)",
+    "arguments": "p_expected_revision bigint, p_configuration jsonb"
+  },
+  {
+    "name": "svc_study_method_evidence_intent_consume_v1",
+    "identity": "api.svc_study_method_evidence_intent_consume_v1(uuid,jsonb)",
+    "arguments": "p_intent_id uuid, p_completion jsonb"
+  },
+  {
+    "name": "svc_study_method_evidence_intent_reconcile_v1",
+    "identity": "api.svc_study_method_evidence_intent_reconcile_v1(uuid,uuid,text)",
+    "arguments": "p_intent_id uuid, p_artifact_id uuid, p_content_hash text"
+  },
+  {
+    "name": "svc_study_method_evidence_intent_resolve_v1",
+    "identity": "api.svc_study_method_evidence_intent_resolve_v1(uuid)",
+    "arguments": "p_intent_id uuid"
+  },
+  {
+    "name": "svc_study_report_method_intent_consume_v1",
+    "identity": "api.svc_study_report_method_intent_consume_v1(uuid,jsonb)",
+    "arguments": "p_intent_id uuid, p_completion jsonb"
+  },
+  {
+    "name": "svc_study_report_method_intent_reconcile_v1",
+    "identity": "api.svc_study_report_method_intent_reconcile_v1(uuid,uuid,text)",
+    "arguments": "p_intent_id uuid, p_artifact_id uuid, p_content_hash text"
+  },
+  {
+    "name": "svc_study_report_method_intent_resolve_v1",
+    "identity": "api.svc_study_report_method_intent_resolve_v1(uuid)",
+    "arguments": "p_intent_id uuid"
+  },
+  {
+    "name": "svc_study_review_method_configure_v1",
+    "identity": "api.svc_study_review_method_configure_v1(bigint,jsonb)",
+    "arguments": "p_expected_revision bigint, p_configuration jsonb"
+  },
+  {
+    "name": "svc_study_review_method_intent_consume_v1",
+    "identity": "api.svc_study_review_method_intent_consume_v1(uuid,jsonb)",
+    "arguments": "p_intent_id uuid, p_completion jsonb"
+  },
+  {
+    "name": "svc_study_review_method_intent_reconcile_v1",
+    "identity": "api.svc_study_review_method_intent_reconcile_v1(uuid,uuid,text)",
+    "arguments": "p_intent_id uuid, p_artifact_id uuid, p_content_hash text"
+  },
+  {
+    "name": "svc_study_review_method_intent_resolve_v1",
+    "identity": "api.svc_study_review_method_intent_resolve_v1(uuid)",
+    "arguments": "p_intent_id uuid"
+  }
+]
