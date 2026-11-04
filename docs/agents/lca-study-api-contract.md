@@ -18,9 +18,9 @@ checkPaths:
   - test/fixtures/lca-study-api/v1/**
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: a5e1103ba5158db6dfe08af9cae73eec9e5f6b21
-lastReviewedNote: 'Edge #544: reviewed shared portable V2 validation, build identity and source-only V3 report/signature contracts. Actual P2 producer/consumer qualification and hosted admission remain separate.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md
@@ -29,6 +29,8 @@ related:
 ---
 
 # LCA Study API v1
+
+P3 adds the separately negotiated [V4 review/finalization/share protocol](lca-study-reporting-contract.md#v4-review-finalization-and-named-shares); V1 remains offline and V2/V3 are unchanged.
 
 Runtime W04 uses the explicit [Study v2 runtime contract](lca-study-runtime-contract.md). This P0 v1 contract and its fixtures remain offline and unchanged.
 

@@ -1,8 +1,8 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-11-03'
-lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
-lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
+lastReviewedAt: '2026-11-04'
+lastReviewedCommit: '2884217cafc186d03f5c21709328067e4cae4efa'
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -127,6 +127,8 @@ routing:
     lca-study-runtime:
       paths:
         - contracts/lca-study/v2/**
+        - contracts/lca-study/v3/**
+        - contracts/lca-study/v4/**
         - supabase/functions/app_lca_study/**
         - supabase/functions/_shared/study/**
         - test/study_runtime_test.ts
@@ -375,6 +377,14 @@ rules:
         kind: reporting-contract-doc
       - path: contracts/lca-study/v3/**
         kind: reporting-contract
+      - path: contracts/lca-study/v4/**
+        kind: review-contract
+      - path: supabase/functions/_shared/study/review_*.ts
+        kind: review-runtime
+      - path: test/study_review_contract_test.ts
+        kind: review-proof
+      - path: test/study_review_runtime_test.ts
+        kind: review-proof
       - path: contracts/lca-study/v2/codec.ts
         kind: portable-codec
       - path: supabase/functions/_shared/study/reporting_*.ts

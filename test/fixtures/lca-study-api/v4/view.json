@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "lca.study-report-view.v1",
+  "rendererVersion": "1.0.0",
+  "report": {
+    "studyId": "p3-study",
+    "reportRevisionId": "p3-report",
+    "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "title": "Internal review snapshot",
+    "generatedAt": "2026-11-03T00:00:00Z"
+  },
+  "definition": {
+    "goal": "A bounded review protocol fixture.",
+    "functionalUnit": {
+      "amount": "1",
+      "unit": "kg",
+      "referenceFlowId": "flow-1"
+    },
+    "boundary": "Declared boundary",
+    "methodRefs": [
+      {
+        "id": "method-1",
+        "version": "01.00.000",
+        "name": "Method",
+        "unit": "kg CO2 eq"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "runId": "run-1",
+      "scenarioRevisionId": "scenario-1",
+      "label": "Baseline",
+      "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "profileId": "profile-1",
+      "calculationContractRef": {
+        "kind": "calculation_contract",
+        "schema": "lca.calculation-contract.v1",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    }
+  ],
+  "facts": [
+    {
+      "factId": "fact-1",
+      "label": "Impact",
+      "runIds": ["run-1"],
+      "methodRef": {
+        "id": "method-1",
+        "version": "01.00.000"
+      },
+      "canonicalValue": "1.796202",
+      "unit": "kg CO2 eq",
+      "coverage": "complete",
+      "provenance": {
+        "type": "analysisFacts",
+        "id": "analysis-1",
+        "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      }
+    }
+  ],
+  "sections": [
+    {
+      "sectionId": "section-1",
+      "title": "Interpretation",
+      "paragraphs": ["An actor reviewed this frozen report. No independent review is claimed."],
+      "factIds": ["fact-1"],
+      "citationIds": []
+    }
+  ],
+  "tables": [],
+  "charts": [],
+  "citations": [],
+  "assumptions": [],
+  "cutoffs": [],
+  "limitations": ["Source, scientific and publication permissions are separate."],
+  "snapshot": {
+    "validity": "current",
+    "checkedAt": "2026-11-03T00:00:00Z",
+    "review": "reviewed",
+    "reviewIds": ["p3-review"],
+    "finalization": "finalized"
+  }
+}

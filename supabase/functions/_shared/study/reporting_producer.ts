@@ -56,7 +56,11 @@ function ordered(value: unknown): unknown {
 export const sameJson = (a: unknown, b: unknown) =>
   JSON.stringify(ordered(a)) === JSON.stringify(ordered(b));
 
-export function assertReportContext(context: ReportContext, request: unknown): void {
+export function assertReportContext(
+  context: ReportContext,
+  request: unknown,
+  options: { allowReadProjection?: boolean } = {},
+): void {
   const semanticRequest = (value: unknown) => {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
     const { requestId: _transport, ...identity } = value as Record<string, unknown>;
@@ -117,12 +121,13 @@ export function assertReportContext(context: ReportContext, request: unknown): v
         r.status !== 'frozen' ||
         r.reportRevisionId !== context.request.reportRevisionId ||
         r.contentHash !== context.request.expectedContentHash ||
-        !context.exportProfile ||
-        !context.disclosureContextHash ||
-        !context.exportId ||
-        !context.projectionArtifactId ||
-        !context.resourcesArtifactId ||
-        !context.bundleArtifactId
+        (!options.allowReadProjection &&
+          (!context.exportProfile ||
+            !context.disclosureContextHash ||
+            !context.exportId ||
+            !context.projectionArtifactId ||
+            !context.resourcesArtifactId ||
+            !context.bundleArtifactId))
       )
         fail('report.export_context');
     }
@@ -175,9 +180,10 @@ export function assertReportContext(context: ReportContext, request: unknown): v
 export async function validateReportInputs(
   contextInput: unknown,
   bytes: Map<string, Uint8Array>,
+  options: { allowReadProjection?: boolean } = {},
 ): Promise<ReportProducerInput> {
   const context = reportContextSchema.parse(contextInput);
-  assertReportContext(context, context.request);
+  assertReportContext(context, context.request, options);
   const prepared = new Map<string, Prepared>(),
     analyses = new Map<string, AnalysisFacts>();
   const read = (ref: { id: string }) => {

@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: '74d002e24df6e1e7a47d17eb7888ab982f711702'
-lastReviewedNote: 'Edge #544: reviewed P2 report producer, exact clean renderer and current #545 SDK 0.6.0 integration; actual installed E2E and hosted admission remain separately evidenced.'
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
+lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -50,7 +50,7 @@ related:
 
 ## Study runtime entrypoint
 
-W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); review/share remains unavailable. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
+W04 introduces the separately versioned `lca.study-api.v2` authenticated `app_lca_study` adapter. P0 v1 remains offline. The [runtime contract](lca-study-runtime-contract.md) owns deployment capability/profile gates, resumable source acquisition, actor/service RPC separation, team resource grants, freeze validation and bounded authorized artifact bytes. P2 analysis/report/export producers are separately gated through the [reporting contract](lca-study-reporting-contract.md); V4 review/finalization/named-share adapters have a separate default-off gate and require Database and installed-consumer qualification. Default runtime configuration admits only capability read; source code and synthetic tests do not enable a hosted endpoint.
 
 The W06 adapter uses typed Study `task.read`/`task.cancel` resource references rather than generic requester-only job routes. Artifact RPCs expose opaque short-lived intents to actors; only service resolution yields a locator, and the shared bounded reader resolves current authority again after byte/hash verification. The opt-in owned runtime qualifier composes actual handlers with the separately owned Database/Worker processes and keeps hosted admission separate; details stay in the runtime contract.
 
