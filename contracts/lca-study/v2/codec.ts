@@ -142,6 +142,14 @@ export function validateResponseForRequest(
   }
   const d = value.data;
   if (
+    request.operation === 'study.archive' &&
+    (d.type !== 'study' ||
+      d.value.status !== 'archived' ||
+      !Number.isSafeInteger(request.target.expectedRevision + 1) ||
+      d.value.revision !== request.target.expectedRevision + 1)
+  )
+    throw new StudyCodecError('REFERENCE_MISMATCH', 'response.archived_study');
+  if (
     (request.operation === 'revision.create' || request.operation === 'revision.save') &&
     (d.type !== 'studyRevision' ||
       JSON.stringify(d.value.definition) !== JSON.stringify(request.definition) ||

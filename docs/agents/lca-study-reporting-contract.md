@@ -24,8 +24,8 @@ checkPaths:
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md
@@ -108,3 +108,5 @@ Online pre-finalization report previews have no export identity. Platform owns a
 Withdrawal requests and withdrawal-delegation issue requests require a nonnull `predecessorReviewId`. This structural rule rejects a first withdrawal before Edge dispatch (`INVALID_REQUEST`). Database still owns exact current-head validation and returns `REVISION_CONFLICT` for missing/stale heads through its direct RPC surface. Initial approve/reject decisions retain nullable predecessor semantics; replay, actor and source authorization rules are unchanged.
 
 `resource.actions.corePermissions` is a strict `{read:boolean,write:boolean}` projection for a Study target only; both values are false for report, export or share targets. Database obtains each value from its existing V2 `private.study_authorize` semantics, with archived Studies never reporting write permission. Reviewer and named-share authority cannot become core Study access through this projection. The UI intersects these coarse flags with current V2 capabilities and the fetched target state. They do not authorize any exact source, mutation target, cancellation or I/O; normal commands recheck all current domain/source permissions. Edge forwards the server result without reconstructing role policy, and V2 wire/roles remain unchanged.
+
+V5 adds separately versioned advanced facts/content and view2/renderer2.0/export3 in [the advanced contract](lca-study-advanced-contract.md). The retained V3/V4 producer/export semantics remain strict; older consumers cannot receive incompatible P4 resources.

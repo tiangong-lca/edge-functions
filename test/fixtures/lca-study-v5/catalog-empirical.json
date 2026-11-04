@@ -1,0 +1,328 @@
+[
+  {
+    "factId": "parameter:0:baseline",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "baseline"
+    },
+    "methodRef": null,
+    "canonicalValue": "2",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "parameter:0:low",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "low"
+    },
+    "methodRef": null,
+    "canonicalValue": "1",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "parameter:0:high",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "high"
+    },
+    "methodRef": null,
+    "canonicalValue": "3",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "baseline:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "baselineOutput",
+      "methodIndex": 0
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "5.306122448979592",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:mean:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyStatistic",
+      "methodIndex": 0,
+      "statistic": "mean"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "5.306122448979592",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:sampleStandardDeviation:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyStatistic",
+      "methodIndex": 0,
+      "statistic": "sampleStandardDeviation"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "2.107746038752336",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:meanMcse:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyStatistic",
+      "methodIndex": 0,
+      "statistic": "meanMcse"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "0.526936509688084",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:minimum:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyStatistic",
+      "methodIndex": 0,
+      "statistic": "minimum"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "3.2653061224489797",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:maximum:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyStatistic",
+      "methodIndex": 0,
+      "statistic": "maximum"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "7.346938775510205",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:quantile:0.025:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyQuantile",
+      "methodIndex": 0,
+      "probability": "0.025"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "3.2653061224489797",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:quantile:0.5:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyQuantile",
+      "methodIndex": 0,
+      "probability": "0.5"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "5.306122448979592",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "uncertainty:quantile:0.975:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "uncertaintyQuantile",
+      "methodIndex": 0,
+      "probability": "0.975"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "7.346938775510205",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  }
+]

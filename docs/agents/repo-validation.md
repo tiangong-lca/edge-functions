@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -331,3 +331,5 @@ Run `test/study_review_contract_test.ts` and `test/study_review_runtime_test.ts`
 V4 owner-download corrections require exact export/bundle selection, the real SDK query route and actor/service split, current authorization around I/O and locator-free bounded bytes. Replay fixtures must retain original outcome IDs alongside refreshed review/finalization state and revoked/expired shares or consumed/revoked delegation metadata. Validate personal reviewer-only and team member-role choices from `resource.actions.allowedMemberRoles`; consumers must not infer those choices from role strings.
 
 Core Study permissions in V4 actions require exact strict boolean projection, false values on non-Study targets and unchanged actor/api forwarding. Database actual tests own owner/editor/viewer/reviewer, read-only OAuth, archive and live team/client revocation checks through existing core authorization. Edge adapter tests prove that available V4 actions do not substitute for these flags. The projection does not grant per-source/target access or a cancellation action.
+
+For V5 changes run `test/study_advanced_contract_test.ts`, `test/study_advanced_runtime_test.ts` and `scripts/study-advanced-build.test.cjs`, then retained Study protocol/report/review/signature suites and canonical `pnpm lint`/`pnpm check`. Prove exact native bytes, catalog/claim source bindings, post-I/O revocation, strict old consumers, portable standalone Node/Deno, new renderer2.0 and manifest3 authenticity. Fixture success never establishes actual integrated runtime, supported-host capacity, deployment admission or workspace inclusion.

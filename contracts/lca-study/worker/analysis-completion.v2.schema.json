@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-completion.v2",
+  "type": "object",
+  "properties": {
+    "profileId": {
+      "type": "string",
+      "enum": [
+        "lca.study-sensitivity-oat.v1",
+        "lca.study-uncertainty-bounded.v1"
+      ]
+    },
+    "configHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "factsRef": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "analysisFacts"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "digestScope": {
+          "type": "string",
+          "enum": [
+            "artifact_bytes_sha256"
+          ]
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mediaType": {
+          "type": "string",
+          "enum": [
+            "application/json"
+          ]
+        },
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "lca.study-analysis-facts.v2"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "additionalProperties": false
+    },
+    "storageBucket": {
+      "type": "string",
+      "enum": [
+        "study-artifacts"
+      ]
+    },
+    "storageObjectPath": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "profileId",
+    "configHash",
+    "factsRef",
+    "storageBucket",
+    "storageObjectPath"
+  ],
+  "additionalProperties": false
+}

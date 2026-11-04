@@ -19,8 +19,8 @@ checkPaths:
   - docs/agents/lca-study-api-contract.md
   - .docpact/config.yaml
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - ../../AGENTS.md
   - repo-architecture.md
@@ -160,3 +160,5 @@ The top-level test imports the pure contract modules, so the existing Deno graph
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. P2 producer integration, actual consumer qualification and immutable artifact publication remain in progress; source schemas and crypto tests enable no hosted operation, grant or signing key.
+
+V5 advanced profiles are governed by [the advanced contract](lca-study-advanced-contract.md). Older version literals and historical artifacts are retained; new numerical schemas and report families require explicit negotiation.

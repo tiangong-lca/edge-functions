@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 2884217cafc186d03f5c21709328067e4cae4efa
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: 6684c3fdf542fa624139cc8504b7730a527bd2de
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -423,3 +423,5 @@ Release-owned final Results use separate `_shared/result_query_v2.ts` modes `sou
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.
+
+Study `advanced_*.ts` modules and `contracts/lca-study/v5/` own the separate advanced analysis/catalog/report/review adapter. Worker schema pins are held in `contracts/lca-study/worker/advanced-manifest.json`; the advanced contract owns this family, preserving prior adapters.

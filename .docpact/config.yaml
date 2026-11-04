@@ -1,8 +1,8 @@
 version: 1
 layout: repo
 lastReviewedAt: '2026-11-04'
-lastReviewedCommit: '2884217cafc186d03f5c21709328067e4cae4efa'
-lastReviewedNote: 'Edge #550: reviewed server-derived coarse corePermissions on Study action discovery; existing Database authorization owns read/write and exact source/target checks. V2 roles/wire and historical evidence/export pins remain unchanged.'
+lastReviewedCommit: '6684c3fdf542fa624139cc8504b7730a527bd2de'
+lastReviewedNote: 'Edge #556: reviewed shared V2 archive success binding to exact Study, archived state and safe CAS successor; original receipt replay, wire literals, authorization and historical artifact identities remain unchanged.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.
@@ -129,6 +129,7 @@ routing:
         - contracts/lca-study/v2/**
         - contracts/lca-study/v3/**
         - contracts/lca-study/v4/**
+        - contracts/lca-study/v5/**
         - supabase/functions/app_lca_study/**
         - supabase/functions/_shared/study/**
         - test/study_runtime_test.ts
@@ -361,6 +362,7 @@ docInventory:
     - docs/agents/repo-architecture.md
     - docs/agents/lca-study-api-contract.md
     - docs/agents/lca-study-reporting-contract.md
+    - docs/agents/lca-study-advanced-contract.md
     - .github/PULL_REQUEST_TEMPLATE/feature-to-dev.md
     - .github/PULL_REQUEST_TEMPLATE/promote-dev-to-main.md
 
@@ -369,6 +371,32 @@ repo:
   owner: edge-functions
 
 rules:
+  - id: edge-functions-study-advanced
+    scope: repo
+    repo: edge-functions
+    triggers:
+      - path: contracts/lca-study/v5/**
+        kind: advanced-contract
+      - path: contracts/lca-study/worker/*v2*
+        kind: advanced-worker-contract
+      - path: contracts/lca-study/worker/advanced-manifest.json
+        kind: advanced-source-identity
+      - path: supabase/functions/_shared/study/advanced_*.ts
+        kind: advanced-runtime
+      - path: supabase/functions/_shared/study/vendor/renderer-v2/**
+        kind: advanced-renderer-artifact
+      - path: test/study_advanced*
+        kind: advanced-proof
+      - path: test/fixtures/lca-study-v5/**
+        kind: advanced-golden
+      - path: scripts/study-advanced-build.test.cjs
+        kind: advanced-portable-proof
+    requiredDocs:
+      - path: docs/agents/lca-study-advanced-contract.md
+        mode: review_or_update
+      - path: docs/agents/repo-validation.md
+        mode: review_or_update
+    reason: Explicit advanced profiles and renderer/export schema families preserve older strict consumers and numerical authority.
   - id: edge-functions-study-reporting
     scope: repo
     repo: edge-functions

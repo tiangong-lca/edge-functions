@@ -1,0 +1,330 @@
+[
+  {
+    "factId": "parameter:0:baseline",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "baseline"
+    },
+    "methodRef": null,
+    "canonicalValue": "10",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "parameter:0:low",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "low"
+    },
+    "methodRef": null,
+    "canonicalValue": "9",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "parameter:0:high",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "parameterAmount",
+      "parameterIndex": 0,
+      "role": "high"
+    },
+    "methodRef": null,
+    "canonicalValue": "11",
+    "unit": "kg",
+    "unitIdentity": {
+      "kind": "exchangeAmount",
+      "parameterIndex": 0,
+      "flow": {
+        "id": "emission",
+        "version": "01.00.000"
+      },
+      "direction": "Output",
+      "unit": "kg",
+      "support": [
+        {
+          "id": "mass",
+          "version": "01.00.000"
+        },
+        {
+          "id": "kg",
+          "version": "01.00.000"
+        }
+      ]
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "baseline:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "baselineOutput",
+      "methodIndex": 0
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "10",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:low:output:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatOutput",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "low",
+      "evaluationId": "evaluation-0"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "9",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:low:absoluteDelta:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatAbsoluteDelta",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "low",
+      "evaluationId": "evaluation-0"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "-1",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:low:relativeDelta:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatRelativeDelta",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "low",
+      "evaluationId": "evaluation-0"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "-0.1",
+    "unit": "1",
+    "unitIdentity": {
+      "kind": "dimensionless",
+      "unit": "1"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:high:output:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatOutput",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "high",
+      "evaluationId": "evaluation-1"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "11",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:high:absoluteDelta:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatAbsoluteDelta",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "high",
+      "evaluationId": "evaluation-1"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "1",
+    "unit": "impact",
+    "unitIdentity": {
+      "kind": "methodQuantity",
+      "methodRef": {
+        "id": "method",
+        "version": "01.00.000"
+      },
+      "unit": "impact"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:high:relativeDelta:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatRelativeDelta",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "endpoint": "high",
+      "evaluationId": "evaluation-1"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "0.1",
+    "unit": "1",
+    "unitIdentity": {
+      "kind": "dimensionless",
+      "unit": "1"
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  },
+  {
+    "factId": "oat:parameter:0:secant:method:0",
+    "baselineRunId": "10000000-0000-4000-8000-000000000010",
+    "context": {
+      "kind": "oatSecant",
+      "parameterIndex": 0,
+      "methodIndex": 0,
+      "lowEvaluationId": "evaluation-0",
+      "highEvaluationId": "evaluation-1"
+    },
+    "methodRef": {
+      "id": "method",
+      "version": "01.00.000"
+    },
+    "canonicalValue": "1",
+    "unit": "(impact)/(kg)",
+    "unitIdentity": {
+      "kind": "secant",
+      "numerator": {
+        "methodRef": {
+          "id": "method",
+          "version": "01.00.000"
+        },
+        "unit": "impact"
+      },
+      "denominator": {
+        "parameterIndex": 0,
+        "flow": {
+          "id": "emission",
+          "version": "01.00.000"
+        },
+        "direction": "Output",
+        "unit": "kg",
+        "support": [
+          {
+            "id": "mass",
+            "version": "01.00.000"
+          },
+          {
+            "id": "kg",
+            "version": "01.00.000"
+          }
+        ]
+      }
+    },
+    "coverage": "complete",
+    "reasonCodes": []
+  }
+]

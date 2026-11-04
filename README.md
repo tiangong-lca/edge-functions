@@ -23,8 +23,8 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-03
-lastReviewedCommit: 69038d3c62ed07f87652fe7338c4b263e898282e
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 2a357923465d8ecceba313c83165007c5702a25d
 lastReviewedNote: 'Edge #550: reviewed additive V4 review/finalization/share wire, exact renderer and V2/V3 preservation. Actual OAuth/installed-consumer qualification and delivery remain separate.'
 ---
 
@@ -680,3 +680,5 @@ Verify both formats using disposable synthetic objects, unchanged actor/current/
 ## P2 reporting contract preparation
 
 The [reporting and portable consumer contract](docs/agents/lca-study-reporting-contract.md) owns pure V2 codec distribution and the separate V3 reporting/signature source protocol. The handler now shares V2 response selection validation with installed consumers. The default-off V3 producer now validates exact Worker facts, produces bounded report views and signs detached exports through Database-owned intents. Actual installed consumer qualification and immutable artifact publication remain in progress; source and component tests enable no hosted operation, grant or signing key.
+
+Advanced Study V5 analysis/reporting uses separately disabled authoring and review configuration. The [advanced contract](docs/agents/lca-study-advanced-contract.md) defines its exact Worker schema pins, current-source fences, renderer2.0/export3 compatibility and qualification requirements. Source installation does not enable hosted capabilities.

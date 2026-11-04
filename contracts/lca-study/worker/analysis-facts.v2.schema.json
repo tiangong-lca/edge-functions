@@ -1,0 +1,3407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lca.study-analysis-facts.v2",
+  "$defs": {
+    "datasetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instanceId",
+        "exchangeId"
+      ],
+      "properties": {
+        "instanceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "exchangeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "inventoryAxis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "flow",
+        "direction",
+        "unit"
+      ],
+      "properties": {
+        "flow": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "direction": {
+          "enum": [
+            "Input",
+            "Output"
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "calculationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "schema",
+        "sha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "calculation_contract"
+        },
+        "schema": {
+          "const": "lca.calculation-contract.v1"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "contentHash",
+        "digestScope",
+        "byteSize",
+        "mediaType",
+        "schemaVersion"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "modelInput",
+            "runResult"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "artifact_bytes_sha256"
+        },
+        "byteSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4194304
+        },
+        "mediaType": {
+          "const": "application/json"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "modelRevisionId",
+        "contentHash",
+        "digestScope"
+      ],
+      "properties": {
+        "type": {
+          "const": "modelRevision"
+        },
+        "modelRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "digestScope": {
+          "const": "worker_prepared_model"
+        }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checkedAt",
+        "reasonCodes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "current",
+            "superseded",
+            "withdrawn",
+            "unknown"
+          ]
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 32
+        }
+      }
+    },
+    "config": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "runIds"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "lca.study-analysis-config.v1"
+            },
+            "kind": {
+              "const": "contribution"
+            },
+            "runIds": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schemaVersion",
+            "kind",
+            "runIds"
+          ],
+          "properties": {
+            "schemaVersion": {
+              "const": "lca.study-analysis-config.v1"
+            },
+            "kind": {
+              "const": "comparison"
+            },
+            "runIds": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "inputBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "studyRevisionId",
+        "scenarioRevisionId",
+        "modelPreparationId",
+        "inputHash",
+        "effectiveModelRef",
+        "preparedArtifactRef",
+        "resultRef",
+        "calculationContractRef",
+        "methodSourceHash",
+        "validity"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "studyRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scenarioRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "modelPreparationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "inputHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "effectiveModelRef": {
+          "$ref": "#/$defs/modelRef"
+        },
+        "preparedArtifactRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "resultRef": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "calculationContractRef": {
+          "$ref": "#/$defs/calculationRef"
+        },
+        "methodSourceHash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "validity": {
+          "$ref": "#/$defs/validity"
+        }
+      }
+    },
+    "unitIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "flow",
+        "method",
+        "support",
+        "view"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "model_view_reference_unit",
+            "flow_reference_unit",
+            "lcia_method_quantity",
+            "dimensionless"
+          ]
+        },
+        "flow": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "support": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/datasetRef"
+          },
+          "maxItems": 4
+        },
+        "view": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/port"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "factId",
+            "kind",
+            "label",
+            "runIds",
+            "methodRef",
+            "canonicalValue",
+            "unit",
+            "unitIdentity",
+            "coverage",
+            "scope",
+            "reasonCodes",
+            "subject"
+          ],
+          "properties": {
+            "factId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "kind": {
+              "enum": [
+                "activity",
+                "inventory",
+                "impact",
+                "viewContribution",
+                "inventoryContribution",
+                "comparisonDelta",
+                "relativeDelta"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "runIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "methodRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "canonicalValue": {
+              "type": "string",
+              "maxLength": 64,
+              "pattern": "^(?!-0$)-?(?:0|[1-9]\\d*)(?:\\.\\d*[1-9])?(?:e-?[1-9]\\d{0,2})?$",
+              "$comment": "Producer additionally requires finite binary64 shortest-roundtrip spelling after facts-only normalization; regex alone is not that proof."
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "unitIdentity": {
+              "$ref": "#/$defs/unitIdentity"
+            },
+            "coverage": {
+              "enum": [
+                "complete",
+                "partial"
+              ]
+            },
+            "scope": {
+              "enum": [
+                "declared_model_activity",
+                "declared_inventory",
+                "characterized_subtotal",
+                "characterized_inventory_term",
+                "numeric_delta_of_characterized_subtotals",
+                "delta_divided_by_absolute_baseline"
+              ]
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "maxItems": 32
+            },
+            "subject": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "view",
+                "inventory"
+              ],
+              "properties": {
+                "view": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/port"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "inventory": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/inventoryAxis"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "factId",
+            "kind",
+            "label",
+            "runIds",
+            "methodRef",
+            "canonicalValue",
+            "unit",
+            "unitIdentity",
+            "coverage",
+            "scope",
+            "reasonCodes",
+            "subject"
+          ],
+          "properties": {
+            "factId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "kind": {
+              "enum": [
+                "activity",
+                "inventory",
+                "impact",
+                "viewContribution",
+                "inventoryContribution",
+                "comparisonDelta",
+                "relativeDelta"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "runIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "maxItems": 2,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "methodRef": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "canonicalValue": {
+              "type": "null"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "unitIdentity": {
+              "$ref": "#/$defs/unitIdentity"
+            },
+            "coverage": {
+              "const": "unknown"
+            },
+            "scope": {
+              "enum": [
+                "declared_model_activity",
+                "declared_inventory",
+                "characterized_subtotal",
+                "characterized_inventory_term",
+                "numeric_delta_of_characterized_subtotals",
+                "delta_divided_by_absolute_baseline"
+              ]
+            },
+            "reasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "maxItems": 32
+            },
+            "subject": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "view",
+                "inventory"
+              ],
+              "properties": {
+                "view": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/port"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "inventory": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/inventoryAxis"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "comparability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reasonCodes",
+        "scope",
+        "rankingAllowed",
+        "checks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_assessed",
+            "comparable",
+            "not_comparable"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 32
+        },
+        "scope": {
+          "const": "frozen_numerical_inputs_only"
+        },
+        "rankingAllowed": {
+          "const": false
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ruleId",
+              "status"
+            ],
+            "properties": {
+              "ruleId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "failed",
+                  "unknown"
+                ]
+              }
+            }
+          },
+          "maxItems": 32
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "gaps",
+        "qualityFindings",
+        "completeLciaScores"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "method",
+              "inventoryIndex"
+            ],
+            "properties": {
+              "method": {
+                "$ref": "#/$defs/datasetRef"
+              },
+              "inventoryIndex": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "maxItems": 102400
+        },
+        "qualityFindings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "maxItems": 512
+        },
+        "completeLciaScores": {
+          "type": "boolean"
+        }
+      }
+    },
+    "scenarioEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "scenarioRevisionId",
+        "contentHash",
+        "overrides"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scenarioRevisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "value"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            }
+          },
+          "maxItems": 256
+        }
+      }
+    },
+    "hotspots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "methodRef",
+        "coverage",
+        "ordering",
+        "factIds"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "methodRef": {
+          "$ref": "#/$defs/datasetRef"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "ordering": {
+          "const": "absolute_characterized_contribution_desc_then_fact_id"
+        },
+        "factIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "maxItems": 128
+        }
+      }
+    },
+    "reportFact": {
+      "type": "object",
+      "properties": {
+        "factId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "baselineRunId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "context": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "parameterAmount"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "baseline",
+                    "low",
+                    "high"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "role"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "baselineOutput"
+                  ]
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "kind",
+                "methodIndex"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "oatOutput"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "endpoint": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "high"
+                  ]
+                },
+                "evaluationId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "methodIndex",
+                "endpoint",
+                "evaluationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "oatAbsoluteDelta"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "endpoint": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "high"
+                  ]
+                },
+                "evaluationId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "methodIndex",
+                "endpoint",
+                "evaluationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "oatRelativeDelta"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "endpoint": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "high"
+                  ]
+                },
+                "evaluationId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "methodIndex",
+                "endpoint",
+                "evaluationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "oatSecant"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "lowEvaluationId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "highEvaluationId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "methodIndex",
+                "lowEvaluationId",
+                "highEvaluationId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "uncertaintyStatistic"
+                  ]
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "statistic": {
+                  "type": "string",
+                  "enum": [
+                    "mean",
+                    "sampleStandardDeviation",
+                    "meanMcse",
+                    "minimum",
+                    "maximum"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "methodIndex",
+                "statistic"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "uncertaintyQuantile"
+                  ]
+                },
+                "methodIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "probability": {
+                  "type": "string",
+                  "enum": [
+                    "0.025",
+                    "0.5",
+                    "0.975"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "methodIndex",
+                "probability"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "methodRef": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/datasetRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonicalValue": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unitIdentity": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "methodQuantity"
+                  ]
+                },
+                "methodRef": {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "methodRef",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "exchangeAmount"
+                  ]
+                },
+                "parameterIndex": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "flow": {
+                  "$ref": "#/$defs/datasetRef"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "Input",
+                    "Output"
+                  ]
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "support": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/datasetRef"
+                  }
+                }
+              },
+              "required": [
+                "kind",
+                "parameterIndex",
+                "flow",
+                "direction",
+                "unit",
+                "support"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "dimensionless"
+                  ]
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "1"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "unit"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "secant"
+                  ]
+                },
+                "numerator": {
+                  "type": "object",
+                  "properties": {
+                    "methodRef": {
+                      "$ref": "#/$defs/datasetRef"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "methodRef",
+                    "unit"
+                  ],
+                  "additionalProperties": false
+                },
+                "denominator": {
+                  "type": "object",
+                  "properties": {
+                    "parameterIndex": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "flow": {
+                      "$ref": "#/$defs/datasetRef"
+                    },
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "Input",
+                        "Output"
+                      ]
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "support": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/datasetRef"
+                      }
+                    }
+                  },
+                  "required": [
+                    "parameterIndex",
+                    "flow",
+                    "direction",
+                    "unit",
+                    "support"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "kind",
+                "numerator",
+                "denominator"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "coverage": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "unknown"
+          ]
+        },
+        "reasonCodes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "no_characterized_terms",
+              "zero_baseline_relative_undefined"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "factId",
+        "baselineRunId",
+        "context",
+        "methodRef",
+        "canonicalValue",
+        "unit",
+        "unitIdentity",
+        "coverage",
+        "reasonCodes"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "lca.study-analysis-facts.v2"
+          ]
+        },
+        "profileId": {
+          "const": "lca.study-sensitivity-oat.v1"
+        },
+        "producerVersion": {
+          "type": "string",
+          "enum": [
+            "study.analysis.advanced.v1"
+          ]
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "sensitivityOat"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline": {
+          "$ref": "#/$defs/inputBinding"
+        },
+        "sourceSnapshotRef": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "digestScope": {
+              "type": "string",
+              "enum": [
+                "artifact_bytes_sha256"
+              ]
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mediaType": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "additionalProperties": false
+        },
+        "resolvedParameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameterIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "path": {
+                "type": "string"
+              },
+              "flow": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "direction": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "support": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "version"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "baselineAmount": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "parameterIndex",
+              "path",
+              "flow",
+              "direction",
+              "unit",
+              "support",
+              "baselineAmount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coverageGaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "inventoryIndex": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "method",
+              "inventoryIndex"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "qualityFindings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "baselineEvaluation": {
+          "type": "object",
+          "properties": {
+            "evaluationId": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "baseline",
+                "low",
+                "high",
+                "sample"
+              ]
+            },
+            "parameterIndex": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "empiricalRowIndex": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "amounts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "modelHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "preparedSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "resultSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "methodRef": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "version"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "canonicalValue": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64,
+                        "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "coverage": {
+                    "type": "string",
+                    "enum": [
+                      "complete",
+                      "partial",
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "methodRef",
+                  "unit",
+                  "canonicalValue",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "maxResidual": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+            }
+          },
+          "required": [
+            "evaluationId",
+            "kind",
+            "parameterIndex",
+            "empiricalRowIndex",
+            "amounts",
+            "inputHash",
+            "modelHash",
+            "preparedSha256",
+            "resultSha256",
+            "outputs",
+            "maxResidual"
+          ],
+          "additionalProperties": false
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluationId": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "baseline",
+                  "low",
+                  "high",
+                  "sample"
+                ]
+              },
+              "parameterIndex": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "empiricalRowIndex": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "amounts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                }
+              },
+              "inputHash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "modelHash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "preparedSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "resultSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "methodRef": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "canonicalValue": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "enum": [
+                        "complete",
+                        "partial",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "methodRef",
+                    "unit",
+                    "canonicalValue",
+                    "coverage"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "maxResidual": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "evaluationId",
+              "kind",
+              "parameterIndex",
+              "empiricalRowIndex",
+              "amounts",
+              "inputHash",
+              "modelHash",
+              "preparedSha256",
+              "resultSha256",
+              "outputs",
+              "maxResidual"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "oatEffects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameterIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "methodRef": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "outputUnit": {
+                "type": "string"
+              },
+              "inputUnit": {
+                "type": "string"
+              },
+              "coverage": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ]
+              },
+              "lowEvaluationId": {
+                "type": "string"
+              },
+              "highEvaluationId": {
+                "type": "string"
+              },
+              "lowAbsoluteDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "highAbsoluteDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lowRelativeDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "highRelativeDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "secant": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reasonCodes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "parameterIndex",
+              "methodRef",
+              "outputUnit",
+              "inputUnit",
+              "coverage",
+              "lowEvaluationId",
+              "highEvaluationId",
+              "lowAbsoluteDelta",
+              "highAbsoluteDelta",
+              "lowRelativeDelta",
+              "highRelativeDelta",
+              "secant",
+              "reasonCodes"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "statistics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "methodRef": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "unit": {
+                "type": "string"
+              },
+              "coverage": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ]
+              },
+              "mean": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "sampleStandardDeviation": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "meanMcse": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "minimum": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maximum": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "quantiles": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "probability": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "probability",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 3,
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "methodRef",
+              "unit",
+              "coverage",
+              "mean",
+              "sampleStandardDeviation",
+              "meanMcse",
+              "minimum",
+              "maximum",
+              "quantiles"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 0
+        },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "requested": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "attempted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "valid": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "invalid": {
+              "const": 0
+            },
+            "stopReason": {
+              "type": "string",
+              "enum": [
+                "fixed_budget_complete"
+              ]
+            }
+          },
+          "required": [
+            "requested",
+            "attempted",
+            "valid",
+            "invalid",
+            "stopReason"
+          ],
+          "additionalProperties": false
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scientificRankingQualified": {
+          "const": false
+        },
+        "businessPilotQualified": {
+          "const": false
+        },
+        "executionLimits": {
+          "type": "object",
+          "properties": {
+            "batch": {
+              "type": "object",
+              "properties": {
+                "maxParameters": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxEvaluations": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "maxParameters",
+                "maxEvaluations"
+              ],
+              "additionalProperties": false
+            },
+            "native": {
+              "type": "object",
+              "properties": {
+                "maxSourceBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxDocuments": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxInstances": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxViews": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxExchanges": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxMethods": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxNonzeros": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxDenseCells": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxArtifactBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxElapsedMillis": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxOwnedBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxFunctionalUnitAmount": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "maxSourceBytes",
+                "maxDocuments",
+                "maxInstances",
+                "maxViews",
+                "maxExchanges",
+                "maxMethods",
+                "maxNonzeros",
+                "maxDenseCells",
+                "maxArtifactBytes",
+                "maxElapsedMillis",
+                "maxOwnedBytes",
+                "maxFunctionalUnitAmount"
+              ]
+            }
+          },
+          "required": [
+            "batch",
+            "native"
+          ],
+          "additionalProperties": false
+        },
+        "factCatalog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reportFact"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "producerVersion",
+        "studyId",
+        "analysisId",
+        "config",
+        "configHash",
+        "baseline",
+        "sourceSnapshotRef",
+        "resolvedParameters",
+        "coverageGaps",
+        "qualityFindings",
+        "baselineEvaluation",
+        "evaluations",
+        "oatEffects",
+        "statistics",
+        "counts",
+        "limitations",
+        "scientificRankingQualified",
+        "businessPilotQualified",
+        "executionLimits",
+        "factCatalog"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "lca.study-analysis-facts.v2"
+          ]
+        },
+        "profileId": {
+          "const": "lca.study-uncertainty-bounded.v1"
+        },
+        "producerVersion": {
+          "type": "string",
+          "enum": [
+            "study.analysis.advanced.v1"
+          ]
+        },
+        "studyId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "analysisId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "uncertainty"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string",
+              "enum": [
+                "lca.study-analysis-config.v2"
+              ]
+            },
+            "baselineRunId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "pattern": "^/instances/[^/]+/exchanges/[^/]+/amount$"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "baselineAmount": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "low": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  "high": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "unit",
+                  "baselineAmount",
+                  "low",
+                  "high"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "design": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "independentUniform"
+                      ]
+                    },
+                    "independenceDeclared": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "independenceDeclared"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "jointEmpirical"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        "minItems": 1
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "sampleCount": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 4294967295
+            },
+            "seedHex": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "generator": {
+              "type": "string",
+              "enum": [
+                "study.uncertainty.hmac-drbg-sha256.v1"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "schemaVersion",
+            "baselineRunId",
+            "parameters",
+            "design",
+            "sampleCount",
+            "seedHex",
+            "generator"
+          ],
+          "additionalProperties": false
+        },
+        "configHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline": {
+          "$ref": "#/$defs/inputBinding"
+        },
+        "sourceSnapshotRef": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "contentHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "digestScope": {
+              "type": "string",
+              "enum": [
+                "artifact_bytes_sha256"
+              ]
+            },
+            "byteSize": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "mediaType": {
+              "type": "string",
+              "enum": [
+                "application/json"
+              ]
+            },
+            "schemaVersion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "id",
+            "contentHash",
+            "digestScope",
+            "byteSize",
+            "mediaType",
+            "schemaVersion"
+          ],
+          "additionalProperties": false
+        },
+        "resolvedParameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameterIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "path": {
+                "type": "string"
+              },
+              "flow": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "direction": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "support": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "version"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "baselineAmount": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "parameterIndex",
+              "path",
+              "flow",
+              "direction",
+              "unit",
+              "support",
+              "baselineAmount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coverageGaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "inventoryIndex": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "method",
+              "inventoryIndex"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "qualityFindings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "baselineEvaluation": {
+          "type": "object",
+          "properties": {
+            "evaluationId": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "baseline",
+                "low",
+                "high",
+                "sample"
+              ]
+            },
+            "parameterIndex": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "empiricalRowIndex": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "amounts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "inputHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "modelHash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "preparedSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "resultSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "methodRef": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "version"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "canonicalValue": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64,
+                        "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "coverage": {
+                    "type": "string",
+                    "enum": [
+                      "complete",
+                      "partial",
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "methodRef",
+                  "unit",
+                  "canonicalValue",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "maxResidual": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+            }
+          },
+          "required": [
+            "evaluationId",
+            "kind",
+            "parameterIndex",
+            "empiricalRowIndex",
+            "amounts",
+            "inputHash",
+            "modelHash",
+            "preparedSha256",
+            "resultSha256",
+            "outputs",
+            "maxResidual"
+          ],
+          "additionalProperties": false
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluationId": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "baseline",
+                  "low",
+                  "high",
+                  "sample"
+                ]
+              },
+              "parameterIndex": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "empiricalRowIndex": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "amounts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                }
+              },
+              "inputHash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "modelHash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "preparedSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "resultSha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "outputs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "methodRef": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "canonicalValue": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "enum": [
+                        "complete",
+                        "partial",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "methodRef",
+                    "unit",
+                    "canonicalValue",
+                    "coverage"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "maxResidual": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+              }
+            },
+            "required": [
+              "evaluationId",
+              "kind",
+              "parameterIndex",
+              "empiricalRowIndex",
+              "amounts",
+              "inputHash",
+              "modelHash",
+              "preparedSha256",
+              "resultSha256",
+              "outputs",
+              "maxResidual"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "oatEffects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameterIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "methodRef": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "outputUnit": {
+                "type": "string"
+              },
+              "inputUnit": {
+                "type": "string"
+              },
+              "coverage": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ]
+              },
+              "lowEvaluationId": {
+                "type": "string"
+              },
+              "highEvaluationId": {
+                "type": "string"
+              },
+              "lowAbsoluteDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "highAbsoluteDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lowRelativeDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "highRelativeDelta": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "secant": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reasonCodes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "parameterIndex",
+              "methodRef",
+              "outputUnit",
+              "inputUnit",
+              "coverage",
+              "lowEvaluationId",
+              "highEvaluationId",
+              "lowAbsoluteDelta",
+              "highAbsoluteDelta",
+              "lowRelativeDelta",
+              "highRelativeDelta",
+              "secant",
+              "reasonCodes"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 0
+        },
+        "statistics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "methodRef": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "additionalProperties": false
+              },
+              "unit": {
+                "type": "string"
+              },
+              "coverage": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ]
+              },
+              "mean": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "sampleStandardDeviation": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "meanMcse": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "minimum": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maximum": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "quantiles": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "probability": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                    },
+                    "value": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?(e-?[1-9][0-9]*)?$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "probability",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 3,
+                "maxItems": 3
+              }
+            },
+            "required": [
+              "methodRef",
+              "unit",
+              "coverage",
+              "mean",
+              "sampleStandardDeviation",
+              "meanMcse",
+              "minimum",
+              "maximum",
+              "quantiles"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "requested": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "attempted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "valid": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "invalid": {
+              "const": 0
+            },
+            "stopReason": {
+              "type": "string",
+              "enum": [
+                "fixed_budget_complete"
+              ]
+            }
+          },
+          "required": [
+            "requested",
+            "attempted",
+            "valid",
+            "invalid",
+            "stopReason"
+          ],
+          "additionalProperties": false
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scientificRankingQualified": {
+          "const": false
+        },
+        "businessPilotQualified": {
+          "const": false
+        },
+        "executionLimits": {
+          "type": "object",
+          "properties": {
+            "batch": {
+              "type": "object",
+              "properties": {
+                "maxParameters": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxEvaluations": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "maxParameters",
+                "maxEvaluations"
+              ],
+              "additionalProperties": false
+            },
+            "native": {
+              "type": "object",
+              "properties": {
+                "maxSourceBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxDocuments": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxInstances": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxViews": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxExchanges": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxMethods": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxNonzeros": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxDenseCells": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxArtifactBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxElapsedMillis": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxOwnedBytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxFunctionalUnitAmount": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "maxSourceBytes",
+                "maxDocuments",
+                "maxInstances",
+                "maxViews",
+                "maxExchanges",
+                "maxMethods",
+                "maxNonzeros",
+                "maxDenseCells",
+                "maxArtifactBytes",
+                "maxElapsedMillis",
+                "maxOwnedBytes",
+                "maxFunctionalUnitAmount"
+              ]
+            }
+          },
+          "required": [
+            "batch",
+            "native"
+          ],
+          "additionalProperties": false
+        },
+        "factCatalog": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reportFact"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "producerVersion",
+        "studyId",
+        "analysisId",
+        "config",
+        "configHash",
+        "baseline",
+        "sourceSnapshotRef",
+        "resolvedParameters",
+        "coverageGaps",
+        "qualityFindings",
+        "baselineEvaluation",
+        "evaluations",
+        "oatEffects",
+        "statistics",
+        "counts",
+        "limitations",
+        "scientificRankingQualified",
+        "businessPilotQualified",
+        "executionLimits",
+        "factCatalog"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
