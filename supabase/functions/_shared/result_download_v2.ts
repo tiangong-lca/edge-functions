@@ -19,7 +19,7 @@ const descriptorSchema = z
     targetHash: sha,
     file: z
       .object({
-        name: z.enum(['result.tidas.zip', 'result.ilcd.zip']),
+        name: z.enum(['result.tidas.7z', 'result.ilcd.7z']),
         sha256: sha,
         byteSize: z
           .number()
@@ -204,12 +204,12 @@ export function downloadFinalResult(
     const descriptor = await resolve();
     if (
       descriptor.publicationId !== request.publicationId ||
-      descriptor.file.name !== `result.${request.format}.zip`
+      descriptor.file.name !== `result.${request.format}.7z`
     )
-      throw new Error('Result ZIP identity mismatch');
+      throw new Error('Result archive identity mismatch');
     const config = options.config ?? configuration();
     const { target, targetHash } = await finalDownloadTarget(config);
-    if (targetHash !== descriptor.targetHash) throw new Error('Result ZIP target mismatch');
+    if (targetHash !== descriptor.targetHash) throw new Error('Result archive target mismatch');
     const expiresIn = 60;
     const issuedAt = Date.now();
     const key = [
@@ -262,7 +262,7 @@ export function downloadFinalResult(
           new GetObjectCommand({
             Bucket: target.bucket,
             Key: key,
-            ResponseContentType: 'application/zip',
+            ResponseContentType: 'application/x-7z-compressed',
             ResponseContentDisposition: `attachment; filename="${descriptor.file.name}"`,
           }),
           { expiresIn, signingDate: new Date(issuedAt) },
