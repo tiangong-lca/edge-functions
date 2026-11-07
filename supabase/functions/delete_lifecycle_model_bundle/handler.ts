@@ -6,6 +6,7 @@ import {
   ensureOwnerOrReviewAdmin,
   json,
   mapRpcError,
+  rpcErrorStatusCode,
   normalizeDeleteRpcPayload,
   permissionErrorStatusCode,
   validateDeleteBody,
@@ -125,7 +126,7 @@ export function createDeleteLifecycleModelBundleHandler(
         details: error.details,
       });
       const mapped = mapRpcError(error);
-      return json(mapped, mapped.code === 'MODEL_NOT_FOUND' ? 404 : 400);
+      return json(mapped, rpcErrorStatusCode(mapped));
     }
 
     return json(normalizeDeleteRpcPayload(data), 200);

@@ -6,6 +6,7 @@ import {
   ensureOwnerOrReviewAdmin,
   json,
   mapRpcError,
+  rpcErrorStatusCode,
   normalizeSaveRpcPayload,
   permissionErrorStatusCode,
   validateSavePlan,
@@ -127,7 +128,7 @@ export function createSaveLifecycleModelBundleHandler(
         details: error.details,
       });
       const mapped = mapRpcError(error);
-      return json(mapped, mapped.code === 'MODEL_NOT_FOUND' ? 404 : 400);
+      return json(mapped, rpcErrorStatusCode(mapped));
     }
 
     return json(normalizeSaveRpcPayload(data), 200);

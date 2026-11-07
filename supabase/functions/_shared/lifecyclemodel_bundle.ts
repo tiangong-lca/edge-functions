@@ -249,8 +249,46 @@ export function mapRpcError(error: { message?: string; code?: string; details?: 
     ok: false as const,
     code,
     message: rpcErrorMessage(code),
-    details: error.details ?? error.message ?? null,
+    details: code === 'PROCESS_PERSIST_FAILED' ? null : safeRpcDetails(error.details),
   };
+}
+
+// Only exact dataset identities are safe public diagnostics; never forward SQL text.
+function safeRpcDetails(details: unknown): Record<string, string> | null {
+  let value = details;
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return null;
+    }
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const result: Record<string, string> = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (['id', 'model_id', 'process_id'].includes(key) && isUuid(item)) result[key] = item;
+    if (['version', 'model_version', 'process_version'].includes(key) && isVersion(item))
+      result[key] = item;
+  }
+  return Object.keys(result).length > 0 ? result : null;
+}
+
+export function rpcErrorStatusCode(error: { code: string }): number {
+  switch (error.code) {
+    case 'AUTH_REQUIRED':
+      return 401;
+    case 'FORBIDDEN':
+      return 403;
+    case 'MODEL_NOT_FOUND':
+    case 'PROCESS_NOT_FOUND':
+      return 404;
+    case 'VERSION_CONFLICT':
+      return 409;
+    case 'INVALID_PAYLOAD':
+      return 400;
+    default:
+      return 500;
+  }
 }
 
 export function normalizeSaveRpcPayload(payload: any) {
@@ -300,7 +338,10 @@ function normalizeRpcErrorCode(error: { message?: string; code?: string }) {
     return 'MODEL_NOT_FOUND';
   }
   if (message === 'PROCESS_NOT_FOUND') {
-    return 'PROCESS_PERSIST_FAILED';
+    return 'PROCESS_NOT_FOUND';
+  }
+  if (message === 'AUTH_REQUIRED' || message === 'FORBIDDEN') {
+    return message;
   }
   if (message === 'INVALID_PLAN') {
     return 'INVALID_PAYLOAD';
@@ -317,6 +358,12 @@ function normalizeRpcErrorCode(error: { message?: string; code?: string }) {
 
 function rpcErrorMessage(code: string) {
   switch (code) {
+    case 'AUTH_REQUIRED':
+      return 'Authentication required';
+    case 'FORBIDDEN':
+      return 'You do not have permission to mutate this lifecycle model';
+    case 'PROCESS_NOT_FOUND':
+      return 'A lifecycle model result process was not found at the requested version';
     case 'MODEL_NOT_FOUND':
       return 'Lifecycle model not found';
     case 'INVALID_PAYLOAD':

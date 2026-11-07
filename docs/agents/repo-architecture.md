@@ -425,3 +425,7 @@ Release-owned final Results use separate `_shared/result_query_v2.ts` modes `sou
 The [reporting and portable consumer contract](lca-study-reporting-contract.md) owns V2/V3 portable codecs and the separately gated P2 analysis/report/export producer. The actual handler validates report claims against byte-bound Worker artifacts, rechecks Database intents around I/O, renders the exact approved view and signs a detached export. The default remains off. Installed end-to-end qualification and immutable consumer publication remain distinct evidence; source and synthetic tests enable no hosted operation, grant or signing key.
 
 Study `advanced_*.ts` modules and `contracts/lca-study/v5/` own the separate advanced analysis/catalog/report/review adapter. Worker schema pins are held in `contracts/lca-study/worker/advanced-manifest.json`; the advanced contract owns this family, preserving prior adapters.
+
+## Lifecycle Model bundle error boundary
+
+Save and delete retain known database business codes: missing Model/result is HTTP 404, version conflict 409, invalid plan 400, missing authentication 401 and forbidden 403. Unknown persistence errors are HTTP 500. Public details contain only validated exact dataset identifiers/versions; raw database messages and detail text are not returned. Success payloads and actor-bound RPC execution are unchanged.
