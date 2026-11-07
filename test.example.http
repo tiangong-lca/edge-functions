@@ -600,3 +600,6 @@ curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
 
 # Edge #527: hosted Supabase ZIP links use the native Storage signer with existing server credentials.
 # The request above remains actor-scoped; no S3 key or Auth session token belongs in a download URL.
+
+# Final Result complete downloads use result.tidas.7z / result.ilcd.7z.
+# The final_download request still selects format tidas|ilcd and an exact publicationId.

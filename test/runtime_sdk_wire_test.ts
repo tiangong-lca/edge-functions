@@ -162,7 +162,7 @@ Deno.test('installed SageMaker SDK forwards cancellation to a pending transport'
   });
   try {
     const result = client.send(embeddingCommand(), { abortSignal: controller.signal });
-    const rejected = assertRejects(() => result, Error, 'synthetic transport aborted');
+    const rejected = assertRejects(() => result, Error);
     await Promise.race([
       started.promise,
       rejected.then(() => {
@@ -170,7 +170,8 @@ Deno.test('installed SageMaker SDK forwards cancellation to a pending transport'
       }),
     ]);
     controller.abort();
-    await rejected;
+    const error = await rejected;
+    assertEquals(error.name, 'AbortError');
     assertEquals(abortObserved, true);
     assertEquals(calls, 1);
   } finally {

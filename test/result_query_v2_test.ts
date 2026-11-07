@@ -514,7 +514,7 @@ function downloadRequest(format = 'tidas') {
     body: JSON.stringify({ mode: 'final_download', publicationId, format }),
   });
 }
-Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signing', async () => {
+Deno.test('Supabase S3 base path agrees with Release and survives real 7z signing', async () => {
   const endpoint = 'https://abcdefghijklmnopqrst.storage.supabase.co/storage/v1/s3';
   const downloadConfig = { ...config, endpoint, bucket: 'lca_results' };
   const { target, targetHash } = await finalDownloadTarget({ ...config, endpoint });
@@ -540,7 +540,7 @@ Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signi
   ])
     await assertRejects(() => finalDownloadTarget({ ...config, endpoint: bad }));
   for (const format of ['tidas', 'ilcd']) {
-    const file = { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 };
+    const file = { name: `result.${format}.7z`, sha256: 'e'.repeat(64), byteSize: 1000 };
     const { handler, counts } = setup({
       downloadConfig,
       database: () => ({
@@ -562,16 +562,17 @@ Deno.test('Supabase S3 base path agrees with Release and survives real ZIP signi
       `/storage/v1/s3/lca_results/test-owned/release-candidates/${'c'.repeat(64)}/${file.name}`,
     );
     assertEquals(url.searchParams.get('X-Amz-Expires'), '60');
+    assertEquals(url.searchParams.get('response-content-type'), 'application/x-7z-compressed');
     assertMatch(url.searchParams.get('X-Amz-Signature')!, /^[0-9a-f]{64}$/);
     assertEquals(counts, { actor: 1, database: 2, reader: 0 });
   }
 });
 Deno.test(
-  'ZIP signing uses the immutable target and file name, short TTL and independent actor recheck',
+  '7z signing uses the immutable target and file name, short TTL and independent actor recheck',
   async () => {
     const { targetHash } = await finalDownloadTarget(config);
     for (const format of ['tidas', 'ilcd']) {
-      const file = { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 };
+      const file = { name: `result.${format}.7z`, sha256: 'e'.repeat(64), byteSize: 1000 };
       const { handler, counts } = setup({
         database: (name, args) => {
           assertEquals(name, 'qry_final_result_download_v2');
@@ -593,6 +594,7 @@ Deno.test(
         `/synthetic-results/test-owned/release-candidates/${'c'.repeat(64)}/${file.name}`,
       );
       assertEquals(url.searchParams.get('X-Amz-Expires'), '60');
+      assertEquals(url.searchParams.get('response-content-type'), 'application/x-7z-compressed');
       assertEquals(url.searchParams.get('X-Amz-Algorithm'), 'AWS4-HMAC-SHA256');
       assertMatch(url.searchParams.get('X-Amz-Signature')!, /^[0-9a-f]{64}$/);
       assertEquals(
@@ -620,7 +622,7 @@ Deno.test(
                   publicationId,
                   candidateHash: 'c'.repeat(64),
                   targetHash: mode === 'target' ? 'f'.repeat(64) : targetHash,
-                  file: { name: 'result.tidas.zip', sha256: 'e'.repeat(64), byteSize: 1000 },
+                  file: { name: 'result.tidas.7z', sha256: 'e'.repeat(64), byteSize: 1000 },
                 },
               },
       });
@@ -667,15 +669,15 @@ const nativeConfig: FinalDownloadConfig = {
   secretAccessKey: '',
 };
 const zipPath = (format: string) =>
-  `/object/sign/lca_results/lca_results/release-candidates/${'c'.repeat(64)}/result.${format}.zip`;
+  `/object/sign/lca_results/lca_results/release-candidates/${'c'.repeat(64)}/result.${format}.7z`;
 const zipDescriptor = async (format = 'tidas') => ({
   publicationId,
   candidateHash: 'c'.repeat(64),
   targetHash: (await finalDownloadTarget(nativeConfig)).targetHash,
-  file: { name: `result.${format}.zip`, sha256: 'e'.repeat(64), byteSize: 1000 },
+  file: { name: `result.${format}.7z`, sha256: 'e'.repeat(64), byteSize: 1000 },
 });
 Deno.test(
-  'Storage ZIP signing uses existing server credentials and returns one object capability',
+  'Storage 7z signing uses existing server credentials and returns one object capability',
   async () => {
     for (const format of ['tidas', 'ilcd']) {
       const d = await zipDescriptor(format);
@@ -704,7 +706,7 @@ Deno.test(
       const url = new URL(body.data.url);
       assertEquals(url.origin, 'https://abcdefghijklmnopqrst.supabase.co');
       assertEquals(url.pathname, '/storage/v1' + zipPath(format));
-      assertEquals(url.searchParams.get('download'), `result.${format}.zip`);
+      assertEquals(url.searchParams.get('download'), `result.${format}.7z`);
       assertEquals([...url.searchParams.keys()].sort(), ['download', 'token']);
       assertEquals(JSON.stringify(body).includes(serviceCredentials.key), false);
       assertEquals(counts.database, 2);

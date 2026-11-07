@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-05
-lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
-lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
+lastReviewedAt: 2026-11-06
+lastReviewedCommit: 4f38a720a128dd738c71c8f5858a23c19ca1b8cf
+lastReviewedNote: 'Edge #562: reviewed final Result 7z filenames and signed MIME; target binding, actor recheck and capability expiry are unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
