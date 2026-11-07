@@ -1,7 +1,7 @@
 version: 1
 layout: repo
-lastReviewedAt: "2026-11-07"
-lastReviewedCommit: "145b4106a8bec86d5b34ef6df4eb24683df4a1bc"
+lastReviewedAt: '2026-11-07'
+lastReviewedCommit: '145b4106a8bec86d5b34ef6df4eb24683df4a1bc'
 lastReviewedNote: 'Edge #562: reviewed SDK cancellation proof on Linux and macOS; assert AbortError, transport signal observation and one call without relying on provider-specific error text.'
 
 # Keep deterministic governance facts here.
