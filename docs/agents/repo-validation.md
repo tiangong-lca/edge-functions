@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-07
-lastReviewedCommit: 145b4106a8bec86d5b34ef6df4eb24683df4a1bc
-lastReviewedNote: 'Edge #562: reviewed SDK cancellation proof on Linux and macOS; assert AbortError, transport signal observation and one call without relying on provider-specific error text.'
+lastReviewedAt: '2026-11-07'
+lastReviewedCommit: '41ba5be'
+lastReviewedNote: 'Edge #565: reviewed bounded bundle error/status mapping and safe details; full lint/check passes with 945 tests and the existing credentialed skip. Success DTO, actor authorization, dependencies and deployment remain unchanged.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
