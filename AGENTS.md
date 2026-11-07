@@ -40,9 +40,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-05
-lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
-lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
+lastReviewedAt: 2026-11-06
+lastReviewedCommit: 4f38a720a128dd738c71c8f5858a23c19ca1b8cf
+lastReviewedNote: 'Edge #562: reviewed final Result 7z filenames and signed MIME; target binding, actor recheck and capability expiry are unchanged.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -105,7 +105,7 @@ Keep these entry-level facts in `AGENTS.md`. Use `README.md` and `docs/agents/re
 
 - authoritative runtime/compiler: Deno `2.1.4` with its actual bundled TypeScript `5.6.2`, matching the selected Supabase CLI `2.121.0` / Edge Runtime `1.77.4` qualification target; this repository does not install or claim TypeScript 7
 - auxiliary package manager/runtime: pnpm `11.24.0` on Node `24.19.0`, retained for the exact Supabase CLI, Prettier, and Node validation wrappers only
-- latest reviewed import graph: SageMaker AWS SDK `3.1152.0`, Result ZIP S3 client/presigner `3.1161.0`, OpenAI `7.38.0`, Supabase JSR `2.118.0`, Upstash Redis `1.38.3`, Deno Redis `0.42.0`, Zod `4.6.7`, and Prettier `3.9.10`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; full dependency refreshes require `pnpm outdated` and exact-Deno `deno outdated --latest` to be empty; scoped additions pin the latest compatible stable version without upgrading unrelated packages
+- latest reviewed import graph: SageMaker AWS SDK `3.1152.0`, Result archive S3 client/presigner `3.1161.0`, OpenAI `7.38.0`, Supabase JSR `2.118.0`, Upstash Redis `1.38.3`, Deno Redis `0.42.0`, Zod `4.6.7`, and Prettier `3.9.10`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; full dependency refreshes require `pnpm outdated` and exact-Deno `deno outdated --latest` to be empty; scoped additions pin the latest compatible stable version without upgrading unrelated packages
 - local serve command: `pnpm start`
 - required stack qualification: `pnpm qualify:stack` runs only on an owned Docker-enabled hosted Linux runner; source fixtures and local checks do not establish a hosted stack pass; every fixture network stays internal, and exact owned endpoint relays provide loopback-only host access with verified listener/resource cleanup
 - baseline local validation: non-mutating `pnpm lint` and canonical `pnpm check`
