@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-05
-lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
-lastReviewedNote: 'Edge #562: reviewed final Result 7z filenames and signed MIME; target binding, actor recheck and capability expiry are unchanged.'
+lastReviewedAt: 2026-11-07
+lastReviewedCommit: 145b4106a8bec86d5b34ef6df4eb24683df4a1bc
+lastReviewedNote: 'Edge #562: reviewed SDK cancellation proof on Linux and macOS; assert AbortError, transport signal observation and one call without relying on provider-specific error text.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
