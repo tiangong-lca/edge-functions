@@ -2,8 +2,8 @@
   "imports": {
     "@aws-sdk/client-s3": "npm:@aws-sdk/client-s3@3.1161.0",
     "@aws-sdk/s3-request-presigner": "npm:@aws-sdk/s3-request-presigner@3.1161.0",
-    "@aws-sdk/client-sagemaker-runtime": "npm:@aws-sdk/client-sagemaker-runtime@3.1152.0",
-    "@openai/openai": "npm:openai@7.38.0",
+    "@aws-sdk/client-sagemaker-runtime": "npm:@aws-sdk/client-sagemaker-runtime@3.1161.0",
+    "@openai/openai": "npm:openai@7.47.0",
     "@supabase/functions-js/edge-runtime.d.ts": "jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts",
     "@supabase/supabase-js@2": "jsr:@supabase/supabase-js@2.118.0",
     "@upstash/redis": "https://esm.sh/@upstash/redis@1.38.3",
