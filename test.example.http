@@ -592,7 +592,7 @@ curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
     --header 'Content-Type: application/json' \
     --data '{"mode":"final_query","resultId":"{{$dotenv FINAL_RESULT_ID}}","resultVersion":"01.00.000","query":{"kind":"lci","limit":100}}'
 
-### @name LCA_Final_Result_ZIP：Local (complete Candidate only)
+### @name LCA_Final_Result_Archive：Local (complete Candidate only)
 curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
     --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
     --header 'Content-Type: application/json' \

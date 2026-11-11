@@ -5,7 +5,11 @@ import { createLcaReleaseResultsHandler } from '../../supabase/functions/lca_rel
 
 if (import.meta.main) {
   const config = JSON.parse(await Deno.readTextFile(Deno.args[0]));
-  for (const endpoint of [config.actorEndpoint, config.readerEndpoint]) {
+  for (const endpoint of [
+    config.actorEndpoint,
+    config.readerEndpoint,
+    ...(config.archiveTarget ? [config.archiveTarget.endpoint] : []),
+  ]) {
     const url = new URL(endpoint);
     if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1')
       throw new Error('Synthetic loopback endpoints required');
@@ -20,6 +24,18 @@ if (import.meta.main) {
       value: { userId: config.actorId, accessToken: config.token, supabase: actor },
     }),
     resultQuery: { serviceUrl: config.readerEndpoint, secret: config.readerSecret },
+    ...(config.archiveTarget
+      ? {
+          finalDownload: {
+            config: {
+              ...config.archiveTarget,
+              signer: 's3',
+              accessKeyId: 'synthetic',
+              secretAccessKey: 'synthetic',
+            },
+          },
+        }
+      : {}),
   });
   const replies = [];
   for (const body of config.requests) {

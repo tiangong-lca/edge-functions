@@ -575,7 +575,7 @@ Deno.test(
       const file = { name: `result.${format}.7z`, sha256: 'e'.repeat(64), byteSize: 1000 };
       const { handler, counts } = setup({
         database: (name, args) => {
-          assertEquals(name, 'qry_final_result_download_v2');
+          assertEquals(name, 'qry_final_result_download');
           assertEquals(args, { p_publication_id: publicationId, p_format: format });
           return {
             ok: true,
