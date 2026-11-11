@@ -199,7 +199,7 @@ export function downloadFinalResult(
     const args = { p_publication_id: request.publicationId, p_format: request.format };
     const resolve = async () =>
       descriptorSchema.parse(
-        await finalResultRpc(actor, 'qry_final_result_download_v2', args, signal),
+        await finalResultRpc(actor, 'qry_final_result_download', args, signal),
       );
     const descriptor = await resolve();
     if (
@@ -271,7 +271,7 @@ export function downloadFinalResult(
         client.destroy();
       }
     }
-    // A signed URL is returned only after a second current-publication and complete-closure RLS check.
+    // A signed URL is returned only after a second check of the current publication and exact archive descriptor.
     // Already issued S3 URLs remain bearer capabilities until their short expiry.
     if (JSON.stringify(await resolve()) !== JSON.stringify(descriptor))
       throw new Error('Result ZIP authorization changed');

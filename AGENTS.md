@@ -40,9 +40,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-11-07'
-lastReviewedCommit: '41ba5be'
-lastReviewedNote: 'Edge #565: reviewed bounded bundle error/status mapping and safe details; full lint/check passes with 945 tests and the existing credentialed skip. Success DTO, actor authorization, dependencies and deployment remain unchanged.'
+lastReviewedAt: '2026-11-11'
+lastReviewedCommit: 'b434301733d0d98ddd05862ecec7133d6d59b02e'
+lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
