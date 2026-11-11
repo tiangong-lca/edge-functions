@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-11-07'
-lastReviewedCommit: '41ba5be'
-lastReviewedNote: 'Edge #565: reviewed bounded bundle error/status mapping and safe details; full lint/check passes with 945 tests and the existing credentialed skip. Success DTO, actor authorization, dependencies and deployment remain unchanged.'
+lastReviewedAt: '2026-11-11'
+lastReviewedCommit: 'b434301733d0d98ddd05862ecec7133d6d59b02e'
+lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -312,7 +312,7 @@ Run locally executable gates with `pnpm lint` and `pnpm check`; `pnpm qualify:st
 
 ## Published HDF5 results
 
-For Release-owned final Results, run `test/result_query_v2_test.ts` in addition to the tests below. Real Supabase clients with synthetic RPC replies verify actor-only `api` profiles, exact source/Result selection, publication/runtime-bound cursors, Derived isolation, UTF-8 bounds, cold preparation, timeout cleanup, reader builds and in-flight withdrawal/runtime rotation. DTOs preserve signed LCI, zero LCIA, frozen method versions and full units. Real pinned S3 SDK signing covers both fixed 7z formats without external I/O, exact target matching, complete-selection denials, post-signing withdrawal and the 60-second capability boundary. The native Storage signer also covers exact project/object URL binding, server-key non-disclosure, malformed/foreign responses, cancellation, mixed credentials and Supabase session-token rejection. Credential guards reject missing keys and foreign project URLs before I/O; both existing opaque secret and legacy service-role credentials are covered without disclosure. These tests do not establish hosted auth, Database RLS, object integrity or browser behavior; cross-repository and hosted qualification must supply those independent proofs before rollout. Dependency additions require the ordinary dependency-triggered CI; local Deno tests do not establish a hosted stack pass.
+For Release-owned final Results, run `test/result_query_v2_test.ts` in addition to the tests below. Real Supabase clients with synthetic RPC replies verify actor-only `api` profiles, exact source/Result selection, publication/runtime-bound cursors, Derived isolation, UTF-8 bounds, cold preparation, timeout cleanup, reader builds and in-flight withdrawal/runtime rotation. DTOs preserve signed LCI, zero LCIA, frozen method versions and full units. Real pinned S3 SDK signing covers both fixed 7z formats without external I/O, exact target matching, stable RPC calls before and after signing, complete-selection denials, post-signing withdrawal and the 60-second capability boundary. The loopback gateway accepts a synthetic archive target for Release byte and hash readback. The native Storage signer also covers exact project/object URL binding, server-key non-disclosure, malformed/foreign responses, cancellation, mixed credentials and Supabase session-token rejection. Credential guards reject missing keys and foreign project URLs before I/O; both existing opaque secret and legacy service-role credentials are covered without disclosure. These tests do not establish hosted auth, Database RLS, object integrity or browser behavior; cross-repository and hosted qualification must supply those independent proofs before rollout. Dependency additions require the ordinary dependency-triggered CI; local Deno tests do not establish a hosted stack pass.
 
 Run `test/result_query_test.ts` with `test/lca_release_results_test.ts` plus the canonical baseline. Real Supabase client transports with synthetic responses prove explicit actor `public` profile/version filtering, service RPC payload, repeated authorization after warm reads/revocation, cold202, immutable identity, HMAC UTF-8 framing, numeric signs/small values/frozen units, request and response bounds, cancellation and capacity release. The HMAC golden vector is independently computed with Python SHA-256. Existing anonymous metadata/download modes remain covered. Paired Database/Worker and browser qualification remain required before rollout; these tests do not establish live publication or production performance.
 
