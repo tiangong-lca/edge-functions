@@ -870,3 +870,224 @@ Deno.test('Storage signer also accepts existing legacy service-role credentials'
   assertEquals(response.status, 200);
   assertEquals((await response.text()).includes(key), false);
 });
+
+Deno.test(
+  'final_current reads one actor-scoped publication without reader or service I/O',
+  async () => {
+    const publication = {
+      publicationId,
+      releaseVersion: '2026.11.1',
+      format: 'final-result-pair.v2',
+    };
+    for (const value of [publication, null]) {
+      const { handler, counts } = setup({
+        database: (name, args) => {
+          assertEquals(name, 'qry_current_final_result_publication');
+          assertEquals(args, {});
+          return { ok: true, data: { publication: value } };
+        },
+      });
+      const response = await handler(
+        new Request('http://localhost/lca_release_results', {
+          method: 'POST',
+          body: JSON.stringify({ mode: 'final_current' }),
+        }),
+      );
+      assertEquals(response.status, 200);
+      assertEquals(response.headers.get('Cache-Control'), 'no-store');
+      assertEquals(await response.json(), {
+        ok: true,
+        mode: 'final_current',
+        data: { publication: value },
+      });
+      assertEquals(counts, { actor: 1, database: 1, reader: 0 });
+    }
+  },
+);
+Deno.test(
+  'final_current rejects private fields, old format and failed database reads',
+  async () => {
+    for (const data of [
+      {
+        publication: {
+          publicationId,
+          releaseVersion: '2026.11.1',
+          format: 'final-result-pair.v2',
+          candidateHash: 'private',
+        },
+      },
+      { publication: { publicationId, releaseVersion: '2026.11.1', format: 'legacy-four-zip.v1' } },
+      {},
+    ]) {
+      const { handler } = setup({ database: () => ({ ok: true, data }) });
+      const response = await handler(
+        new Request('http://localhost/lca_release_results', {
+          method: 'POST',
+          body: JSON.stringify({ mode: 'final_current' }),
+        }),
+      );
+      assertEquals(response.status, 503);
+      assertEquals(response.headers.get('Cache-Control'), 'no-store');
+      assertEquals((await response.text()).includes('private'), false);
+    }
+    const { handler } = setup({ database: () => ({ ok: false, code: 'provider-private-error' }) });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current' }),
+      }),
+    );
+    assertEquals(response.status, 503);
+    assertEquals((await response.text()).includes('provider-private-error'), false);
+  },
+);
+Deno.test(
+  'final_current requires actor authentication and rejects client-chosen scope',
+  async () => {
+    const handler = createLcaReleaseResultsHandler({
+      resolveActor: () =>
+        Promise.resolve({
+          ok: false,
+          response: new Response('{}', { status: 401 }),
+        }),
+    });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current' }),
+      }),
+    );
+    assertEquals(response.status, 401);
+    assertEquals(response.headers.get('Cache-Control'), 'no-store');
+    const invalid = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current', publicationId }),
+      }),
+    );
+    assertEquals(invalid.status, 400);
+  },
+);
+
+Deno.test(
+  'default download resolves current once and pins the second read to its exact identity',
+  async () => {
+    const data = {
+      ...(await zipDescriptor()),
+      targetHash: (await finalDownloadTarget(config)).targetHash,
+    };
+    const { handler, counts } = setup({
+      database: (name, args, count) => {
+        assertEquals(name, 'qry_final_result_download');
+        assertEquals(args, {
+          p_publication_id: count === 1 ? null : data.publicationId,
+          p_format: 'tidas',
+        });
+        return { ok: true, data };
+      },
+    });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_download', format: 'tidas' }),
+      }),
+    );
+    assertEquals(response.status, 200);
+    assertEquals((await response.json()).data.publicationId, data.publicationId);
+    assertEquals(counts, { actor: 1, database: 2, reader: 0 });
+  },
+);
+Deno.test('withdrawal during default archive signing never discloses a signed URL', async () => {
+  const data = {
+    ...(await zipDescriptor()),
+    targetHash: (await finalDownloadTarget(config)).targetHash,
+  };
+  const { handler } = setup({
+    database: (_name, _args, count) =>
+      count === 1
+        ? { ok: true, data }
+        : { ok: false, code: 'result_package_not_available', status: 404 },
+  });
+  const response = await handler(
+    new Request('http://localhost/lca_release_results', {
+      method: 'POST',
+      body: JSON.stringify({ mode: 'final_download', format: 'tidas' }),
+    }),
+  );
+  assertEquals(response.status, 404);
+  assertEquals((await response.text()).includes('X-Amz-Signature'), false);
+});
+Deno.test(
+  'history forwards a bounded cursor and projects available historical versions',
+  async () => {
+    const before = { publishedAt: '2026-11-01T00:00:00+00:00', publicationId };
+    const data = {
+      publications: [
+        {
+          publicationId,
+          releaseVersion: '2026.10.0',
+          publishedAt: '2026-10-01T00:00:00+00:00',
+          status: 'superseded',
+          formats: ['tidas'],
+        },
+      ],
+      nextCursor: null,
+    };
+    const { handler, counts } = setup({
+      database: (name, args) => {
+        assertEquals(name, 'qry_final_result_publication_history');
+        assertEquals(args, {
+          p_limit: 10,
+          p_before_published_at: before.publishedAt,
+          p_before_id: publicationId,
+        });
+        return { ok: true, data };
+      },
+    });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_history', before, limit: 10 }),
+      }),
+    );
+    assertEquals(response.status, 200);
+    assertEquals((await response.json()).data, data);
+    assertEquals(counts, { actor: 1, database: 1, reader: 0 });
+  },
+);
+Deno.test('history rejects unbounded pages, malformed cursors and withdrawn versions', async () => {
+  const { handler, counts } = setup({
+    database: () => ({
+      ok: true,
+      data: {
+        publications: [
+          {
+            publicationId,
+            releaseVersion: '2026.10.0',
+            publishedAt: '2026-10-01T00:00:00Z',
+            status: 'unpublished',
+            formats: [],
+          },
+        ],
+        nextCursor: null,
+      },
+    }),
+  });
+  for (const extra of [{ limit: 51 }, { before: { publicationId } }, { privatePath: 'storage' }]) {
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_history', ...extra }),
+      }),
+    );
+    assertEquals(response.status, 400);
+  }
+  assertEquals(counts.actor, 0);
+  const response = await handler(
+    new Request('http://localhost/lca_release_results', {
+      method: 'POST',
+      body: '{"mode":"final_history"}',
+    }),
+  );
+  assertEquals(response.status, 503);
+});

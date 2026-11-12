@@ -57,7 +57,7 @@ export const sourceResultsRequestSchema = z
 export const finalDownloadRequestSchema = z
   .object({
     mode: z.literal('final_download'),
-    publicationId: uuid,
+    publicationId: uuid.optional(),
     format: z.enum(['tidas', 'ilcd']),
   })
   .strict();
@@ -528,5 +528,83 @@ export function sourceFinalResults(
     if (data.nextResultKey !== null && (!data.results.length || data.nextResultKey !== previous))
       throw new Error('Result selection cursor mismatch');
     return json({ ok: true, mode: 'source_results', data });
+  });
+}
+
+const currentPublicationSchema = z
+  .object({
+    publication: z
+      .object({
+        publicationId: uuid,
+        releaseVersion,
+        format: z.literal('final-result-pair.v2'),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+
+export function currentFinalPublication(
+  actor: SupabaseClient,
+  signal: AbortSignal,
+  options: ResultQueryOptions = {},
+): Promise<Response> {
+  return withFinalResultBudget(signal, options.timeoutMs, async (signal) => {
+    const data = currentPublicationSchema.parse(
+      await finalResultRpc(actor, 'qry_current_final_result_publication', {}, signal),
+    );
+    return json({ ok: true, mode: 'final_current', data });
+  });
+}
+
+const publicationHistoryCursor = z
+  .object({ publishedAt: z.iso.datetime({ offset: true }), publicationId: uuid })
+  .strict();
+export const finalHistoryRequestSchema = z
+  .object({
+    mode: z.literal('final_history'),
+    limit: z.number().int().min(1).max(50).default(20),
+    before: publicationHistoryCursor.optional(),
+  })
+  .strict();
+const publicationHistorySchema = z
+  .object({
+    publications: z
+      .array(
+        z
+          .object({
+            publicationId: uuid,
+            releaseVersion,
+            publishedAt: z.iso.datetime({ offset: true }),
+            status: z.literal('superseded'),
+            formats: z.array(z.enum(['tidas', 'ilcd'])).max(2),
+          })
+          .strict(),
+      )
+      .max(50),
+    nextCursor: publicationHistoryCursor.nullable(),
+  })
+  .strict();
+export function finalPublicationHistory(
+  request: z.infer<typeof finalHistoryRequestSchema>,
+  actor: SupabaseClient,
+  signal: AbortSignal,
+  options: ResultQueryOptions = {},
+): Promise<Response> {
+  return withFinalResultBudget(signal, options.timeoutMs, async (signal) => {
+    const data = publicationHistorySchema.parse(
+      await finalResultRpc(
+        actor,
+        'qry_final_result_publication_history',
+        {
+          p_limit: request.limit,
+          p_before_published_at: request.before?.publishedAt ?? null,
+          p_before_id: request.before?.publicationId ?? null,
+        },
+        signal,
+      ),
+    );
+    if (data.publications.length > request.limit) throw new Error('Invalid publication history');
+    return json({ ok: true, mode: 'final_history', data });
   });
 }

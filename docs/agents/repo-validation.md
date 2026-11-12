@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-11-11'
-lastReviewedCommit: 'b434301733d0d98ddd05862ecec7133d6d59b02e'
-lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
+lastReviewedAt: 2026-11-12
+lastReviewedCommit: 40b3bf66de254c95019d255c006822bdf18d6137
+lastReviewedNote: 'Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -333,3 +333,9 @@ V4 owner-download corrections require exact export/bundle selection, the real SD
 Core Study permissions in V4 actions require exact strict boolean projection, false values on non-Study targets and unchanged actor/api forwarding. Database actual tests own owner/editor/viewer/reviewer, read-only OAuth, archive and live team/client revocation checks through existing core authorization. Edge adapter tests prove that available V4 actions do not substitute for these flags. The projection does not grant per-source/target access or a cancellation action.
 
 For V5 changes run `test/study_advanced_contract_test.ts`, `test/study_advanced_runtime_test.ts` and `scripts/study-advanced-build.test.cjs`, then retained Study protocol/report/review/signature suites and canonical `pnpm lint`/`pnpm check`. Prove exact native bytes, catalog/claim source bindings, post-I/O revocation, strict old consumers, portable standalone Node/Deno, new renderer2.0 and manifest3 authenticity. Fixture success never establishes actual integrated runtime, supported-host capacity, deployment admission or workspace inclusion.
+
+### Current final Result catalog
+
+`test/result_query_v2_test.ts` covers `final_current`: one actor-scoped bounded RPC, no reader/service I/O, explicit null publication, strict three-field projection, auth rejection, unexpected fields/formats, sanitized errors and no-store responses. Database #970 owns active-publication filtering. Platform #1493 consumes this mode and pins downloads separately. Local proof does not imply deployed catalog availability.
+
+Result-library history coverage in `test/result_query_v2_test.ts` verifies bounded/cursor-validated actor-only history forwarding, withdrawn-row rejection, omitted-current download selection, exact resolved-ID recheck after signing and withdrawal during signing. Run the canonical full gate; Database rollback fixtures independently prove SQL state/grant behavior.
