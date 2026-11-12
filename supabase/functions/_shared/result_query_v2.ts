@@ -530,3 +530,29 @@ export function sourceFinalResults(
     return json({ ok: true, mode: 'source_results', data });
   });
 }
+
+const currentPublicationSchema = z
+  .object({
+    publication: z
+      .object({
+        publicationId: uuid,
+        releaseVersion,
+        format: z.literal('final-result-pair.v2'),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+
+export function currentFinalPublication(
+  actor: SupabaseClient,
+  signal: AbortSignal,
+  options: ResultQueryOptions = {},
+): Promise<Response> {
+  return withFinalResultBudget(signal, options.timeoutMs, async (signal) => {
+    const data = currentPublicationSchema.parse(
+      await finalResultRpc(actor, 'qry_current_final_result_publication', {}, signal),
+    );
+    return json({ ok: true, mode: 'final_current', data });
+  });
+}

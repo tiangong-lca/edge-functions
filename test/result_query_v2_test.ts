@@ -870,3 +870,101 @@ Deno.test('Storage signer also accepts existing legacy service-role credentials'
   assertEquals(response.status, 200);
   assertEquals((await response.text()).includes(key), false);
 });
+
+Deno.test(
+  'final_current reads one actor-scoped publication without reader or service I/O',
+  async () => {
+    const publication = {
+      publicationId,
+      releaseVersion: '2026.11.1',
+      format: 'final-result-pair.v2',
+    };
+    for (const value of [publication, null]) {
+      const { handler, counts } = setup({
+        database: (name, args) => {
+          assertEquals(name, 'qry_current_final_result_publication');
+          assertEquals(args, {});
+          return { ok: true, data: { publication: value } };
+        },
+      });
+      const response = await handler(
+        new Request('http://localhost/lca_release_results', {
+          method: 'POST',
+          body: JSON.stringify({ mode: 'final_current' }),
+        }),
+      );
+      assertEquals(response.status, 200);
+      assertEquals(response.headers.get('Cache-Control'), 'no-store');
+      assertEquals(await response.json(), {
+        ok: true,
+        mode: 'final_current',
+        data: { publication: value },
+      });
+      assertEquals(counts, { actor: 1, database: 1, reader: 0 });
+    }
+  },
+);
+Deno.test(
+  'final_current rejects private fields, old format and failed database reads',
+  async () => {
+    for (const data of [
+      {
+        publication: {
+          publicationId,
+          releaseVersion: '2026.11.1',
+          format: 'final-result-pair.v2',
+          candidateHash: 'private',
+        },
+      },
+      { publication: { publicationId, releaseVersion: '2026.11.1', format: 'legacy-four-zip.v1' } },
+      {},
+    ]) {
+      const { handler } = setup({ database: () => ({ ok: true, data }) });
+      const response = await handler(
+        new Request('http://localhost/lca_release_results', {
+          method: 'POST',
+          body: JSON.stringify({ mode: 'final_current' }),
+        }),
+      );
+      assertEquals(response.status, 503);
+      assertEquals(response.headers.get('Cache-Control'), 'no-store');
+      assertEquals((await response.text()).includes('private'), false);
+    }
+    const { handler } = setup({ database: () => ({ ok: false, code: 'provider-private-error' }) });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current' }),
+      }),
+    );
+    assertEquals(response.status, 503);
+    assertEquals((await response.text()).includes('provider-private-error'), false);
+  },
+);
+Deno.test(
+  'final_current requires actor authentication and rejects client-chosen scope',
+  async () => {
+    const handler = createLcaReleaseResultsHandler({
+      resolveActor: () =>
+        Promise.resolve({
+          ok: false,
+          response: new Response('{}', { status: 401 }),
+        }),
+    });
+    const response = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current' }),
+      }),
+    );
+    assertEquals(response.status, 401);
+    assertEquals(response.headers.get('Cache-Control'), 'no-store');
+    const invalid = await handler(
+      new Request('http://localhost/lca_release_results', {
+        method: 'POST',
+        body: JSON.stringify({ mode: 'final_current', publicationId }),
+      }),
+    );
+    assertEquals(invalid.status, 400);
+  },
+);

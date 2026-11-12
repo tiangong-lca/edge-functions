@@ -603,3 +603,10 @@ curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
 
 # Final Result complete downloads use result.tidas.7z / result.ilcd.7z.
 # The final_download request still selects format tidas|ilcd and an exact publicationId.
+
+
+### @name LCA_Final_Current：Local (ordinary authenticated actor)
+curl -i --request POST '{{$dotenv LOCAL_ENDPOINT}}/lca_release_results' \
+    --header 'Authorization: Bearer {{$dotenv USER_JWT}}' \
+    --header 'Content-Type: application/json' \
+    --data '{"mode":"final_current"}'

@@ -40,9 +40,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: '2026-11-11'
-lastReviewedCommit: 'b434301733d0d98ddd05862ecec7133d6d59b02e'
-lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
+lastReviewedAt: 2026-11-12
+lastReviewedCommit: b507864e735b912f3144ac678650f6eea6db5c23
+lastReviewedNote: "Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
