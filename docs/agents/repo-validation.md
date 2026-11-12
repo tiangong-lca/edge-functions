@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-12
-lastReviewedCommit: b507864e735b912f3144ac678650f6eea6db5c23
-lastReviewedNote: "Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate."
+lastReviewedCommit: 40b3bf66de254c95019d255c006822bdf18d6137
+lastReviewedNote: 'Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -337,3 +337,5 @@ For V5 changes run `test/study_advanced_contract_test.ts`, `test/study_advanced_
 ### Current final Result catalog
 
 `test/result_query_v2_test.ts` covers `final_current`: one actor-scoped bounded RPC, no reader/service I/O, explicit null publication, strict three-field projection, auth rejection, unexpected fields/formats, sanitized errors and no-store responses. Database #970 owns active-publication filtering. Platform #1493 consumes this mode and pins downloads separately. Local proof does not imply deployed catalog availability.
+
+Result-library history coverage in `test/result_query_v2_test.ts` verifies bounded/cursor-validated actor-only history forwarding, withdrawn-format rejection, omitted-current download selection, exact resolved-ID recheck after signing and withdrawal during signing. Run the canonical full gate; Database rollback fixtures independently prove SQL state/grant behavior.

@@ -23,8 +23,8 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-11
-lastReviewedCommit: b434301733d0d98ddd05862ecec7133d6d59b02e
+lastReviewedAt: 2026-11-12
+lastReviewedCommit: 40b3bf66de254c95019d255c006822bdf18d6137
 lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
 ---
 
@@ -662,7 +662,8 @@ Authenticated `POST lca_release_results` also has explicit final Result modes. T
 - `final_current`: no parameters. Returns `{publication: null}` or the current public final Result publication (`publicationId`, `releaseVersion`, `format`). Ordinary authenticated users can discover the Result library without a source UUID or manager authority. The actor-only `api.qry_current_final_result_publication` reads a bounded publication summary; it never traverses Candidate dependencies. Deploy that migration before this mode.
 - `source_results`: exact `sourceId`/`sourceVersion`, optional `limit` (1–100, default 100), `afterKey` and `publicationId`. Database checks current source RLS and returns only direct Result relations in the current publication. A continuation requires the returned publication ID. `data.publication.format` distinguishes `final-result-pair.v2` from `legacy-four-zip.v1`; no publication is `null`, and empty results are ordinary. Derived ancestors are not source lookup results.
 - `final_query`: exact `resultId`/`resultVersion`, optional `publicationId`/`runtimeRevision`, and overview/LCI/LCIA `query` kinds. Both pins are required for an LCI cursor. V2 cursor/filter limits are 4096/256 UTF-8 bytes. Database resolves the selected, globally registered Result and active reader revision. Edge signs `/internal/results/query-v2`, checks the actual reader executable hash, then repeats live authorization. A published Derived Result can be viewed without access to its private ancestors.
-- `final_download`: `publicationId` and `format` (`tidas` or `ilcd`). Database permits only a complete prebuilt Candidate 7z archive: the sealed publication must select every Result root. The active archive is available to the existing authenticated audience. Partial selection has no whole-Candidate download. No query files or client-chosen paths are signed.
+- `final_history`: optional `limit` (1–50, default 20) and `before: {publishedAt, publicationId}`. Returns bounded historical public releases, available formats and `nextCursor`; withdrawn versions remain listed with no formats. Deploy the Database history migration first.
+- `final_download`: required `format` (`tidas` or `ilcd`), optional `publicationId`. Omission resolves the current online publication; an explicit ID selects that exact current or superseded release. Unknown or withdrawn IDs do not fall back to current. Database permits only a complete prebuilt Candidate 7z archive: the sealed publication must select every Result root. The selected archive is available to the existing authenticated audience. The resolved publication ID is pinned for the post-signing recheck, including when the request omitted it. Partial selection has no whole-Candidate download. No query files or client-chosen paths are signed.
 
 V2 query responses contain `publicationId`, `releaseVersion`, `runtimeRevision`, exact `result` and `data`. Ready `data.result` includes the frozen quantitative reference and `relationKind`. LCI item keys preserve flow ID/version, direction, location, function type and full flow-property/unit-group/internal-unit identity; values retain their sign. LCIA retains frozen method ID/version/name/unit and zero amounts. Missing LCIA returns `RESULT_LCIA_NOT_AVAILABLE` (404), never synthetic zeros. Internal ordinals, content hashes, ancestor identities, file locators and reader hashes are omitted. Cold 202 contains `data.status: "preparing"` with `Retry-After: 2`; repeat the same pinned lookup. Runtime rotation is 409; invalid/replayed cursors may be 422. Restart a page sequence after either event. Withdrawal or an unselected Result is 404. Replies use `no-store`; live lookups and private reader I/O share the eight-second/eight-request budget.
 

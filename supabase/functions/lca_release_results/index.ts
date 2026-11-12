@@ -29,6 +29,8 @@ import {
   queryFinalResult,
   sourceFinalResults,
   currentFinalPublication,
+  finalHistoryRequestSchema,
+  finalPublicationHistory,
 } from '../_shared/result_query_v2.ts';
 import { downloadFinalResult, type FinalDownloadOptions } from '../_shared/result_download_v2.ts';
 
@@ -49,6 +51,7 @@ export const lcaReleaseResultsRequestSchema = z.preprocess(
     finalQueryRequestSchema,
     sourceResultsRequestSchema,
     finalDownloadRequestSchema,
+    finalHistoryRequestSchema,
     z.object({ mode: z.literal('final_current') }).strict(),
     z.object({ mode: z.literal('current') }).strict(),
     z
@@ -160,7 +163,8 @@ export function createLcaReleaseResultsHandler(options: LcaReleaseResultsHandler
       parsed.data.mode === 'final_query' ||
       parsed.data.mode === 'source_results' ||
       parsed.data.mode === 'final_download' ||
-      parsed.data.mode === 'final_current'
+      parsed.data.mode === 'final_current' ||
+      parsed.data.mode === 'final_history'
     ) {
       const actor = await (options.resolveActor ?? resolveActorContext)(req);
       if (!actor.ok) {
@@ -169,6 +173,14 @@ export function createLcaReleaseResultsHandler(options: LcaReleaseResultsHandler
       }
       if (parsed.data.mode === 'final_current') {
         return currentFinalPublication(actor.value.supabase, req.signal, options.resultQuery);
+      }
+      if (parsed.data.mode === 'final_history') {
+        return finalPublicationHistory(
+          parsed.data,
+          actor.value.supabase,
+          req.signal,
+          options.resultQuery,
+        );
       }
       return parsed.data.mode === 'final_query'
         ? queryFinalResult(parsed.data, actor.value.supabase, req.signal, options.resultQuery)

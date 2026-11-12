@@ -42,7 +42,7 @@ checkPaths:
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-12
 lastReviewedCommit: b507864e735b912f3144ac678650f6eea6db5c23
-lastReviewedNote: "Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate."
+lastReviewedNote: 'Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md

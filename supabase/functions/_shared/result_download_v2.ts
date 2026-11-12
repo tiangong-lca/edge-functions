@@ -196,17 +196,19 @@ export function downloadFinalResult(
   options: FinalDownloadOptions = {},
 ): Promise<Response> {
   return withFinalResultBudget(signal, options.timeoutMs, async (signal) => {
-    const args = { p_publication_id: request.publicationId, p_format: request.format };
+    const args = { p_publication_id: request.publicationId ?? null, p_format: request.format };
     const resolve = async () =>
       descriptorSchema.parse(
         await finalResultRpc(actor, 'qry_final_result_download', args, signal),
       );
     const descriptor = await resolve();
     if (
-      descriptor.publicationId !== request.publicationId ||
+      (request.publicationId !== undefined && descriptor.publicationId !== request.publicationId) ||
       descriptor.file.name !== `result.${request.format}.7z`
     )
       throw new Error('Result archive identity mismatch');
+    // Default selection is resolved once. Recheck exactly that publication, even if the head advances.
+    args.p_publication_id = descriptor.publicationId;
     const config = options.config ?? configuration();
     const { target, targetHash } = await finalDownloadTarget(config);
     if (targetHash !== descriptor.targetHash) throw new Error('Result archive target mismatch');
@@ -271,7 +273,7 @@ export function downloadFinalResult(
         client.destroy();
       }
     }
-    // A signed URL is returned only after a second check of the current publication and exact archive descriptor.
+    // A signed URL is returned only after a second check of the selected publication and exact archive descriptor.
     // Already issued S3 URLs remain bearer capabilities until their short expiry.
     if (JSON.stringify(await resolve()) !== JSON.stringify(descriptor))
       throw new Error('Result ZIP authorization changed');
