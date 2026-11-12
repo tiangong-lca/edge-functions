@@ -150,6 +150,13 @@ routing:
         - supabase/functions/*/index.ts
         - supabase/functions/*/handler.ts
         - supabase/functions/**
+    portal-index-notifications:
+      paths:
+        - supabase/functions/dispatch_portal_index_notifications/**
+        - supabase/functions/_shared/portal_index_providers.ts
+        - test/portal_index_dispatch_test.ts
+        - supabase/.env.example
+        - supabase/config.toml
     auth-runtime:
       paths:
         - supabase/functions/_shared/auth.ts
