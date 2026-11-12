@@ -1018,7 +1018,7 @@ Deno.test('withdrawal during default archive signing never discloses a signed UR
   assertEquals((await response.text()).includes('X-Amz-Signature'), false);
 });
 Deno.test(
-  'history forwards a bounded cursor and projects withdrawn rows without archives',
+  'history forwards a bounded cursor and projects available historical versions',
   async () => {
     const before = { publishedAt: '2026-11-01T00:00:00+00:00', publicationId };
     const data = {
@@ -1027,8 +1027,8 @@ Deno.test(
           publicationId,
           releaseVersion: '2026.10.0',
           publishedAt: '2026-10-01T00:00:00+00:00',
-          status: 'unpublished',
-          formats: [],
+          status: 'superseded',
+          formats: ['tidas'],
         },
       ],
       nextCursor: null,
@@ -1055,46 +1055,39 @@ Deno.test(
     assertEquals(counts, { actor: 1, database: 1, reader: 0 });
   },
 );
-Deno.test(
-  'history rejects unbounded pages, malformed cursors and downloadable withdrawals',
-  async () => {
-    const { handler, counts } = setup({
-      database: () => ({
-        ok: true,
-        data: {
-          publications: [
-            {
-              publicationId,
-              releaseVersion: '2026.10.0',
-              publishedAt: '2026-10-01T00:00:00Z',
-              status: 'unpublished',
-              formats: ['tidas'],
-            },
-          ],
-          nextCursor: null,
-        },
-      }),
-    });
-    for (const extra of [
-      { limit: 51 },
-      { before: { publicationId } },
-      { privatePath: 'storage' },
-    ]) {
-      const response = await handler(
-        new Request('http://localhost/lca_release_results', {
-          method: 'POST',
-          body: JSON.stringify({ mode: 'final_history', ...extra }),
-        }),
-      );
-      assertEquals(response.status, 400);
-    }
-    assertEquals(counts.actor, 0);
+Deno.test('history rejects unbounded pages, malformed cursors and withdrawn versions', async () => {
+  const { handler, counts } = setup({
+    database: () => ({
+      ok: true,
+      data: {
+        publications: [
+          {
+            publicationId,
+            releaseVersion: '2026.10.0',
+            publishedAt: '2026-10-01T00:00:00Z',
+            status: 'unpublished',
+            formats: [],
+          },
+        ],
+        nextCursor: null,
+      },
+    }),
+  });
+  for (const extra of [{ limit: 51 }, { before: { publicationId } }, { privatePath: 'storage' }]) {
     const response = await handler(
       new Request('http://localhost/lca_release_results', {
         method: 'POST',
-        body: '{"mode":"final_history"}',
+        body: JSON.stringify({ mode: 'final_history', ...extra }),
       }),
     );
-    assertEquals(response.status, 503);
-  },
-);
+    assertEquals(response.status, 400);
+  }
+  assertEquals(counts.actor, 0);
+  const response = await handler(
+    new Request('http://localhost/lca_release_results', {
+      method: 'POST',
+      body: '{"mode":"final_history"}',
+    }),
+  );
+  assertEquals(response.status, 503);
+});

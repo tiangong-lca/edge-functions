@@ -576,7 +576,7 @@ const publicationHistorySchema = z
             publicationId: uuid,
             releaseVersion,
             publishedAt: z.iso.datetime({ offset: true }),
-            status: z.enum(['superseded', 'unpublished']),
+            status: z.literal('superseded'),
             formats: z.array(z.enum(['tidas', 'ilcd'])).max(2),
           })
           .strict(),
@@ -604,11 +604,7 @@ export function finalPublicationHistory(
         signal,
       ),
     );
-    if (
-      data.publications.length > request.limit ||
-      data.publications.some((p) => p.status === 'unpublished' && p.formats.length)
-    )
-      throw new Error('Invalid publication history');
+    if (data.publications.length > request.limit) throw new Error('Invalid publication history');
     return json({ ok: true, mode: 'final_history', data });
   });
 }
