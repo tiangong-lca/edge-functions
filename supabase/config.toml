@@ -172,6 +172,10 @@ project_id = "submidrhbtknjxfympna"
 [functions.portal_r0_hmac_verify_v1]
 verify_jwt = false
 
+# This trusted scheduler and read-only feed authenticate inside the function.
+[functions.dispatch_portal_index_notifications]
+verify_jwt = false
+
 [analytics]
 enabled = false
 port = 54327
