@@ -39,6 +39,113 @@ export type SaveLifecycleModelBundlePlan = {
   processMutations: BundleProcessMutation[];
 };
 
+export const MODEL_BUNDLE_PROTOCOL = 'model-bundle.v1';
+
+type GuardedBundleTarget = {
+  protocol: typeof MODEL_BUNDLE_PROTOCOL;
+  modelId: string;
+  version: string;
+};
+
+export type GuardedBundleRequest = GuardedBundleTarget &
+  (
+    | { action: 'inspect' }
+    | { action: 'recover'; operationId: string }
+    | {
+        action: 'save';
+        operationId: string;
+        expectedRevision: string | null;
+        plan: SaveLifecycleModelBundlePlan;
+      }
+  );
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isRevision(value: unknown): value is string {
+  return typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
+}
+
+export function isGuardedBundleBody(body: unknown): boolean {
+  return isRecord(body) && Object.hasOwn(body, 'protocol');
+}
+
+export function validateGuardedBundleRequest(
+  body: unknown,
+): ValidationResult<GuardedBundleRequest> {
+  const invalid = { ok: false as const, message: 'Invalid guarded Model bundle request' };
+  if (!isRecord(body) || body.protocol !== MODEL_BUNDLE_PROTOCOL) return invalid;
+  if (!isUuid(body.modelId) || !isVersion(body.version)) return invalid;
+  const target: GuardedBundleTarget = {
+    protocol: MODEL_BUNDLE_PROTOCOL,
+    modelId: body.modelId,
+    version: body.version,
+  };
+  if (body.action === 'inspect' && Object.keys(body).length === 4)
+    return { ok: true, value: { ...target, action: 'inspect' } };
+  if (!isUuid(body.operationId)) return invalid;
+  if (body.action === 'recover' && Object.keys(body).length === 5)
+    return { ok: true, value: { ...target, action: 'recover', operationId: body.operationId } };
+  if (body.action !== 'save' || Object.keys(body).length !== 7 || !isRecord(body.plan))
+    return invalid;
+  const plan = validateSavePlan(body.plan);
+  if (
+    !plan.ok ||
+    plan.value.modelId !== target.modelId ||
+    plan.value.version !== target.version ||
+    !isRecord(plan.value.parent.jsonOrdered) ||
+    !isRecord(plan.value.parent.jsonTg) ||
+    Object.hasOwn(body.plan, 'allocateVersion') ||
+    Object.hasOwn(body.plan, 'actorUserId') ||
+    !(
+      (plan.value.mode === 'create' && body.expectedRevision === null) ||
+      (plan.value.mode === 'update' && isRevision(body.expectedRevision))
+    )
+  ) {
+    return invalid;
+  }
+  return {
+    ok: true,
+    value: {
+      ...target,
+      action: 'save',
+      operationId: body.operationId,
+      expectedRevision: body.expectedRevision,
+      plan: plan.value,
+    },
+  };
+}
+
+export function isGuardedBundleReply(response: unknown, request: GuardedBundleRequest): boolean {
+  if (!isRecord(response) || response.protocol !== MODEL_BUNDLE_PROTOCOL) return false;
+  if (request.action === 'inspect') {
+    const snapshot = response.snapshot;
+    return (
+      response.status === 'observed' &&
+      (snapshot === null ||
+        (isRecord(snapshot) &&
+          isRevision(snapshot.revision) &&
+          isRecord(snapshot.model) &&
+          snapshot.model.id === request.modelId &&
+          snapshot.model.version === request.version &&
+          Array.isArray(snapshot.members) &&
+          Array.isArray(snapshot.processes)))
+    );
+  }
+  if (response.operationId !== request.operationId) return false;
+  if (request.action === 'recover' && response.status === 'unknown') return true;
+  return (
+    response.status === 'committed' &&
+    response.modelId === request.modelId &&
+    response.version === request.version &&
+    isRevision(response.revision) &&
+    typeof response.savedAt === 'string' &&
+    Array.isArray(response.members) &&
+    response.members.length > 0
+  );
+}
+
 export type DeleteLifecycleModelBundleBody = {
   modelId: string;
   version: string;
@@ -283,6 +390,10 @@ export function rpcErrorStatusCode(error: { code: string }): number {
     case 'PROCESS_NOT_FOUND':
       return 404;
     case 'VERSION_CONFLICT':
+    case 'MODEL_BUNDLE_CONFLICT':
+    case 'MODEL_MEMBERSHIP_INVALID':
+    case 'MODEL_MEMBERSHIP_BUSY':
+    case 'MODEL_OPERATION_CONFLICT':
       return 409;
     case 'INVALID_PAYLOAD':
       return 400;
@@ -349,6 +460,14 @@ function normalizeRpcErrorCode(error: { message?: string; code?: string }) {
   if (message === 'VERSION_CONFLICT') {
     return 'VERSION_CONFLICT';
   }
+  if (
+    message === 'MODEL_BUNDLE_CONFLICT' ||
+    message === 'MODEL_MEMBERSHIP_INVALID' ||
+    message === 'MODEL_MEMBERSHIP_BUSY' ||
+    message === 'MODEL_OPERATION_CONFLICT'
+  ) {
+    return message;
+  }
   if (error?.code === '23505') {
     return 'VERSION_CONFLICT';
   }
@@ -370,6 +489,14 @@ function rpcErrorMessage(code: string) {
       return 'Invalid lifecycle model bundle payload';
     case 'VERSION_CONFLICT':
       return 'A record with the same id and version already exists';
+    case 'MODEL_BUNDLE_CONFLICT':
+      return 'The Model or its results changed. Reload the Model before saving again';
+    case 'MODEL_MEMBERSHIP_INVALID':
+      return 'The stored result members do not match the Model declaration';
+    case 'MODEL_MEMBERSHIP_BUSY':
+      return 'The Model or its results are being changed by another operation';
+    case 'MODEL_OPERATION_CONFLICT':
+      return 'This save operation identity belongs to a different request';
     case 'PROCESS_PERSIST_FAILED':
     default:
       return 'Failed to persist lifecycle model bundle';
