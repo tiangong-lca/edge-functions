@@ -4,11 +4,14 @@ import { authenticateRequest, AuthMethod, type AuthResult } from '../_shared/aut
 import { extractBearerToken } from '../_shared/command_runtime/actor_context.ts';
 import {
   ensureOwnerOrReviewAdmin,
+  isGuardedBundleBody,
+  isGuardedBundleReply,
   json,
   mapRpcError,
   rpcErrorStatusCode,
   normalizeSaveRpcPayload,
   permissionErrorStatusCode,
+  validateGuardedBundleRequest,
   validateSavePlan,
 } from '../_shared/lifecyclemodel_bundle.ts';
 import {
@@ -86,6 +89,41 @@ export function createSaveLifecycleModelBundleHandler(
         },
         400,
       );
+    }
+
+    if (isGuardedBundleBody(body)) {
+      const validation = validateGuardedBundleRequest(body);
+      if (!validation.ok)
+        return json({ ok: false, code: 'INVALID_PAYLOAD', message: validation.message }, 400);
+      const request = validation.value;
+      const actorSupabase = deps.createRequestSupabaseClient(accessToken);
+      const { data, error } = await actorSupabase.rpc('cmd_lifecycle_model_bundle_save', {
+        p_plan: request,
+      });
+      if (error) {
+        const mapped = mapRpcError(error);
+        if (request.action === 'inspect' && mapped.code === 'INVALID_PAYLOAD') {
+          return json(
+            {
+              ok: false,
+              code: 'MODEL_BUNDLE_UNSUPPORTED',
+              message: 'This environment does not support guarded Model bundle saves',
+            },
+            501,
+          );
+        }
+        return json(mapped, rpcErrorStatusCode(mapped));
+      }
+      if (!isGuardedBundleReply(data, request))
+        return json(
+          {
+            ok: false,
+            code: 'MODEL_BUNDLE_REPLY_UNVERIFIED',
+            message: 'The server did not return a verifiable Model bundle response',
+          },
+          502,
+        );
+      return json({ ...data, ok: true });
     }
 
     const validation = validateSavePlan(body);

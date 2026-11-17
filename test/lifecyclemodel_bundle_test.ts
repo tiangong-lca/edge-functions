@@ -11,6 +11,58 @@ import {
 const USER_ID = '11111111-1111-4111-8111-111111111111';
 
 Deno.test(
+  'guarded bundle recovery uses only the authenticated actor and verifies the original operation',
+  async () => {
+    const requests: unknown[] = [];
+    const target = {
+      protocol: 'model-bundle.v1',
+      modelId: USER_ID,
+      version: '06.00.000',
+      operationId: '22222222-2222-4222-8222-222222222222',
+    };
+    const actor = {
+      rpc(name: string, args: unknown) {
+        requests.push({ name, args });
+        return Promise.resolve({
+          data: { ...target, status: 'unknown' },
+          error: null,
+        });
+      },
+    } as unknown as SupabaseClient;
+    const handler = createSaveLifecycleModelBundleHandler({
+      authClient: actor,
+      serviceSupabase: {} as SupabaseClient,
+      createRequestSupabaseClient: () => actor,
+      authenticateRequest: async () => ({
+        isAuthenticated: true,
+        principal: { userId: USER_ID, authMethod: 'supabase_jwt', assurance: 'claims' },
+      }),
+      ensureOwnerOrReviewAdmin: () => {
+        throw new Error('Guarded recovery must use actor admission');
+      },
+    });
+    const request = (body: unknown) =>
+      new Request('https://example.test/bundle', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { Authorization: 'Bearer test.header.signature' },
+      });
+    const invalid = await handler(request({ ...target, action: 'recover', actorUserId: USER_ID }));
+    assertEquals(invalid.status, 400);
+    assertEquals(requests, []);
+    const result = await handler(request({ ...target, action: 'recover' }));
+    assertEquals(result.status, 200);
+    assertEquals((await result.json()).status, 'unknown');
+    assertEquals(requests, [
+      {
+        name: 'cmd_lifecycle_model_bundle_save',
+        args: { p_plan: { ...target, action: 'recover' } },
+      },
+    ]);
+  },
+);
+
+Deno.test(
   'lifecycle model authorization uses the service-only review-admin predicate',
   async () => {
     const calls: Array<{ fn: string; args: Record<string, unknown> }> = [];
