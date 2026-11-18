@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-12
-lastReviewedCommit: 40b3bf66de254c95019d255c006822bdf18d6137
-lastReviewedNote: 'Edge #568 reviewed the stable archive download RPC, exact target/signature recheck and loopback fixture.'
+lastReviewedAt: 2026-11-18
+lastReviewedCommit: 058a70b1bce11e6aafae608740f40b73718b53ac
+lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff.'
 ---
 
 # TianGong-LCA-Edge-Functions

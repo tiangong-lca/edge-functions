@@ -7,8 +7,13 @@ import { parseSubmitReviewRequest, submitReviewRequestSchema } from './validatio
 
 export { submitReviewRequestSchema };
 
-export function parseSubmitReviewCommand(body: unknown) {
-  return parseSubmitReviewRequest(body);
+export function parseSubmitReviewCommand(body: unknown, operationKey: string | null = null) {
+  const parsed = parseSubmitReviewRequest(body);
+  if (!parsed.ok || operationKey === null) return parsed;
+  if (!/^[0-9a-f]{64}$/.test(operationKey)) {
+    return { ok: false as const, message: 'Invalid review operation key' };
+  }
+  return { ok: true as const, value: { ...parsed.value, operationKey } };
 }
 
 export async function executeSubmitReviewCommand(
@@ -27,7 +32,7 @@ export async function executeSubmitReviewCommand(
     targetTable: request.table,
     targetId: request.id,
     targetVersion: request.version,
-    payload: {},
+    payload: request.operationKey ? { review_operation_key: request.operationKey } : {},
   });
 
   const result = await repository.submitReview(request, audit);
