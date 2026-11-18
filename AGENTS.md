@@ -40,9 +40,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-17
-lastReviewedCommit: dc5f68e2c310bcb8a092fa5681f9827e15bd095e
-lastReviewedNote: 'Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate.'
+lastReviewedAt: 2026-11-18
+lastReviewedCommit: 058a70b1bce11e6aafae608740f40b73718b53ac
+lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
