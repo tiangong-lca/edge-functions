@@ -100,3 +100,38 @@ Deno.test('parseSubmitReviewCommand rejects retired Gate metadata', () => {
 
   assertEquals(result.ok, false);
 });
+
+Deno.test(
+  'submit validates the optional operation key and includes it in the existing audit',
+  async () => {
+    const operationKey = 'a'.repeat(64);
+    const body = {
+      table: 'processes',
+      id: TEST_DATASET_ID,
+      version: '01.00.000',
+    };
+    assertEquals(parseSubmitReviewCommand(body, 'invalid').ok, false);
+    const parsed = parseSubmitReviewCommand(body, operationKey);
+    if (!parsed.ok) throw new Error(parsed.message);
+    const supabase = new FakeRpcSupabase();
+    await executeSubmitReviewCommand(parsed.value, buildActor(supabase));
+    assertEquals(supabase.rpcCalls, [
+      {
+        fn: 'cmd_review_submit',
+        args: {
+          p_target_table: 'processes',
+          p_target_id: TEST_DATASET_ID,
+          p_target_version: '01.00.000',
+          p_audit: {
+            command: 'dataset_submit_review',
+            actorUserId: TEST_USER_ID,
+            targetTable: 'processes',
+            targetId: TEST_DATASET_ID,
+            targetVersion: '01.00.000',
+            payload: { review_operation_key: operationKey },
+          },
+        },
+      },
+    ]);
+  },
+);

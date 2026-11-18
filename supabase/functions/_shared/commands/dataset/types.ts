@@ -60,6 +60,7 @@ export type PublishRequest = {
 };
 
 export type SubmitReviewRequest = {
+  operationKey?: string;
   table: DatasetTable;
   id: string;
   version: string;
@@ -102,4 +103,9 @@ export type DatasetCommandFailure = {
 };
 
 export type DatasetCommandExecutionResult =
-  { ok: true; body: unknown; status?: number } | DatasetCommandFailure;
+  | {
+      ok: true;
+      body: unknown;
+      status?: number;
+    }
+  | DatasetCommandFailure;
