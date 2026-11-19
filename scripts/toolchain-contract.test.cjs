@@ -54,10 +54,10 @@ test('keeps Supabase Edge Runtime-compatible Deno authoritative and auxiliary to
   assert.deepEqual(packageJson.engines, { node: '24.19.0', pnpm: '11.24.0' });
   assert.equal(packageJson.config.denoVersion, '2.1.4');
   assert.equal(packageJson.config.denoTypeScriptVersion, '5.6.2');
-  assert.equal(packageJson.config.supabaseCliVersion, '2.121.0');
-  assert.equal(packageJson.config.supabaseEdgeRuntimeVersion, '1.77.4');
+  assert.equal(packageJson.config.supabaseCliVersion, '3.1.0');
+  assert.equal(packageJson.config.supabaseEdgeRuntimeVersion, '1.78.1');
   assert.equal(packageJson.devDependencies.prettier, '3.9.10');
-  assert.equal(packageJson.devDependencies.supabase, '2.121.0');
+  assert.equal(packageJson.devDependencies.supabase, '3.1.0');
   assert.equal(packageJson.devDependencies.typescript, undefined);
   assert.equal(packageJson.devDependencies['prettier-plugin-organize-imports'], undefined);
   assert.equal(read('.nvmrc').trim(), '24.19.0');
@@ -131,7 +131,7 @@ test('pins the latest reviewed Edge-compatible runtime dependency graph', () => 
 
 test('binds the Supabase CLI image to reviewed Edge Runtime and Deno source evidence', () => {
   const packageJson = readJson('package.json');
-  const fixture = readJson('test/fixtures/supabase-edge-runtime-v1.77.4-deno.json');
+  const fixture = readJson('test/fixtures/supabase-edge-runtime-v1.78.1-deno.json');
 
   assert.equal(fixture.schemaVersion, 'supabase.edge-runtime-deno-source.v1');
   assert.equal(fixture.cli.version, packageJson.config.supabaseCliVersion);
@@ -152,13 +152,13 @@ test('binds the Supabase CLI image to reviewed Edge Runtime and Deno source evid
     [
       {
         repository: 'supabase/cli',
-        ref: 'v2.121.0',
+        ref: 'v3.1.0',
         path: 'apps/cli/src/shared/services/Dockerfile',
-        gitBlobSha: '563c96ccd7ce0a7d1f4052750b391a1a46ca3836',
+        gitBlobSha: '2fc80e16fd69a9dc215bd20e0341c19409ef2d5c',
       },
       {
         repository: 'supabase/edge-runtime',
-        ref: 'v1.77.4',
+        ref: 'v1.78.1',
         path: 'deno/Cargo.toml',
         gitBlobSha: '7d9ff170f4a4ce3d82096705f9a97ee86984fb6b',
       },
@@ -177,7 +177,7 @@ test('uses one frozen pnpm graph without npm-owned compiler tooling', () => {
   const workspace = read('pnpm-workspace.yaml');
 
   assert.match(lockfile, /^\s{2}prettier@3\.9\.10:/mu);
-  assert.match(lockfile, /^\s{2}supabase@2\.121\.0:/mu);
+  assert.match(lockfile, /^\s{2}supabase@3\.1\.0:/mu);
   assert.doesNotMatch(lockfile, /^\s{2}typescript@/mu);
   assert.doesNotMatch(lockfile, /prettier-plugin-organize-imports/u);
   assert.match(workspace, /supabase:\s*true/u);

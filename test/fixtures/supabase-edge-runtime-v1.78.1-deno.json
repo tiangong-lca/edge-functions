@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "supabase.edge-runtime-deno-source.v1",
+  "cli": {
+    "version": "3.1.0",
+    "edgeRuntimeVersion": "1.78.1",
+    "source": {
+      "repository": "supabase/cli",
+      "ref": "v3.1.0",
+      "path": "apps/cli/src/shared/services/Dockerfile",
+      "gitBlobSha": "2fc80e16fd69a9dc215bd20e0341c19409ef2d5c",
+      "url": "https://github.com/supabase/cli/blob/v3.1.0/apps/cli/src/shared/services/Dockerfile"
+    },
+    "readerSource": {
+      "repository": "supabase/cli",
+      "ref": "v3.1.0",
+      "path": "apps/cli/src/shared/services/dockerfile-images.ts",
+      "gitBlobSha": "377f78a0344c2c004e24621f8f86f7f6e4084576",
+      "url": "https://github.com/supabase/cli/blob/v3.1.0/apps/cli/src/shared/services/dockerfile-images.ts"
+    }
+  },
+  "edgeRuntime": {
+    "version": "1.78.1",
+    "denoVersion": "2.1.4",
+    "source": {
+      "repository": "supabase/edge-runtime",
+      "ref": "v1.78.1",
+      "path": "deno/Cargo.toml",
+      "gitBlobSha": "7d9ff170f4a4ce3d82096705f9a97ee86984fb6b",
+      "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/deno/Cargo.toml"
+    },
+    "binary": {
+      "version": "0.1.0",
+      "profile": "release",
+      "target": "x86_64-unknown-linux-gnu",
+      "sources": [
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "cli/Cargo.toml",
+          "gitBlobSha": "73f582905c73d58481f0fec2311b4f8d1a0a544e",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/cli/Cargo.toml"
+        },
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "cli/src/flags.rs",
+          "gitBlobSha": "393922835c671a403da65f031349579fa954d64f",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/cli/src/flags.rs"
+        },
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "Dockerfile",
+          "gitBlobSha": "ff1c4d68f27e76b09263e45a0cc4496fbf71a034",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/Dockerfile"
+        }
+      ]
+    },
+    "worker": {
+      "reportedVersion": {
+        "deno": "supabase-edge-runtime-1.78.1 (compatible with Deno v2.1.4)",
+        "v8": "11.6.189.12",
+        "typescript": "5.1.6"
+      },
+      "sources": [
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "ext/runtime/js/bootstrap.js",
+          "gitBlobSha": "1a98593cee8882faa9206b8a274496b5e8166935",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/ext/runtime/js/bootstrap.js"
+        },
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "crates/base/src/runtime/mod.rs",
+          "gitBlobSha": "0cf2d01e45c5c0e8d33ca741dd07dde73b20a873",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/crates/base/src/runtime/mod.rs"
+        },
+        {
+          "repository": "supabase/edge-runtime",
+          "ref": "v1.78.1",
+          "path": "deno/versions.rs",
+          "gitBlobSha": "eb2014ed445e81118fc5cf4083e77fd228fc4e45",
+          "url": "https://github.com/supabase/edge-runtime/blob/v1.78.1/deno/versions.rs"
+        }
+      ]
+    }
+  },
+  "deno": {
+    "version": "2.1.4",
+    "bundledTypeScriptVersion": "5.6.2",
+    "source": {
+      "repository": "denoland/deno",
+      "ref": "v2.1.4",
+      "path": "cli/build.rs",
+      "gitBlobSha": "3d986612841584b764e9996aa861724b744017a7",
+      "url": "https://github.com/denoland/deno/blob/v2.1.4/cli/build.rs"
+    }
+  }
+}

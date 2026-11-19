@@ -40,10 +40,7 @@ const {
   asymmetricJwt,
 } = require('./stack-qualification/contracts.cjs');
 const repo = path.resolve(__dirname, '..');
-const variants = {
-  baseline: { cli: '2.116.0', runtime: '1.74.3', postgres: '17.6.1.165' },
-  candidate: { cli: '2.121.0', runtime: '1.77.4', postgres: '17.11.0.004' },
-};
+const variants = require('../test/fixtures/stack-qualification/cli3-case.json');
 const excludes =
   'gotrue,realtime,storage-api,imgproxy,mailpit,postgrest,postgres-meta,studio,logflare,vector,supavisor';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

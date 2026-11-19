@@ -25,8 +25,7 @@ function buildPortalR0CleanupArgs(projectRef) {
     'functions',
     'delete',
     FUNCTION_NAME,
-    '--project-ref',
-    projectRef,
+    `--remote=${projectRef}`,
     '--yes',
   ];
 }

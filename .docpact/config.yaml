@@ -207,7 +207,9 @@ routing:
         - scripts/cleanup-portal-r0-fixture.test.cjs
         - scripts/run-portal-upstash-live-fixture.cjs
         - test/fixtures/supabase-cli-v2.121.0-functions-transport.json
+        - test/fixtures/supabase-cli-v3.1.0-functions-transport.json
         - test/fixtures/supabase-edge-runtime-v1.77.4-deno.json
+        - test/fixtures/supabase-edge-runtime-v1.78.1-deno.json
         - supabase/.env.example
         - README.md
         - docs/agents/repo-architecture.md
@@ -651,7 +653,11 @@ rules:
         kind: live-proof-runner
       - path: test/fixtures/supabase-cli-v2.121.0-functions-transport.json
         kind: source-contract-fixture
+      - path: test/fixtures/supabase-cli-v3.1.0-functions-transport.json
+        kind: source-contract-fixture
       - path: test/fixtures/supabase-edge-runtime-v1.77.4-deno.json
+        kind: source-contract-fixture
+      - path: test/fixtures/supabase-edge-runtime-v1.78.1-deno.json
         kind: source-contract-fixture
     requiredDocs:
       - path: AGENTS.md
@@ -824,6 +830,8 @@ rules:
       - path: pnpm-workspace.yaml
         kind: package-manager-config
       - path: test/fixtures/supabase-edge-runtime-v1.77.4-deno.json
+        kind: source-contract-fixture
+      - path: test/fixtures/supabase-edge-runtime-v1.78.1-deno.json
         kind: source-contract-fixture
       - path: supabase/config.toml
         kind: deploy-config
