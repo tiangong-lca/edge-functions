@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "cli": "2.121.0",
+    "runtime": "1.77.4",
+    "postgres": "17.11.0.004"
+  },
+  "candidate": {
+    "cli": "3.1.0",
+    "runtime": "1.78.1",
+    "postgres": "17.11.0.018"
+  }
+}

@@ -201,7 +201,7 @@ test('fixture loads its configured signing key while excluding the Auth service'
 test('runtime binary identity separates the image release from crate and embedded Deno versions', () => {
   const { runtimeBinaryIdentity } = require('./stack-qualification/contracts.cjs');
   const actual = 'edge-runtime 0.1.0\ndeno 2.1.4 (release, x86_64-unknown-linux-gnu)\n';
-  for (const release of ['1.74.3', '1.77.4']) {
+  for (const release of ['1.74.3', '1.77.4', '1.78.1']) {
     const fixture = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, `../test/fixtures/supabase-edge-runtime-v${release}-deno.json`),

@@ -63,8 +63,7 @@ test('builds one fixed no-gateway-JWT R0 function deployment', () => {
     'functions',
     'deploy',
     FUNCTION_NAME,
-    '--project-ref',
-    PREVIEW_REF,
+    `--remote=${PREVIEW_REF}`,
     '--no-verify-jwt',
     '--import-map',
     'supabase/functions/deno.json',
@@ -91,7 +90,7 @@ test('live branch list runner executes one read-only exact Main-parent query and
     environment: { SUPABASE_ACCESS_TOKEN: 'must-not-be-logged' },
     execFileSyncImpl(command, args, options) {
       calls.push({ command, args, options });
-      return JSON.stringify({ branches: [readyBranch()], message: '' });
+      return JSON.stringify([readyBranch()]);
     },
   });
   assert.equal(branches.length, 1);
@@ -102,9 +101,8 @@ test('live branch list runner executes one read-only exact Main-parent query and
     'supabase',
     'branches',
     'list',
-    '--project-ref',
-    MAIN_REF,
-    '--output-format',
+    `--remote=${MAIN_REF}`,
+    '--output',
     'json',
   ]);
   assert.deepEqual(calls[0].options.stdio, ['ignore', 'pipe', 'pipe']);
@@ -188,4 +186,37 @@ for (const output of [
 test('guard surface never accepts a function name argument', () => {
   assert.equal(FUNCTION_NAME, 'portal_r0_hmac_verify_v1');
   assert.equal(validatePortalR0Deploy.length, 1);
+});
+
+test('the real CLI3 raw JSON branch result preserves rows and rejects its target-bearing envelope', () => {
+  const fixture = require('../test/fixtures/supabase-cli-v3.1.0-branches-output.json');
+  assert.equal(fixture.cliVersion, '3.1.0');
+  assert.equal(fixture.syntheticOnly, true);
+  const run = (output) =>
+    listSupabasePreviewBranches({
+      parentProjectRef: fixture.syntheticParentProjectRef,
+      repoRoot: process.cwd(),
+      environment: {},
+      execFileSyncImpl: (_command, args) => {
+        assert.deepEqual(args.slice(-2), ['--output', 'json']);
+        return JSON.stringify(output);
+      },
+    });
+  assert.deepEqual(run(fixture.outputJson), fixture.outputJson);
+  assert.deepEqual(fixture.outputJson, fixture.outputFormatJson.branches);
+  assert.equal(fixture.outputFormatJson.target.project_ref, fixture.syntheticParentProjectRef);
+  for (const output of [
+    fixture.outputFormatJson,
+    {
+      ...fixture.outputFormatJson,
+      target: { kind: 'linked', project_ref: MAIN_REF, environment: 'production' },
+    },
+    null,
+    {},
+    [],
+    '',
+    'not-json',
+  ]) {
+    assert.throws(() => run(output), /live Preview branch verification failed/u);
+  }
 });

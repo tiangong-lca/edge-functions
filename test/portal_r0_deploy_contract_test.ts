@@ -42,7 +42,7 @@ Deno.test('R0 deploy requires the dedicated live disposable Preview guard', asyn
     'projectRef === input.productionProjectRef',
     "'branches'",
     "'list'",
-    "'--output-format'",
+    "'--output'",
     'branch.parent_project_ref !== input.productionProjectRef',
     'branch.is_default !== false',
     'branch.persistent !== false',

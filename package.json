@@ -2,8 +2,8 @@
   "config": {
     "denoVersion": "2.1.4",
     "denoTypeScriptVersion": "5.6.2",
-    "supabaseCliVersion": "2.121.0",
-    "supabaseEdgeRuntimeVersion": "1.77.4",
+    "supabaseCliVersion": "3.1.0",
+    "supabaseEdgeRuntimeVersion": "1.78.1",
     "supabaseProjectRefDev": "submidrhbtknjxfympna",
     "supabaseProjectRefMain": "qgzvkongdjqiiamzbbts"
   },
@@ -34,7 +34,7 @@
   "devDependencies": {
     "esbuild": "0.28.2",
     "prettier": "3.9.10",
-    "supabase": "2.121.0",
+    "supabase": "3.1.0",
     "zod": "4.6.7"
   }
 }

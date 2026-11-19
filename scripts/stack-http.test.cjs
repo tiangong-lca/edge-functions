@@ -102,7 +102,7 @@ test('diagnostic response reads are bounded and cancel unread stream data', asyn
   await assert.rejects(() => boundedBody(new Response('x'), 0));
 });
 test('worker reports use exact tagged metadata separately from actual compiler/binary identities', () => {
-  for (const release of ['1.74.3', '1.77.4']) {
+  for (const release of ['1.74.3', '1.77.4', '1.78.1']) {
     const fixture = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, `../test/fixtures/supabase-edge-runtime-v${release}-deno.json`),
