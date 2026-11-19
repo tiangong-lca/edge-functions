@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from 'jsr:@std/assert';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import { createStudyHandler } from '../supabase/functions/_shared/study/handler.ts';
 import { bundledReportingRenderer } from '../supabase/functions/_shared/study/reporting_view.ts';
 import {

@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import { createDeleteLifecycleModelBundleHandler } from '../supabase/functions/delete_lifecycle_model_bundle/handler.ts';
 import { createExportTidasPackageHandler } from '../supabase/functions/export_tidas_package/handler.ts';

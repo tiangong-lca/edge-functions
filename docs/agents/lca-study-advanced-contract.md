@@ -16,9 +16,9 @@ checkPaths:
   - supabase/functions/_shared/study/advanced_*.ts
   - test/study_advanced*
   - scripts/study-advanced-build.test.cjs
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: e8dc3a5f195ebb0d5403d5d1800bd5bac4a178eb
-lastReviewedNote: 'Edge #553: initial explicit V5 advanced analysis/report contract; actual integrated runtime and hosted admission remain separately qualified.'
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
+lastReviewedNote: 'Edge #553: initial explicit V5 advanced analysis/report contract; actual integrated runtime and hosted admission remain separately qualified. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 related:
   - lca-study-reporting-contract.md
   - lca-study-runtime-contract.md

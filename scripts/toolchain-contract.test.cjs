@@ -27,6 +27,13 @@ function collectFunctionsJsSpecifiers(source) {
     ),
   );
 }
+function collectSupabaseJsSpecifiers(source) {
+  return new Set(
+    [...source.matchAll(/['"]([^'"\r\n]*@supabase\/supabase-js[^'"\r\n]*)['"]/gu)].map(
+      (match) => match[1],
+    ),
+  );
+}
 const workflowSources = fs
   .readdirSync(path.join(repositoryRoot, '.github/workflows'))
   .filter((fileName) => fileName.endsWith('.yml'))
@@ -61,34 +68,42 @@ test('keeps Supabase Edge Runtime-compatible Deno authoritative and auxiliary to
 test('pins the latest reviewed Edge-compatible runtime dependency graph', () => {
   const imports = readJson('supabase/functions/deno.json').imports;
   assert.deepEqual(imports, {
-    '@aws-sdk/client-s3': 'npm:@aws-sdk/client-s3@3.1161.0',
-    '@aws-sdk/s3-request-presigner': 'npm:@aws-sdk/s3-request-presigner@3.1161.0',
-    '@aws-sdk/client-sagemaker-runtime': 'npm:@aws-sdk/client-sagemaker-runtime@3.1152.0',
-    '@openai/openai': 'npm:openai@7.38.0',
+    '@aws-sdk/client-s3': 'npm:@aws-sdk/client-s3@3.1167.0',
+    '@aws-sdk/s3-request-presigner': 'npm:@aws-sdk/s3-request-presigner@3.1167.0',
+    '@aws-sdk/client-sagemaker-runtime': 'npm:@aws-sdk/client-sagemaker-runtime@3.1167.0',
+    '@openai/openai': 'npm:openai@7.55.0',
     '@supabase/functions-js/edge-runtime.d.ts':
-      'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts',
-    '@supabase/supabase-js@2': 'jsr:@supabase/supabase-js@2.118.0',
+      'jsr:@supabase/functions-js@2.119.0/edge-runtime.d.ts',
+    '@supabase/supabase-js@2': 'jsr:@supabase/supabase-js@2.119.0',
     '@upstash/redis': 'https://esm.sh/@upstash/redis@1.38.3',
     postgres: 'https://deno.land/x/postgresjs@v3.4.8/mod.js',
-    redis: 'jsr:@db/redis@0.42.0',
+    redis: 'jsr:@db/redis@0.43.0',
     zod: 'npm:/zod@4.6.7',
   });
 
-  const directSupabaseVersions = new Set();
+  const supabaseJsSpecifiers = new Set();
   const directFunctionsJsSpecifiers = new Set();
   for (const root of ['supabase/functions', 'test', 'scripts']) {
     for (const filePath of findFiles(path.join(repositoryRoot, root))) {
       if (!filePath.endsWith('.ts')) continue;
       const source = fs.readFileSync(filePath, 'utf8');
-      for (const match of source.matchAll(/jsr:@supabase\/supabase-js@([^/'"]+)/gu)) {
-        directSupabaseVersions.add(match[1]);
+      for (const specifier of collectSupabaseJsSpecifiers(source)) {
+        supabaseJsSpecifiers.add(specifier);
       }
       for (const specifier of collectFunctionsJsSpecifiers(source)) {
         directFunctionsJsSpecifiers.add(specifier);
       }
     }
   }
-  assert.deepEqual([...directSupabaseVersions], ['2.118.0']);
+  for (const bypass of [
+    'jsr:@supabase/supabase-js',
+    'jsr:@supabase/supabase-js@2.119.0',
+    'npm:@supabase/supabase-js@2.119.0',
+    'https://esm.sh/@supabase/supabase-js@2.119.0',
+  ]) {
+    assert.deepEqual([...collectSupabaseJsSpecifiers(`import '${bypass}';`)], [bypass]);
+  }
+  assert.deepEqual([...supabaseJsSpecifiers], ['@supabase/supabase-js@2']);
   for (const bypass of [
     'jsr:@supabase/functions-js/edge-runtime.d.ts',
     'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts',
@@ -100,7 +115,7 @@ test('pins the latest reviewed Edge-compatible runtime dependency graph', () => 
   assert.deepEqual([...directFunctionsJsSpecifiers], ['@supabase/functions-js/edge-runtime.d.ts']);
   assert.match(
     read('supabase/functions/_shared/redis_client.ts'),
-    /@upstash\/redis@1\.38\.3[\s\S]*jsr:@db\/redis@0\.42\.0/u,
+    /@upstash\/redis@1\.38\.3[\s\S]*from 'redis'/u,
   );
   assert.equal(
     fs.existsSync(path.join(repositoryRoot, 'supabase/functions/_shared/decode_api_key.ts')),

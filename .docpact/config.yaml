@@ -1,8 +1,8 @@
 version: 1
 layout: repo
 lastReviewedAt: '2026-11-19'
-lastReviewedCommit: '757ef0f0e6d48797856dca7d2079a09bfdaa6a21'
-lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification.'
+lastReviewedCommit: '4fe7b4943e77881bf4dec2ba00738017c44c3cd2'
+lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 
 # Keep deterministic governance facts here.
 # AGENTS.md stays as the repo contract entrypoint.

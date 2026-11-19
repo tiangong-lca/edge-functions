@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import {
   createLcaReleaseResultsHandler,

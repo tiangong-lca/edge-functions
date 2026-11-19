@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import type { ReviewRequest } from '../../../../contracts/lca-study/v5/review.ts';
 import { operationMetadata } from '../../../../contracts/lca-study/v5/codec.ts';
 import { createReportingRepository, type ReportingRepository } from './reporting_repository.ts';

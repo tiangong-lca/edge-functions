@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from 'jsr:@std/assert';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import { createNotificationCommandRepository } from '../supabase/functions/_shared/commands/notification/repository.ts';
 import {

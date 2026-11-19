@@ -1,9 +1,4 @@
-import type {
-  SupabaseClient,
-  User,
-  UserAppMetadata,
-  UserMetadata,
-} from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient, User, UserAppMetadata, UserMetadata } from '@supabase/supabase-js@2';
 import { corsHeaders } from './cors.ts';
 import { getSupabaseUrl } from './supabase_client.ts';
 
@@ -591,7 +586,7 @@ export function handleCors(req: Request): Response | null {
  * Used for webhook endpoints that need to perform database operations
  */
 export async function createAuthenticatedSupabaseClient(apiKey: string): Promise<SupabaseClient> {
-  const { createClient } = await import('jsr:@supabase/supabase-js@2.118.0');
+  const { createClient } = await import('@supabase/supabase-js@2');
   const supabaseUrl = getSupabaseUrl();
   return createClient(supabaseUrl, apiKey, { db: { schema: 'api' } }) as unknown as SupabaseClient;
 }

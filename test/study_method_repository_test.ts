@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertRejects } from 'jsr:@std/assert';
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js@2';
 import { createMethodRepository } from '../supabase/functions/_shared/study/method_repository.ts';
 import { parseRequest } from '../contracts/lca-study/v6/codec.ts';
 import { sha256 } from '../contracts/lca-study/v3/canonical.ts';
