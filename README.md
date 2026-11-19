@@ -24,7 +24,7 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-11-19
-lastReviewedCommit: a48b827d4c193036344f3056dec0873672e104b4
+lastReviewedCommit: 7c9440445837525912096e3a684a330bad533548
 lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
 ---
 
