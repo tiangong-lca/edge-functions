@@ -29,7 +29,7 @@ function collectFunctionsJsSpecifiers(source) {
 }
 function collectSupabaseJsSpecifiers(source) {
   return new Set(
-    [...source.matchAll(/['"]([^'"\r\n]*@supabase\/supabase-js[^'"\r\n]*)['"]/gu)].map(
+    [...source.matchAll(/['"`]([^'"`\r\n]*@supabase\/supabase-js[^'"`\r\n]*)['"`]/gu)].map(
       (match) => match[1],
     ),
   );
@@ -95,13 +95,19 @@ test('pins the latest reviewed Edge-compatible runtime dependency graph', () => 
       }
     }
   }
-  for (const bypass of [
-    'jsr:@supabase/supabase-js',
-    'jsr:@supabase/supabase-js@2.119.0',
-    'npm:@supabase/supabase-js@2.119.0',
-    'https://esm.sh/@supabase/supabase-js@2.119.0',
-  ]) {
-    assert.deepEqual([...collectSupabaseJsSpecifiers(`import '${bypass}';`)], [bypass]);
+  for (const delimiter of ["'", '"', '`']) {
+    for (const bypass of [
+      'jsr:@supabase/supabase-js',
+      'jsr:@supabase/supabase-js@2.118.0',
+      'jsr:@supabase/supabase-js@2.119.0',
+      'npm:@supabase/supabase-js@2.119.0',
+      'https://esm.sh/@supabase/supabase-js@2.119.0',
+    ]) {
+      const source = `await import(${delimiter}${bypass}${delimiter});`;
+      assert.deepEqual([...collectSupabaseJsSpecifiers(source)], [bypass]);
+    }
+    const canonical = `await import(${delimiter}@supabase/supabase-js@2${delimiter});`;
+    assert.deepEqual([...collectSupabaseJsSpecifiers(canonical)], ['@supabase/supabase-js@2']);
   }
   assert.deepEqual([...supabaseJsSpecifiers], ['@supabase/supabase-js@2']);
   for (const bypass of [
