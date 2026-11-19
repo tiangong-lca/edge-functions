@@ -42,7 +42,7 @@ checkPaths:
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-19
 lastReviewedCommit: 757ef0f0e6d48797856dca7d2079a09bfdaa6a21
-lastReviewedNote: "Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification."
+lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
