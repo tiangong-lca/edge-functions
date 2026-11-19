@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-19
-lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
-lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
+lastReviewedCommit: 7c9440445837525912096e3a684a330bad533548
+lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -177,7 +177,7 @@ The real Upstash proof is opt-in and stays outside `pnpm check`. Run `pnpm test:
 
 Changes to `portal_public_transport.ts`, `portal_hybrid_provider.ts`, `portal_hybrid_kernel.ts`, or `portal_openai_structured.ts` must additionally prove all of the following in the existing Portal test files and static deploy contract:
 
-- `PORTAL_SUPABASE_PUBLISHABLE_KEY` is a modern publishable key present in the current project's platform-owned `SUPABASE_PUBLISHABLE_KEYS` registry, is paired only with platform-injected `SUPABASE_URL`, matches inbound `apikey` exactly, and is reused unchanged downstream; hosted requires HTTPS and rejects Authorization, while pinned CLI `2.121.0` uses `sb-api-key` and leaves Authorization absent. Exact local `http://kong:8000` retains only the older-client anon Bearer compatibility. Generic/direct-or-helper `REMOTE_*`, legacy-anon fallback, secret/service-role, user, missing, malformed, and cross-project key/URL configurations fail before Redis, model, or database work
+- `PORTAL_SUPABASE_PUBLISHABLE_KEY` is a modern publishable key present in the current project's platform-owned `SUPABASE_PUBLISHABLE_KEYS` registry, is paired only with platform-injected `SUPABASE_URL`, matches inbound `apikey` exactly, and is reused unchanged downstream; hosted requires HTTPS and rejects Authorization, while pinned CLI `3.1.0` uses `sb-api-key` and leaves Authorization absent. Exact local `http://kong:8000` retains only the older-client anon Bearer compatibility. Generic/direct-or-helper `REMOTE_*`, legacy-anon fallback, secret/service-role, user, missing, malformed, and cross-project key/URL configurations fail before Redis, model, or database work
 - exact false or unset `PORTAL_HYBRID_ENABLED` returns before Portal Redis, JSON, OpenAI, SageMaker/AWS, or database configuration is read
 - enabled R2 requires the complete strict `PORTAL_OPENAI_*`, `PORTAL_SAGEMAKER_*`, and `PORTAL_AWS_*` surface and passes that exact object into both shared model kernels; generic-only, partial, malformed, whitespace-bearing, credential-bearing URL, and insecure remote URL configurations fail before provider or database calls
 - Portal Responses parameters remain `store=false`, `max_output_tokens=256`, `reasoning.effort=none`, and `text.verbosity=low` with the same strict JSON Schema/model/prompts/temperature/AbortSignal; tests must reject API-key capture and any implicit `service_tier`, while the SDK-capability Chat path carries equivalent controls and raw rewriting independently enforces its required model and none contract
@@ -298,7 +298,15 @@ Independent export changes require default-format/read-versus-enqueue tests, ter
 
 All-unit query reader changes must prove opaque task/calculation/method IDs and the observed non-RFC-variant build ID remain readable, including a numerical zero. Preserve rejection of missing IDs, snapshot or method mismatch, unsafe chunk paths and modified index/chunk bytes. The command-level fixture must bind its registered digest and reject a changed job ID before returning values.
 
-## CLI and gateway stack qualification (Edge #496)
+## CLI 3 major qualification (Edge #590)
+
+The selected CLI is 3.1.0 with its default Edge Runtime 1.78.1 and Postgres 17.11.0.018. The seven-day eligible stable lookup excludes newer releases still in cooldown. Its versioned runtime source retains Deno 2.1.4 / standalone TypeScript 5.6.2. A separately bound transport and runtime fixture records the exact CLI3 blobs; the four historical CLI2/runtime fixtures remain byte-identical.
+
+The normal two-variant hosted matrix now reads `test/fixtures/stack-qualification/cli3-case.json`: baseline is previously qualified CLI2.121.0 / Runtime1.77.4 / Postgres17.11.0.004, candidate is CLI3.1.0 / Runtime1.78.1 / Postgres17.11.0.018. Each actual installed binary, version, source, pulled image, native lifecycle, offline transport, JWT, cancellation and exact-owned cleanup proof remains required. A green matrix that still selects CLI2 does not qualify this major. No assertion, deadline, functional retry, public publisher or live-service permission changes.
+
+The removed `[inbucket]` section becomes `[local_smtp]` with all existing options retained. Deploy and Preview branch-list wrappers use the single attached `--remote=<exact-ref>` target, preserve the same project identities, import map and no-gateway-JWT contract, and retain every branch/expiry/clean-source acknowledgement. Deploy does not automatically consent to hosted writes; an authorized unattended operator must explicitly provide shell `SUPABASE_YES=1`. If a working-directory `.env`, `.env.local`, or `.env.<NODE_ENV>[.local]` defines `SUPABASE_YES`, shell consent is also rejected; remove that env-file definition first. Tests inject the spawn boundary with an empty environment and prove an explicit missing or failing mock has no real-client fallback. Cleanup retains its already guarded `--yes`. Preview branch-list parsing explicitly selects raw `--output json` arrays; the new CLI3 target-bearing `--output-format json` envelope is rejected. A real CLI3 probe against an owned loopback-only synthetic Management API confirms both encodings. All row identity/status/source and cleanup checks remain unchanged; no hosted project is queried. Tests use injected argument capture and an isolated nonexistent Docker socket, never persistent projects or credentials. Local config success is not a hosted stack pass or production deployment.
+
+## Historical CLI and gateway stack qualification (Edge #496)
 
 The selected developer target is Prettier 3.9.10 / Supabase CLI 2.121.0, whose default Edge Runtime is 1.77.4. Its tagged Deno source still declares 2.1.4; standalone compiler checks retain TypeScript 5.6.2. Source fixtures bind exact upstream blobs. These declarations do not claim an executed hosted stack pass.
 

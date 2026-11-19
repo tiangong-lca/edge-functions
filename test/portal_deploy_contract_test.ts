@@ -22,16 +22,16 @@ Deno.test(
       [
         'pnpm deploy:dev portal_hybrid_search_v1',
         `pnpm exec supabase secrets set PORTAL_HYBRID_LEASE_TTL_SECONDS=35 \\
-  --project-ref submidrhbtknjxfympna`,
+  --remote=submidrhbtknjxfympna`,
         `pnpm exec supabase secrets set PORTAL_HYBRID_TIMEOUT_MS=25000 \\
-  --project-ref submidrhbtknjxfympna`,
+  --remote=submidrhbtknjxfympna`,
       ],
       [
         'pnpm deploy:main portal_hybrid_search_v1',
         `pnpm exec supabase secrets set PORTAL_HYBRID_LEASE_TTL_SECONDS=35 \\
-  --project-ref qgzvkongdjqiiamzbbts`,
+  --remote=qgzvkongdjqiiamzbbts`,
         `pnpm exec supabase secrets set PORTAL_HYBRID_TIMEOUT_MS=25000 \\
-  --project-ref qgzvkongdjqiiamzbbts`,
+  --remote=qgzvkongdjqiiamzbbts`,
       ],
     ] as const) {
       const deployIndex = readme.indexOf(deployCommand);
@@ -281,7 +281,7 @@ Deno.test('Portal transport is pinned to reviewed Supabase CLI source evidence',
     devDependencies: { supabase: string };
   };
   const fixture = JSON.parse(
-    await Deno.readTextFile('./test/fixtures/supabase-cli-v2.121.0-functions-transport.json'),
+    await Deno.readTextFile('./test/fixtures/supabase-cli-v3.1.0-functions-transport.json'),
   ) as {
     schemaVersion: string;
     cliVersion: string;
@@ -315,11 +315,11 @@ Deno.test('Portal transport is pinned to reviewed Supabase CLI source evidence',
       },
       {
         path: 'apps/cli/src/commands/start/services/kong.service.ts',
-        gitBlobSha: '199f36ca754ac264ec0bd7e99541f3e1ec5a22bf',
+        gitBlobSha: '269059de712075ed71081e03f42466d33e78e564',
       },
       {
         path: 'apps/cli/src/shared/functions/serve.ts',
-        gitBlobSha: '9d581fa23e3bf3cb17bb118860550cc20c824a4d',
+        gitBlobSha: '83b2a0a19fa26e78e7491509484a889905219305',
       },
       {
         path: 'apps/cli/src/shared/functions/serve.main.ts',
@@ -328,7 +328,7 @@ Deno.test('Portal transport is pinned to reviewed Supabase CLI source evidence',
     ],
   );
   for (const source of fixture.sources) {
-    assertEquals(source.url, `https://github.com/supabase/cli/blob/v2.121.0/${source.path}`);
+    assertEquals(source.url, `https://github.com/supabase/cli/blob/v3.1.0/${source.path}`);
   }
 
   const runtime = await Deno.readTextFile(

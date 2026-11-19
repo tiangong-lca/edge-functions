@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "supabase.cli-branch-json.v1",
+  "cliVersion": "3.1.0",
+  "profile": "supabase-local",
+  "syntheticParentProjectRef": "aaaaaaaaaaaaaaaaaaaa",
+  "syntheticOnly": true,
+  "outputFormatJson": {
+    "branches": [
+      {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "edge590-synthetic",
+        "project_ref": "bbbbbbbbbbbbbbbbbbbb",
+        "parent_project_ref": "aaaaaaaaaaaaaaaaaaaa",
+        "is_default": false,
+        "git_branch": "edge590-synthetic",
+        "pr_number": 590,
+        "persistent": false,
+        "status": "FUNCTIONS_DEPLOYED",
+        "created_at": "2026-11-19T00:00:00Z",
+        "updated_at": "2026-11-19T00:00:00Z",
+        "with_data": false,
+        "preview_project_status": "ACTIVE_HEALTHY"
+      }
+    ],
+    "message": "",
+    "target": {
+      "kind": "linked",
+      "project_ref": "aaaaaaaaaaaaaaaaaaaa",
+      "environment": "unverified"
+    }
+  },
+  "outputJson": [
+    {
+      "created_at": "2026-11-19T00:00:00Z",
+      "git_branch": "edge590-synthetic",
+      "id": "00000000-0000-4000-8000-000000000001",
+      "is_default": false,
+      "name": "edge590-synthetic",
+      "parent_project_ref": "aaaaaaaaaaaaaaaaaaaa",
+      "persistent": false,
+      "pr_number": 590,
+      "preview_project_status": "ACTIVE_HEALTHY",
+      "project_ref": "bbbbbbbbbbbbbbbbbbbb",
+      "status": "FUNCTIONS_DEPLOYED",
+      "updated_at": "2026-11-19T00:00:00Z",
+      "with_data": false
+    }
+  ],
+  "sources": [
+    {
+      "repository": "supabase/cli",
+      "ref": "v3.1.0",
+      "path": "apps/cli/src/commands/branches/list/list.handler.ts",
+      "gitBlobSha": "3b61d57bb50582e95b24ea80bb02a8ed9dc9cc97"
+    },
+    {
+      "repository": "supabase/cli",
+      "ref": "v3.1.0",
+      "path": "apps/cli/src/shared/output/output.layer.ts",
+      "gitBlobSha": "6703f93178950bbc5a71dc3bfba9ae7ecb6942a4"
+    },
+    {
+      "repository": "supabase/cli",
+      "ref": "v3.1.0",
+      "path": "apps/cli/src/shared/output/command-target.service.ts",
+      "gitBlobSha": "f7eb247d5865e7e8a440824cd49cdbaeeaaa1185"
+    }
+  ]
+}

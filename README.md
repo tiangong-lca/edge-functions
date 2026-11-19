@@ -24,8 +24,8 @@ checkPaths:
   - supabase/.env.example
   - test.example.http
 lastReviewedAt: 2026-11-19
-lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
-lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
+lastReviewedCommit: 7c9440445837525912096e3a684a330bad533548
+lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -69,7 +69,7 @@ These files are the low-token entry path for repo ownership, branch and deploy r
 - Deno 2.1.4; `deno --version` must report bundled TypeScript 5.6.2. `.tool-versions` is the shared local/CI version source.
 - Node.js 24.19.0 and pnpm 11.24.0 for auxiliary Supabase CLI, formatting, and validation wrappers
 - Docker Engine (required if you run local Supabase stack)
-- Supabase CLI 2.121.0, installed through this repository's `supabase` dev dependency; it selects the default Edge Runtime image release 1.77.4, whose tagged source declares Deno 2.1.4. The binary reports its separate crate version 0.1.0; hosted qualification binds both identities to source and the actual image digest. Worker `Deno.version` is a separate diagnostic getter with the wrapped runtime/Deno label and literal TypeScript 5.1.6/V8 11.6.189.12; these labels do not change the standalone compiler requirement
+- Supabase CLI 3.1.0, installed through this repository's `supabase` dev dependency; it selects the default Edge Runtime image release 1.78.1, whose tagged source declares Deno 2.1.4. The binary reports its separate crate version 0.1.0; hosted qualification binds both identities to source and the actual image digest. Worker `Deno.version` is a separate diagnostic getter with the wrapped runtime/Deno label and literal TypeScript 5.1.6/V8 11.6.189.12; these labels do not change the standalone compiler requirement
 
 Initialize/refresh Node dependencies:
 
@@ -116,7 +116,7 @@ Credential contract:
 - Keep `REMOTE_SUPABASE_URL`, `REMOTE_SUPABASE_PUBLISHABLE_KEY`, and `REMOTE_SUPABASE_SECRET_KEY` from the same Supabase project. A mismatched or stale secret key causes local RPC calls to fail with `Invalid API key` after request authentication succeeds.
 - The Portal HMAC secret is independent of `REMOTE_SERVICE_API_KEY`, Supabase JWT secrets, and every Supabase client key. Keep dev/Preview and main/Production keyrings, Supabase projects, EdgeOne deployments, and `portal:<environment>:v1` namespaces distinct. The user-approved initial deployment shares one Upstash database/token across R0, Dev, and Production; this is a recorded residual risk and never a permission boundary. Only the verifier holds an optional previous HMAC key during rotation.
 - The R0 HMAC, publishable key, namespace, and Preview secret copies are one-time fixtures. Current and previous require different key IDs and constant-time-distinct secrets. Both empty optional previous values mean absent; one empty side fails closed. An empty optional Standard Redis password means absent. Under the approved shared-Upstash deployment, the endpoint/token source is retained and coordinated across environments: cleanup removes only its R0 secret copies and exact fixture keys together with `portal_r0_hmac_verify_v1`.
-- `PORTAL_SUPABASE_PUBLISHABLE_KEY` is matched in constant time against the inbound `apikey`, checked against the current project's `SUPABASE_PUBLISHABLE_KEYS` registry, paired only with platform-injected `SUPABASE_URL`, and reused unchanged for the downstream public RPC. Remote runtime requires HTTPS; the only non-loopback HTTP origin is exact pinned CLI `http://kong:8000`. `REMOTE_SUPABASE_URL`, generic keys, legacy anon keys, secret/service-role keys, and user credentials cannot replace the Portal key. CLI 2.121.0 maps the local key into `sb-api-key` and leaves Authorization absent. `SUPABASE_ANON_KEY` is consulted only for the narrow older-local-client Bearer compatibility path at that exact local origin; hosted Authorization is rejected.
+- `PORTAL_SUPABASE_PUBLISHABLE_KEY` is matched in constant time against the inbound `apikey`, checked against the current project's `SUPABASE_PUBLISHABLE_KEYS` registry, paired only with platform-injected `SUPABASE_URL`, and reused unchanged for the downstream public RPC. Remote runtime requires HTTPS; the only non-loopback HTTP origin is exact pinned CLI `http://kong:8000`. `REMOTE_SUPABASE_URL`, generic keys, legacy anon keys, secret/service-role keys, and user credentials cannot replace the Portal key. CLI 3.1.0 maps the local key into `sb-api-key` and leaves Authorization absent. `SUPABASE_ANON_KEY` is consulted only for the narrow older-local-client Bearer compatibility path at that exact local origin; hosted Authorization is rejected.
 - Portal Redis provider and credential variables are the only Edge Redis surface. Missing Portal-only values fail closed; provisioning Portal must not create a generic auth Redis fallback.
 - Portal Hybrid provider variables are likewise independent of generic OpenAI, SageMaker, and AWS values. Missing, partial, whitespace-bearing, malformed, or unsafe Portal provider configuration fails before Redis, model, AWS, or database calls; an exact-false/unset kill switch returns before that provider configuration is read.
 - `portal_data_product_results_v1` uses only the matching project publishable key for its downstream `api.portal_get_published_lcia_values_v1` call. It must never receive or construct a service-role/secret-key client.
@@ -198,6 +198,10 @@ The repository serves with `--no-verify-jwt` by design. Gateway JWT verification
 
 ### Deploy Edge Functions
 
+CLI 3 hosted writes require explicit operator confirmation. Interactive invocations prompt; unattended invocations must receive a separately authorized shell `SUPABASE_YES=1`. The deploy wrappers do not add `--yes`; repository `.env` files cannot grant consent. If `.env`, `.env.local`, or `.env.<NODE_ENV>[.local]` in the working directory defines `SUPABASE_YES` at all, shell consent also does not count. Remove that env-file definition before supplying separately authorized shell consent; the wrappers do not synthesize an overriding `--yes`. The guarded R0 cleanup retains its existing explicit deletion acknowledgement and `--yes`. These source and synthetic qualification commands authorize no persistent operation.
+
+The local config uses `[local_smtp]`, replacing the removed `[inbucket]` section without changing its options. Flags override shell environment, then project environment, then selected remote/base config and defaults. Explicit wrapper targets remain fixed to their reviewed project refs; local serve remains local.
+
 Authenticate the Supabase CLI when needed:
 
 ```bash
@@ -209,15 +213,15 @@ The existing runtime rejects any timeout above 6000 ms. Expanding to the bounded
 ```bash
 pnpm deploy:dev portal_hybrid_search_v1
 pnpm exec supabase secrets set PORTAL_HYBRID_LEASE_TTL_SECONDS=35 \
-  --project-ref submidrhbtknjxfympna
+  --remote=submidrhbtknjxfympna
 pnpm exec supabase secrets set PORTAL_HYBRID_TIMEOUT_MS=25000 \
-  --project-ref submidrhbtknjxfympna
+  --remote=submidrhbtknjxfympna
 
 pnpm deploy:main portal_hybrid_search_v1
 pnpm exec supabase secrets set PORTAL_HYBRID_LEASE_TTL_SECONDS=35 \
-  --project-ref qgzvkongdjqiiamzbbts
+  --remote=qgzvkongdjqiiamzbbts
 pnpm exec supabase secrets set PORTAL_HYBRID_TIMEOUT_MS=25000 \
-  --project-ref qgzvkongdjqiiamzbbts
+  --remote=qgzvkongdjqiiamzbbts
 ```
 
 Do not set `25000` while the target still runs code capped at `6000`: that mismatch fails closed as `guard_unavailable`. Set `PORTAL_HYBRID_DEPLOYMENT_SHA` to the exact eligible deployed merge only after the corresponding deploy and both configuration updates succeed.
@@ -234,9 +238,9 @@ Deploy to the production `main` project (`qgzvkongdjqiiamzbbts`) only as part of
 pnpm deploy:main portal_data_product_results_v1 portal_hybrid_search_v1 flow_hybrid_search process_hybrid_search lifecyclemodel_hybrid_search contact_hybrid_search flowproperty_hybrid_search source_hybrid_search unitgroup_hybrid_search process_dataset_extraction_jobs embedding_ft
 ```
 
-The deploy script pins the Supabase CLI version from `package.json`, sets the target `--project-ref`, disables gateway JWT verification with `--no-verify-jwt`, and passes `supabase/functions/deno.json` as the import map so server-side bundling resolves shared npm/jsr imports.
+The deploy script pins the Supabase CLI version from `package.json`, sets the exact target `--remote=<ref>`, disables gateway JWT verification with `--no-verify-jwt`, and passes `supabase/functions/deno.json` as the import map so server-side bundling resolves shared npm/jsr imports.
 
-The disposable R0 function is deliberately excluded from both commands above. The authenticated CLI account must read the configured Main parent's Preview branches. The guard reruns `supabase branches list --project-ref qgzvkongdjqiiamzbbts --output-format json` and accepts only exactly one target whose parent is Main, `is_default=false`, `persistent=false`, `with_data=false`, `status=FUNCTIONS_DEPLOYED`, and `preview_project_status=ACTIVE_HEALTHY`, with exact branch name/Git branch and optional PR-number binding. A 403, malformed response, or empty list fails closed. From a clean exact commit, export the verified branch identity, matching SHA/expiry, and deploy acknowledgement:
+The disposable R0 function is deliberately excluded from both commands above. The authenticated CLI account must read the configured Main parent's Preview branches. The guard reruns `supabase branches list --remote=qgzvkongdjqiiamzbbts --output json` and accepts only exactly one target whose parent is Main, `is_default=false`, `persistent=false`, `with_data=false`, `status=FUNCTIONS_DEPLOYED`, and `preview_project_status=ACTIVE_HEALTHY`, with exact branch name/Git branch and optional PR-number binding. CLI 3 adds target metadata to `--output-format json`; the guard selects the supported raw array with `--output json` and rejects object envelopes, malformed data and empty arrays. Every returned branch identity still goes through the same exact Main-parent, nonpersistent, no-data and expiry/source checks. A 403, malformed response, or empty list fails closed. From a clean exact commit, export the verified branch identity, matching SHA/expiry, and deploy acknowledgement:
 
 ```bash
 PORTAL_R0_PROJECT_REF=<isolated-preview-project-ref> \
@@ -273,8 +277,8 @@ Recommended deploy workflow:
 Do not patch remote secrets as part of normal function deployment. With this repository's pinned Supabase CLI, remote function secrets are managed separately through the Supabase Dashboard or explicit `supabase secrets` operations such as:
 
 ```bash
-pnpm exec supabase secrets list --project-ref <project-ref>
-pnpm exec supabase secrets set KEY=value --project-ref <project-ref>
+pnpm exec supabase secrets list --remote=<project-ref>
+pnpm exec supabase secrets set KEY=value --remote=<project-ref>
 ```
 
 Treat `supabase secrets set --env-file ...` as a credential operation, not as a deploy shortcut. It can write many values at once, so use it only with an explicitly reviewed secret file and target project.
@@ -341,7 +345,7 @@ The dispatcher claims at most two events per enabled lane, rechecks the lease an
 
 `portal_data_product_results_v1` accepts the public `POST /functions/v1/portal_data_product_results_v1` path and the exact `/portal_data_product_results_v1` path produced after pinned Supabase CLI routing strips `/functions/v1`; no suffix or other function path is accepted. HMAC canonical bytes always contain the public path. The request requires the five `portal-hmac-v1` headers (`x-portal-key-id`, `x-portal-timestamp`, `x-portal-nonce`, `x-portal-body-sha256`, and `x-portal-signature`) plus the exact matching project `apikey`. `x-portal-correlation-id` accepts a canonical UUID; missing or invalid values are replaced, and every response returns the resolved `X-Portal-Correlation-Id`.
 
-The Portal BFF sends no `Authorization` or Cookie. The handler resolves only `PORTAL_SUPABASE_PUBLISHABLE_KEY`, proves it belongs to the current project through `SUPABASE_PUBLISHABLE_KEYS`, constant-time matches it to inbound `apikey`, and passes the same value downstream. Pinned CLI 2.121.0 maps that key into `sb-api-key` while leaving Authorization absent. At exact local `SUPABASE_URL=http://kong:8000`, the handler still tolerates the exact `Bearer <configured legacy anon JWT>` only for older local-client compatibility; hosted HTTPS rejects every Authorization. User, service-role, other Bearer, Cookie, `REMOTE_*` public keys, `SERVICE_API_KEY`, Supabase secret/service-role keys, user context, and storage locators remain forbidden after HMAC and before Redis.
+The Portal BFF sends no `Authorization` or Cookie. The handler resolves only `PORTAL_SUPABASE_PUBLISHABLE_KEY`, proves it belongs to the current project through `SUPABASE_PUBLISHABLE_KEYS`, constant-time matches it to inbound `apikey`, and passes the same value downstream. Pinned CLI 3.1.0 maps that key into `sb-api-key` while leaving Authorization absent. At exact local `SUPABASE_URL=http://kong:8000`, the handler still tolerates the exact `Bearer <configured legacy anon JWT>` only for older local-client compatibility; hosted HTTPS rejects every Authorization. User, service-role, other Bearer, Cookie, `REMOTE_*` public keys, `SERVICE_API_KEY`, Supabase secret/service-role keys, user context, and storage locators remain forbidden after HMAC and before Redis.
 
 The signed JSON body has one fixed shape:
 

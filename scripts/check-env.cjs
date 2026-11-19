@@ -11,7 +11,7 @@ const EXPECTED_TOOLCHAIN_VERSIONS = Object.freeze({
   denoTypescript: '5.6.2',
   node: '24.19.0',
   pnpm: '11.24.0',
-  supabaseCli: '2.121.0',
+  supabaseCli: '3.1.0',
 });
 
 function parseDenoVersionOutput(output) {
