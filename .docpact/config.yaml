@@ -208,6 +208,7 @@ routing:
         - scripts/run-portal-upstash-live-fixture.cjs
         - test/fixtures/supabase-cli-v2.121.0-functions-transport.json
         - test/fixtures/supabase-cli-v3.1.0-functions-transport.json
+        - test/fixtures/supabase-cli-v3.1.0-branches-output.json
         - test/fixtures/supabase-edge-runtime-v1.77.4-deno.json
         - test/fixtures/supabase-edge-runtime-v1.78.1-deno.json
         - supabase/.env.example
@@ -654,6 +655,8 @@ rules:
       - path: test/fixtures/supabase-cli-v2.121.0-functions-transport.json
         kind: source-contract-fixture
       - path: test/fixtures/supabase-cli-v3.1.0-functions-transport.json
+        kind: source-contract-fixture
+      - path: test/fixtures/supabase-cli-v3.1.0-branches-output.json
         kind: source-contract-fixture
       - path: test/fixtures/supabase-edge-runtime-v1.77.4-deno.json
         kind: source-contract-fixture

@@ -41,7 +41,7 @@ function listSupabasePreviewBranches(input) {
         'branches',
         'list',
         `--remote=${input.parentProjectRef}`,
-        '--output-format',
+        '--output',
         'json',
       ],
       {
@@ -56,18 +56,10 @@ function listSupabasePreviewBranches(input) {
   }
   try {
     const parsed = JSON.parse(output);
-    if (
-      !parsed ||
-      typeof parsed !== 'object' ||
-      Array.isArray(parsed) ||
-      Object.keys(parsed).sort().join('\n') !== ['branches', 'message'].sort().join('\n') ||
-      parsed.message !== '' ||
-      !Array.isArray(parsed.branches) ||
-      parsed.branches.length === 0
-    ) {
+    if (!Array.isArray(parsed) || parsed.length === 0) {
       throw new Error('invalid branch list');
     }
-    return parsed.branches;
+    return parsed;
   } catch {
     throw new Error('R0 live Preview branch verification failed.');
   }
