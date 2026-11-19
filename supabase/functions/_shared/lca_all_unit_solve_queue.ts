@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import type { LcaSnapshotScope } from './lca_snapshot_capabilities.ts';
 import type { LcaCalculationEvidenceBinding } from './lca_snapshot_scope.ts';

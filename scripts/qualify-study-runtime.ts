@@ -1,4 +1,4 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 import { API_SCHEMA, responseSchema } from '../contracts/lca-study/v2/index.ts';
 import { createStudyHandler } from '../supabase/functions/_shared/study/handler.ts';

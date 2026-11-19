@@ -41,8 +41,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-19
-lastReviewedCommit: 757ef0f0e6d48797856dca7d2079a09bfdaa6a21
-lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification.'
+lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
+lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 related:
   - .docpact/config.yaml
   - docs/agents/repo-validation.md
@@ -105,7 +105,7 @@ Keep these entry-level facts in `AGENTS.md`. Use `README.md` and `docs/agents/re
 
 - authoritative runtime/compiler: Deno `2.1.4` with its actual bundled TypeScript `5.6.2`, matching the selected Supabase CLI `2.121.0` / Edge Runtime `1.77.4` qualification target; this repository does not install or claim TypeScript 7
 - auxiliary package manager/runtime: pnpm `11.24.0` on Node `24.19.0`, retained for the exact Supabase CLI, Prettier, and Node validation wrappers only
-- latest reviewed import graph: SageMaker AWS SDK `3.1152.0`, Result archive S3 client/presigner `3.1161.0`, OpenAI `7.38.0`, Supabase JSR `2.118.0`, Upstash Redis `1.38.3`, Deno Redis `0.42.0`, Zod `4.6.7`, and Prettier `3.9.10`; every Functions JS type import must use the mapped `@supabase/functions-js/edge-runtime.d.ts` alias, while any direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier is forbidden; full dependency refreshes require `pnpm outdated` and exact-Deno `deno outdated --latest` to be empty; scoped additions pin the latest compatible stable version without upgrading unrelated packages
+- latest reviewed import graph: SageMaker and Result archive S3 client/presigner AWS SDK `3.1167.0`, OpenAI `7.55.0`, Supabase JSR `2.119.0`, Upstash Redis `1.38.3`, Deno Redis `0.43.0`, Zod `4.6.7`, and Prettier `3.9.10`; every live Supabase JS import uses the mapped `@supabase/supabase-js@2` alias and every Functions JS type import uses `@supabase/functions-js/edge-runtime.d.ts`; direct JSR, npm, HTTPS or other SDK specifiers are forbidden so clients and error constructors share one exact module identity; full dependency refreshes require `pnpm outdated` and exact-Deno `deno outdated --latest` to be empty; scoped additions pin the latest compatible stable version without upgrading unrelated packages
 - local serve command: `pnpm start`
 - required stack qualification: `pnpm qualify:stack` runs only on an owned Docker-enabled hosted Linux runner; source fixtures and local checks do not establish a hosted stack pass; every fixture network stays internal, and exact owned endpoint relays provide loopback-only host access with verified listener/resource cleanup
 - baseline local validation: non-mutating `pnpm lint` and canonical `pnpm check`
@@ -185,7 +185,7 @@ Do not infer routine workflow from GitHub default-branch UI alone.
 - Raw Hybrid omitted/latest requests reject page_size or match_count above 100 and integer-range pagination before rewrite, embedding or RPC work. Matched 200-candidate and Open Data routes retain their own contracts. Database SQLSTATE `22023` maps to HTTP 400; other RPC failures retain HTTP 500.
 - The bounded full-text selector always reserves the original query and alternates English/Chinese model aliases so OR expansion cannot starve English terms. This does not restrict source-document languages or change the legacy selector.
 - do not invent schema truth or migration history in this repo
-- do not bypass `supabase/functions/deno.json` with a direct JSR, npm, HTTPS, or other `@supabase/functions-js` specifier; all Functions JS type imports use the exact mapped alias so local checks and remote bundles resolve 2.118.0
+- do not bypass `supabase/functions/deno.json` with a direct JSR, npm, HTTPS, or other `@supabase/supabase-js` or `@supabase/functions-js` specifier; live production, test and helper imports use their exact mapped aliases so client types and error constructors resolve one reviewed 2.119.0 graph. Historical stack/source JSON fixtures retain their independently reviewed immutable identities
 - do not interpret `--no-verify-jwt` as permission for anonymous business logic
 - do not deploy `portal_r0_hmac_verify_v1` through persistent Dev/Main tooling or let it read any long-lived Portal/generic credential; remote deploy accepts only a live `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`, nondefault, nonpersistent, no-data Preview branch returned by a read-only `branches list` against the configured Main parent and exactly matching the operator-supplied branch name, Git branch, and optional PR number. It also requires complete `PORTAL_R0_*` configuration, a current-project R0 publishable key, and a `portal:r0:<fixture>:v1` namespace. Local `test` is not a remote deploy target. The function must never call a database, RPC, model, provider, repository, storage, or business kernel
 - do not require an identified R0 branch to remain ready or healthy before cleanup; once Main parent, project ref, nondefault/nonpersistent/no-data flags, branch name, Git branch, optional PR, exact SHA, and cleanup acknowledgement still match, cleanup must attempt the fixed function deletion and surface any real delete failure

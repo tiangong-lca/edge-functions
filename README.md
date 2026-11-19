@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-18
-lastReviewedCommit: 058a70b1bce11e6aafae608740f40b73718b53ac
-lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff.'
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
+lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 ---
 
 # TianGong-LCA-Edge-Functions
@@ -496,7 +496,7 @@ Queued and running jobs return public progress. A completed job includes `data.r
 
 - No LangChain dependency in active path.
 - OpenAI SDK mapping is in `supabase/functions/deno.json`:
-  - `@openai/openai -> npm:openai@7.38.0`
+  - `@openai/openai -> npm:openai@7.55.0`
 - Shared wrappers:
   - `supabase/functions/_shared/openai_structured.ts`
   - `supabase/functions/_shared/openai_chat.ts`
@@ -516,6 +516,8 @@ Use `--phase model-only` to reproduce the frozen original-prompt model compariso
 Only `OPENAI_API_KEY` is used from the key file. The runner sends fixed synthetic cases to the official Responses API, verifies frozen prompts/schema, alternates arm order, performs no retries, and retains private per-call observations. Its completion exit code does not mean quality passed: inspect incomplete responses, identifier/meaning checks, manual LCA review, accepted-output paired latency and downstream retrieval before rollout. Do not infer a production p95 from this small corpus.
 
 Provision `HYBRID_OPENAI_CHAT_MODEL=gpt-6-luna` and `PORTAL_OPENAI_CHAT_MODEL=gpt-6-luna` explicitly in each qualified target. Preserve the generic translation model and isolated Portal credentials. Portal V1 cache identity retains the full signed request; V2 retains query/kind reuse. Both bind model/endpoint/embedding identity, reasoning, actual synonym rules and schema, plus the named task-template revision. Update that revision if the task or user prompt template changes. Changed identities miss; old V2 continuations restart before model/database work. No broad Redis deletion is part of migration.
+
+Edge #588 qualifies the original seven-package runtime proposal at eligible AWS S3/presigner/SageMaker 3.1167.0, OpenAI 7.55.0, Supabase JS/Functions JS 2.119.0 and Deno Redis 0.43.0. All live Supabase clients, types and error constructors use the existing mapped `@supabase/supabase-js@2` alias; Functions declarations keep their mapped alias and the actual Redis consumer uses `redis`. This avoids mixing nominal client/error classes across package identities. Exact selected-version and alias-bypass assertions remain enforced. Deno 2.1.4/TypeScript 5.6.2, auxiliary tooling, hosted stack variants and immutable historical fixtures retain their reviewed identities. This scoped runtime update neither adopts CLI-major proposal #578 nor claims a globally empty latest inventory or hosted deployment.
 
 The reviewed Edge #495 runtime dependency baseline pins AWS SDK 3.1152.0, OpenAI 7.38.0, Supabase JS/Functions JS 2.118.0 and Deno Redis 0.42.0, with the explicitly reviewed Zod 4.6.7 extension, on the unchanged Deno 2.1.4 stack. All direct Supabase consumers match that version and Functions JS declarations retain the mapped alias. Upstash Redis 1.38.3, Postgres HTTPS and TIDAS SDK 0.4.1 remain unchanged. The separately owned Edge #496 developer scope selects CLI 2.121.0 / default Edge Runtime 1.77.4 and Prettier 3.9.10; this candidate normally composes both scopes. Combined local gates and both latest inventories passed; the hosted baseline/candidate stack qualification remains pending. Zod also resolves beneath the unchanged TIDAS SDK 0.4.1 consumer; this is a validator dependency update, not adoption of SDK 0.6.0. Redis dependencies remain only for isolated Portal runtimes. TIDAS package routes enqueue database `worker_jobs`; they do not import the JavaScript TIDAS SDK.
 

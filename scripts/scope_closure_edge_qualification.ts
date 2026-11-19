@@ -1,4 +1,4 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient } from '@supabase/supabase-js@2';
 
 import type { ActorContext } from '../supabase/functions/_shared/command_runtime/actor_context.ts';
 import { executeDataProductCommand } from '../supabase/functions/_shared/commands/data_product/command.ts';

@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from 'jsr:@std/assert';
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js@2';
 import { createLcaReleaseResultsHandler } from '../supabase/functions/lca_release_results/index.ts';
 import {
   readResultQueryBytes,

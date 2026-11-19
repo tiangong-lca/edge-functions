@@ -1,5 +1,5 @@
 import { assert, assertEquals } from 'jsr:@std/assert';
-import { AuthInvalidJwtError, FunctionsHttpError } from 'jsr:@supabase/supabase-js@2.118.0';
+import { AuthInvalidJwtError, FunctionsHttpError } from '@supabase/supabase-js@2';
 
 import { authenticateRequest, AuthMethod } from '../supabase/functions/_shared/auth.ts';
 import {

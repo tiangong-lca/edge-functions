@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import type { MethodRequest } from '../../../../contracts/lca-study/v6/requests.ts';
 import { operationMetadata } from '../../../../contracts/lca-study/v6/codec.ts';
 import { sha256 } from '../../../../contracts/lca-study/v3/canonical.ts';

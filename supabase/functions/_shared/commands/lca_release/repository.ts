@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import type { ActorContext } from '../../command_runtime/actor_context.ts';
 import type { CommandAuditPayload } from '../../command_runtime/audit_log.ts';

@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 import { commandError, json } from './command_runtime/http.ts';
 import { readResultQueryBytes, signResultQuery, type ResultQueryOptions } from './result_query.ts';

@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 import {
   artifactRefSchema,
