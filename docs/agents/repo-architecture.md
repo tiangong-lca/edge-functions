@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-18
-lastReviewedCommit: 058a70b1bce11e6aafae608740f40b73718b53ac
-lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff.'
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 757ef0f0e6d48797856dca7d2079a09bfdaa6a21
+lastReviewedNote: "Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

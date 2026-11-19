@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-17
-lastReviewedCommit: dc5f68e2c310bcb8a092fa5681f9827e15bd095e
-lastReviewedNote: 'Edge #571: reviewed final_current actor-only catalog projection and local full-suite validation; deployment remains separate.'
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 757ef0f0e6d48797856dca7d2079a09bfdaa6a21
+lastReviewedNote: "Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
