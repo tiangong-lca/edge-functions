@@ -198,7 +198,7 @@ The repository serves with `--no-verify-jwt` by design. Gateway JWT verification
 
 ### Deploy Edge Functions
 
-CLI 3 hosted writes require explicit operator confirmation. Interactive invocations prompt; unattended invocations must receive a separately authorized shell `SUPABASE_YES=1`. The deploy wrappers do not add `--yes`; repository `.env` files cannot grant consent. The guarded R0 cleanup retains its existing explicit deletion acknowledgement and `--yes`. These source and synthetic qualification commands authorize no persistent operation.
+CLI 3 hosted writes require explicit operator confirmation. Interactive invocations prompt; unattended invocations must receive a separately authorized shell `SUPABASE_YES=1`. The deploy wrappers do not add `--yes`; repository `.env` files cannot grant consent. If `.env`, `.env.local`, or `.env.<NODE_ENV>[.local]` in the working directory defines `SUPABASE_YES` at all, shell consent also does not count. Remove that env-file definition before supplying separately authorized shell consent; the wrappers do not synthesize an overriding `--yes`. The guarded R0 cleanup retains its existing explicit deletion acknowledgement and `--yes`. These source and synthetic qualification commands authorize no persistent operation.
 
 The local config uses `[local_smtp]`, replacing the removed `[inbucket]` section without changing its options. Flags override shell environment, then project environment, then selected remote/base config and defaults. Explicit wrapper targets remain fixed to their reviewed project refs; local serve remains local.
 

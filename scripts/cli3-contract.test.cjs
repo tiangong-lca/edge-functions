@@ -3,9 +3,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const os = require('node:os');
 const crypto = require('node:crypto');
-const { spawnSync } = require('node:child_process');
+const { main: deploy } = require('./deploy-function.cjs');
 const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const json = (file) => JSON.parse(read(file));
@@ -51,33 +50,25 @@ test('CLI3 config retains every existing mail testing option under its supported
 });
 
 test('ordinary deploy keeps explicit targets, import map and JWT policy without automatic consent', () => {
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'edge590-deploy-'));
-  try {
-    const capture = path.join(temp, 'calls.jsonl');
-    const shim = path.join(temp, 'pnpm');
-    fs.writeFileSync(
-      shim,
-      `#!${process.execPath}\nrequire('node:fs').appendFileSync(process.env.EDGE590_CAPTURE, JSON.stringify(process.argv.slice(2))+'\\n');\n`,
-      { mode: 0o700 },
+  const calls = [];
+  const environment = Object.freeze({});
+  const spawnSyncImpl = (command, args, options) => {
+    calls.push({ command, args, options });
+    return { status: 0 };
+  };
+  for (const target of ['dev', 'main']) {
+    assert.equal(
+      deploy({ argv: [target, 'synthetic_one', 'synthetic_two'], environment, spawnSyncImpl }),
+      0,
     );
-    const environment = {
-      ...process.env,
-      PATH: temp + path.delimiter + process.env.PATH,
-      EDGE590_CAPTURE: capture,
-    };
-    for (const target of ['dev', 'main']) {
-      const result = spawnSync(
-        process.execPath,
-        ['scripts/deploy-function.cjs', target, 'synthetic_one', 'synthetic_two'],
-        { cwd: root, env: environment, encoding: 'utf8' },
-      );
-      assert.equal(result.status, 0, result.stderr);
-    }
-    const refs = json('package.json').config;
-    assert.deepEqual(
-      fs.readFileSync(capture, 'utf8').trim().split('\n').map(JSON.parse),
-      [refs.supabaseProjectRefDev, refs.supabaseProjectRefMain].flatMap((ref) =>
-        ['synthetic_one', 'synthetic_two'].map((name) => [
+  }
+  const refs = json('package.json').config;
+  assert.deepEqual(
+    calls.map(({ command, args, options }) => ({ command, args, options })),
+    [refs.supabaseProjectRefDev, refs.supabaseProjectRefMain].flatMap((ref) =>
+      ['synthetic_one', 'synthetic_two'].map((name) => ({
+        command: 'pnpm',
+        args: [
           'exec',
           'supabase',
           'functions',
@@ -86,22 +77,54 @@ test('ordinary deploy keeps explicit targets, import map and JWT policy without 
           `--remote=${ref}`,
           '--no-verify-jwt',
           '--import-map',
-          'supabase/functions/deno.json',
-        ]),
-      ),
+          path.join('supabase', 'functions', 'deno.json'),
+        ],
+        options: { cwd: root, stdio: 'inherit', env: environment },
+      })),
+    ),
+  );
+  for (const argv of [['dev', 'portal_r0_hmac_verify_v1'], ['other', 'synthetic_one'], ['dev']]) {
+    assert.equal(deploy({ argv, environment, spawnSyncImpl }), 1);
+    assert.equal(calls.length, 4);
+  }
+});
+
+test('an unavailable or failing explicit deploy mock cannot fall back to a real client', () => {
+  for (const spawnSyncImpl of [undefined, null, false, 'pnpm']) {
+    assert.throws(
+      () => deploy({ argv: ['dev', 'synthetic_one'], environment: {}, spawnSyncImpl }),
+      /spawnSyncImpl must be a function/u,
     );
-    const before = fs.readFileSync(capture, 'utf8');
-    for (const args of [['dev', 'portal_r0_hmac_verify_v1'], ['other', 'synthetic_one'], ['dev']]) {
-      const result = spawnSync(process.execPath, ['scripts/deploy-function.cjs', ...args], {
-        cwd: root,
-        env: environment,
-        encoding: 'utf8',
-      });
-      assert.equal(result.status, 1);
-      assert.equal(fs.readFileSync(capture, 'utf8'), before);
-    }
-  } finally {
-    fs.rmSync(temp, { recursive: true });
+  }
+  const failure = new Error('synthetic unavailable mock');
+  let calls = 0;
+  assert.throws(
+    () =>
+      deploy({
+        argv: ['dev', 'synthetic_one', 'synthetic_two'],
+        environment: {},
+        spawnSyncImpl() {
+          calls++;
+          throw failure;
+        },
+      }),
+    (error) => error === failure,
+  );
+  assert.equal(calls, 1);
+  for (const status of [17, null]) {
+    calls = 0;
+    assert.equal(
+      deploy({
+        argv: ['main', 'synthetic_one', 'synthetic_two'],
+        environment: {},
+        spawnSyncImpl() {
+          calls++;
+          return { status };
+        },
+      }),
+      status ?? 1,
+    );
+    assert.equal(calls, 1);
   }
 });
 
