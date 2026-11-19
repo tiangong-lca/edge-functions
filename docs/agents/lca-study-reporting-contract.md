@@ -23,9 +23,9 @@ checkPaths:
   - scripts/study-contract-build.test.cjs
   - test/study_codec_test.ts
   - test/study_export_signature_test.ts
-lastReviewedAt: 2026-11-05
-lastReviewedCommit: 47fa6ab6d9ba221f77f18552de081570994b8f50
-lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending.'
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
+lastReviewedNote: 'Edge #557: reviewed exact evidence consume three-key DTO projection distinct from private/report/export four-key artifacts, and early V6 authored Unicode-scalar rejection with permanent400 before repository I/O. Red/green real SDK transport/golden, create/save scalar negatives and valid astral roundtrip tests pass. Prior artifacts remain immutable; actual cohort, final independent recheck and source delivery remain pending. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 related:
   - ../../AGENTS.md
   - lca-study-runtime-contract.md

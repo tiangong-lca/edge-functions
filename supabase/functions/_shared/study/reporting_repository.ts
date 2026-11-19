@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import type { ReportingRequest } from '../../../../contracts/lca-study/v3/report.ts';
 import { reportingArtifactRefSchema } from '../../../../contracts/lca-study/v3/report.ts';
 import { sha256 } from '../../../../contracts/lca-study/v3/canonical.ts';

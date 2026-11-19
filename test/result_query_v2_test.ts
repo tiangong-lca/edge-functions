@@ -1,6 +1,6 @@
 import { assertEquals, assertMatch, assertRejects } from 'jsr:@std/assert';
 import './fixtures/final-result-gateway.ts';
-import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient } from '@supabase/supabase-js@2';
 import { createLcaReleaseResultsHandler } from '../supabase/functions/lca_release_results/index.ts';
 import { signResultQuery } from '../supabase/functions/_shared/result_query.ts';
 import {

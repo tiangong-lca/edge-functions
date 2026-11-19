@@ -1,5 +1,5 @@
 import { assert, assertEquals } from 'jsr:@std/assert';
-import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js@2';
 import {
   API_SCHEMA,
   CONTRACT_VERSION,

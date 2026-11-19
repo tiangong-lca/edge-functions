@@ -37,8 +37,8 @@ checkPaths:
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
 lastReviewedAt: 2026-11-19
-lastReviewedCommit: 757ef0f0e6d48797856dca7d2079a09bfdaa6a21
-lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification.'
+lastReviewedCommit: 4fe7b4943e77881bf4dec2ba00738017c44c3cd2
+lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required.'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -131,6 +131,8 @@ The repo intentionally keeps gateway JWT verification off in its standard operat
 - scripted remote deploys: `pnpm deploy:dev`, `pnpm deploy:main`
 
 Both paths use `--no-verify-jwt`.
+
+Edge #588 consolidates all live Supabase JS types, clients and error constructors behind `@supabase/supabase-js@2`, resolved by the same Functions import map as the retained Functions JS declaration alias. Qualification helpers already select that config; historical stack/source JSON fixtures remain immutable. The actual Redis provider also consumes its existing mapped alias. Exact selected versions and bypass rejection are owned by the existing toolchain contract; this import-identity correction changes no actor/service selection, domain protocol or deployment authority.
 
 Scripted remote deploys also pass `supabase/functions/deno.json` as the Supabase CLI import map. Keep shared npm/jsr import mappings there so local `deno check` and server-side Supabase bundling use the same resolution contract.
 

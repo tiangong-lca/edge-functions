@@ -1,4 +1,4 @@
-import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 import { createStudyHandler } from '../supabase/functions/_shared/study/handler.ts';
 import { createAppWorkerJobsHandler } from '../supabase/functions/app_worker_jobs/index.ts';

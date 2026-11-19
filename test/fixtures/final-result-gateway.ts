@@ -1,6 +1,6 @@
 // Explicit synthetic cross-repository runner. Release owns creation/cleanup of
 // the temporary inputs, actor SQL facade and real Worker. This is not hosted auth.
-import { createClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import { createClient } from '@supabase/supabase-js@2';
 import { createLcaReleaseResultsHandler } from '../../supabase/functions/lca_release_results/index.ts';
 
 if (import.meta.main) {

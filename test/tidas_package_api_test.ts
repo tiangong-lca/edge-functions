@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertMatch } from 'jsr:@std/assert';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import { AuthMethod, type AuthResult } from '../supabase/functions/_shared/auth.ts';
 

@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import { authenticateRequest, AuthMethod, type AuthResult } from '../_shared/auth.ts';
 import { extractBearerToken } from '../_shared/command_runtime/actor_context.ts';

@@ -1,6 +1,6 @@
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 import { json } from './command_runtime/http.ts';
 import { getSupabaseUrl, getSupabaseServiceRoleKey } from './supabase_client.ts';

@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import { assertEquals, assert } from 'jsr:@std/assert';
 import { createStudyHandler } from '../supabase/functions/_shared/study/handler.ts';
 import { reportingFixture } from './study_reporting_fixture.ts';
@@ -465,7 +465,7 @@ Deno.test(
 Deno.test(
   'V4 real pinned SDK sends query/command actor credentials and service intent calls to api only',
   async () => {
-    const { createClient } = await import('jsr:@supabase/supabase-js@2.118.0');
+    const { createClient } = await import('@supabase/supabase-js@2');
     const { createReviewRepository } =
       await import('../supabase/functions/_shared/study/review_repository.ts');
     const { parseRequest } = await import('../contracts/lca-study/v4/codec.ts');

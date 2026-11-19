@@ -1,6 +1,6 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 
-import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2.118.0';
+import type { SupabaseClient } from '@supabase/supabase-js@2';
 import { z } from 'zod';
 
 import { commandError, json } from '../_shared/command_runtime/http.ts';
