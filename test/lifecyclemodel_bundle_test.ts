@@ -5,6 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js@2';
 
 import {
   mapRpcError,
+  validateSavePlan,
   userHasReviewAdminRole,
 } from '../supabase/functions/_shared/lifecyclemodel_bundle.ts';
 
@@ -187,3 +188,63 @@ for (const [message, code, status] of [
     });
   }
 }
+
+Deno.test(
+  'single-result saves match the sole result and allocated component by exact version',
+  () => {
+    const version = '01.00.000';
+    const primary = { type: 'primary', id: USER_ID, version };
+    const allocated = {
+      type: 'allocated',
+      id: '22222222-2222-4222-8222-222222222222',
+      version,
+    };
+    const ref = (member: typeof primary) => ({
+      '@refObjectId': member.id,
+      '@version': member.version,
+    });
+    const info = {
+      dataSetInformation: { referenceToResultingProcess: [ref(primary)] },
+      technology: {
+        processes: { processInstance: { referenceToProcess: ref(allocated) } },
+      },
+    };
+    const parent = {
+      jsonOrdered: { lifeCycleModelDataSet: { lifeCycleModelInformation: info } },
+      jsonTg: {
+        resultPolicy: 'single-primary-v1',
+        submodels: [primary, allocated],
+      },
+    };
+    const plan = {
+      mode: 'create',
+      modelId: USER_ID,
+      parent,
+      processMutations: [],
+    };
+    assertEquals(validateSavePlan(plan).ok, true);
+    for (const invalid of [
+      [primary, primary],
+      [allocated],
+      [
+        primary,
+        {
+          ...allocated,
+          type: 'secondary',
+        },
+      ],
+      [primary, { ...allocated, version: '01.00.001' }],
+    ]) {
+      assertEquals(
+        validateSavePlan({
+          ...plan,
+          parent: { ...parent, jsonTg: { ...parent.jsonTg, submodels: invalid } },
+        }).ok,
+        false,
+      );
+    }
+    info.dataSetInformation.referenceToResultingProcess.push(ref(allocated));
+    assertEquals(validateSavePlan(plan).ok, false);
+    assertEquals(validateSavePlan({ ...plan, parent: { ...parent, jsonTg: {} } }).ok, true);
+  },
+);
