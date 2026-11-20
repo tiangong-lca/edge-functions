@@ -170,6 +170,50 @@ export function json(body: unknown, status = 200): Response {
   });
 }
 
+// jsonTg carries the authoring policy. Existing unmarked Model revisions retain their wire shape.
+function validResultMembership(parent: Record<string, unknown>): boolean {
+  const tg = parent.jsonTg;
+  if (!isRecord(tg) || !Object.hasOwn(tg, 'resultPolicy')) return true;
+  if (tg.resultPolicy !== 'single-primary-v1' || !Array.isArray(tg.submodels)) {
+    return false;
+  }
+  const ordered = parent.jsonOrdered;
+  const model = isRecord(ordered) && ordered.lifeCycleModelDataSet;
+  const info = isRecord(model) && model.lifeCycleModelInformation;
+  const data = isRecord(info) && info.dataSetInformation;
+  if (!isRecord(data)) return false;
+  const refs = data.referenceToResultingProcess;
+  const ref = Array.isArray(refs) && refs.length === 1 ? refs[0] : refs;
+  if (!isRecord(ref) || !isUuid(ref['@refObjectId']) || !isVersion(ref['@version'])) return false;
+  const technology = isRecord(info) && info.technology;
+  const processes = isRecord(technology) && technology.processes;
+  const instances = isRecord(processes) && processes.processInstance;
+  const componentKeys = new Set<string>();
+  for (const instance of Array.isArray(instances) ? instances : [instances]) {
+    const source = isRecord(instance) && instance.referenceToProcess;
+    if (isRecord(source)) {
+      componentKeys.add(`${source['@refObjectId']}@${source['@version']}`);
+    }
+  }
+  const memberKeys = new Set<string>();
+  let primaries = 0;
+  for (const member of tg.submodels) {
+    if (!isRecord(member) || !isUuid(member.id) || !isVersion(member.version)) {
+      return false;
+    }
+    const key = `${member.id}@${member.version}`;
+    if (memberKeys.has(key)) return false;
+    memberKeys.add(key);
+    if (member.type === 'primary') {
+      if (member.id !== ref['@refObjectId'] || member.version !== ref['@version']) return false;
+      primaries++;
+    } else if (member.type !== 'allocated' || !componentKeys.has(key)) {
+      return false;
+    }
+  }
+  return primaries === 1;
+}
+
 export function validateSavePlan(body: unknown): ValidationResult<SaveLifecycleModelBundlePlan> {
   if (!body || typeof body !== 'object') {
     return { ok: false, message: 'request body must be an object' };
@@ -203,6 +247,12 @@ export function validateSavePlan(body: unknown): ValidationResult<SaveLifecycleM
     return { ok: false, message: 'parent.jsonOrdered and parent.jsonTg are required' };
   }
 
+  if (!validResultMembership(parentRecord)) {
+    return {
+      ok: false,
+      message: 'Invalid Model result policy or exact primary/component membership',
+    };
+  }
   if (!Array.isArray(processMutations)) {
     return { ok: false, message: 'processMutations must be an array' };
   }

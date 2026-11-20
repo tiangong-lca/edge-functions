@@ -438,6 +438,8 @@ Study `advanced_*.ts` modules and `contracts/lca-study/v5/` own the separate adv
 
 ## Lifecycle Model bundle error boundary
 
+Both guarded and ordinary saves validate a Model declaring `parent.jsonTg.resultPolicy = single-primary-v1` before dispatch. Its sole standard resulting Process reference must match the primary member by UUID and version. Each allocated member must resolve through a versioned standard process instance. Unmarked legacy Models retain their original result set. Database owns transactional membership and revision allocation.
+
 Save and delete retain known database business codes: missing Model/result is HTTP 404, version conflict 409, invalid plan 400, missing authentication 401 and forbidden 403. Unknown persistence errors are HTTP 500. Public details contain only validated exact dataset identifiers/versions; raw database messages and detail text are not returned. Success payloads and actor-bound RPC execution are unchanged.
 
 `final_history` delegates through the actor-only `api.qry_final_result_publication_history` with bounded keyset pagination. It exposes release identity/version/date/status/formats only, excludes the current head and never walks dataset dependencies. Withdrawn releases are omitted from public history. History does not enable historical numeric queries.
