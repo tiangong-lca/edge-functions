@@ -1,8 +1,7 @@
 // Setup type definitions for built-in Supabase Runtime APIs
+import { handleExtractionWebhook } from '../_shared/extraction_webhook.ts';
 import '@supabase/functions-js/edge-runtime.d.ts';
 
-import { authenticateRequest, AuthMethod } from '../_shared/auth.ts';
-import { corsHeaders } from '../_shared/cors.ts';
 import {
   asArray as sharedAsArray,
   collectLocalizedTexts as sharedCollectLocalizedTexts,
@@ -15,15 +14,6 @@ import {
   readDisplayTextLeaf as sharedReadTextLeaf,
 } from '../_shared/projection_primitives.ts';
 import { projectLifecycleModelSearchText } from '../_shared/search_text_projection.ts';
-import { supabaseClient } from '../_shared/supabase_client.ts';
-
-interface WebhookPayload {
-  type: 'INSERT' | 'UPDATE' | 'DELETE';
-  table: string;
-  schema: string;
-  record: Record<string, unknown> | null;
-  old_record: Record<string, unknown> | null;
-}
 
 const DEFAULT_LANG = 'en';
 
@@ -927,151 +917,12 @@ export const tidasLifeCycleModelToMarkdown = (modelJson: any, lang = DEFAULT_LAN
 };
 
 if (import.meta.main) {
-  Deno.serve(async (req) => {
-    const authResult = await authenticateRequest(req, {
-      allowedMethods: [AuthMethod.SERVICE_API_KEY],
-    });
-
-    if (!authResult.isAuthenticated) {
-      return authResult.response!;
-    }
-
-    try {
-      const rawPayload: unknown = await req.json();
-      const events: WebhookPayload[] = Array.isArray(rawPayload)
-        ? (rawPayload as WebhookPayload[])
-        : [rawPayload as WebhookPayload];
-
-      // console.log("[webhook_model_embedding_ft] batch received", { size: events.length });
-
-      const results: Array<{
-        index: number;
-        id?: string;
-        version?: string;
-        type?: string;
-        table?: string;
-        status: 'success' | 'ignored' | 'skipped';
-        markdownLength?: number;
-      }> = [];
-
-      for (const [index, payload] of events.entries()) {
-        const { type, record, table } = payload ?? {};
-        // console.log("[webhook_model_embedding_ft] payload received", {
-        //   index,
-        //   type,
-        //   hasRecord: !!record,
-        //   recordKeys: record ? Object.keys(record as Record<string, unknown>) : [],
-        //   table,
-        // });
-
-        if (table && table !== 'lifecyclemodels') {
-          throw new Error(
-            `batch index ${index}: unexpected table ${table}, expect lifecyclemodels`,
-          );
-        }
-
-        if (type !== 'INSERT' && type !== 'UPDATE') {
-          console.error('[webhook_model_embedding_ft] ignored type', { index, type });
-          results.push({ index, type, table, status: 'ignored' });
-          continue;
-        }
-
-        if (!record) {
-          throw new Error(`batch index ${index}: No record data found`);
-        }
-
-        const { id, version } = record as { id?: string; version?: string };
-        if (!id || !version) {
-          throw new Error(`batch index ${index}: Record is missing id or version`);
-        }
-
-        const jsonDataRaw = (record as Record<string, any>).json_ordered;
-        // console.log("[webhook_model_embedding_ft] json_ordered type", {
-        //   index,
-        //   type: typeof jsonDataRaw,
-        //   isString: typeof jsonDataRaw === "string",
-        // });
-        if (typeof jsonDataRaw === 'string') {
-          try {
-            (record as Record<string, any>).json_ordered = JSON.parse(jsonDataRaw);
-          } catch (error) {
-            console.error('[webhook_model_embedding_ft] json parse failed', {
-              index,
-              message: error instanceof Error ? error.message : String(error),
-            });
-            throw new Error(
-              `batch index ${index}: Failed to parse json_ordered string: ${
-                error instanceof Error ? error.message : 'unknown'
-              }`,
-            );
-          }
-        }
-        const jsonData = (record as Record<string, any>).json_ordered;
-        if (!jsonData) {
-          throw new Error(`batch index ${index}: No json_ordered data found in record`);
-        }
-
-        const markdown = tidasLifeCycleModelToMarkdown(jsonData);
-        const searchText = projectLifecycleModelSearchText(jsonData, id);
-        console.log(markdown);
-        // console.log("[webhook_model_embedding_ft] markdown generated", {
-        //   index,
-        //   length: markdown?.length ?? 0,
-        // });
-        if (!markdown) throw new Error(`batch index ${index}: Empty extracted markdown`);
-        if (searchText.length === 0) {
-          throw new Error(`batch index ${index}: Empty search text projection`);
-        }
-
-        const { error: updateError } = await supabaseClient
-          .schema('public')
-          .from('lifecyclemodels')
-          .update({
-            extracted_md: markdown,
-            search_text: searchText,
-          })
-          .eq('id', id)
-          .eq('version', version);
-
-        if (updateError) {
-          console.error('[webhook_model_embedding_ft] supabase update error', updateError);
-          throw new Error(
-            `batch index ${index}: ${
-              updateError instanceof Error ? updateError.message : String(updateError)
-            }`,
-          );
-        }
-        console.log('md update success', {
-          index,
-          id,
-          version,
-          markdownLength: markdown.length,
-        });
-        results.push({
-          index,
-          id,
-          version,
-          type,
-          table,
-          status: 'success',
-          markdownLength: markdown.length,
-        });
-      }
-
-      return new Response(JSON.stringify({ success: true, results }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      console.error('[webhook_model_embedding_ft] caught error', {
-        error: errorMessage,
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-      return new Response(JSON.stringify({ error: errorMessage }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      });
-    }
-  });
+  Deno.serve((req) =>
+    handleExtractionWebhook(
+      req,
+      'lifecyclemodels',
+      tidasLifeCycleModelToMarkdown,
+      projectLifecycleModelSearchText,
+    ),
+  );
 }

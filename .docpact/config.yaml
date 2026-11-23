@@ -1,7 +1,7 @@
 version: 1
 layout: repo
-lastReviewedAt: '2026-11-20'
-lastReviewedCommit: 'c11202fc2d4643173bd83c3c4e6dfca452952f4f'
+lastReviewedAt: '2026-11-23'
+lastReviewedCommit: '1619d4b151f84c3048c7402ba92e570d3a4e1b98'
 lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
 
 # Keep deterministic governance facts here.
