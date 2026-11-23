@@ -196,7 +196,7 @@ async function recordTerminalFailure(
   reason: string,
   message: string,
 ): Promise<void> {
-  const { error } = await supabase.rpc('cmd_dataset_extraction_record_failure', {
+  const { data, error } = await supabase.rpc('cmd_dataset_extraction_record_failure', {
     p_msg_id: job.msg_id,
     p_read_count: job.read_ct,
     p_reason: reason,
@@ -205,40 +205,67 @@ async function recordTerminalFailure(
     p_delete: true,
   });
   if (error) throw error;
+  if (data?.ok !== true) throw new Error('Recording extraction failure was rejected');
 }
 
-async function fetchDatasetJson(
+type ExtractionValues = { extracted_md?: string; search_text: string[] };
+
+// The token is read with the input and used only by this bounded invocation.
+// UPDATE rechecks the row version after any concurrent writer releases its lock.
+export async function refreshDatasetExtraction(
   supabase: SupabaseClient,
   table: string,
   id: string,
   version: string,
-): Promise<unknown | null> {
-  const { data, error } = await supabase
-    .schema('public')
-    .from(table)
-    .select('id,version,json_ordered')
-    .eq('id', id)
-    .eq('version', version)
-    .maybeSingle();
-
-  if (error) throw error;
-  return data ? normalizeJsonOrdered((data as { json_ordered?: unknown }).json_ordered) : null;
+  project: (body: unknown) => ExtractionValues,
+): Promise<{ status: 'success' | 'stale'; markdownLength?: number }> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data, error } = await supabase
+      .schema('public')
+      .from(table)
+      .select('json_ordered,xmin')
+      .eq('id', id)
+      .eq('version', version)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return { status: 'stale' };
+    if (!/^\d+$/.test(String(data.xmin))) throw new Error('Missing extraction row version');
+    const body = normalizeJsonOrdered(data.json_ordered);
+    if (body === null) return { status: 'stale' };
+    const values = project(body);
+    const applied = await supabase
+      .schema('public')
+      .from(table)
+      .update(values)
+      .eq('id', id)
+      .eq('version', version)
+      .eq('xmin', data.xmin)
+      .select('id')
+      .maybeSingle();
+    if (applied.error) throw applied.error;
+    if (applied.data) return { status: 'success', markdownLength: values.extracted_md?.length };
+    // A concurrent write can be metadata-only, with no successor in the queue.
+    // Read again even when this delivery came from a pre-cutover webhook.
+  }
+  throw Object.assign(new Error('Dataset changed during extraction'), {
+    code: 'EXTRACTION_CONFLICT',
+  });
 }
 
-async function updateDatasetExtraction(
-  supabase: SupabaseClient,
-  table: string,
+export function projectExtraction(
+  body: unknown,
   id: string,
-  version: string,
-  values: { extracted_md?: string; search_text?: string[] },
-): Promise<void> {
-  const { error } = await supabase
-    .schema('public')
-    .from(table)
-    .update(values)
-    .eq('id', id)
-    .eq('version', version);
-  if (error) throw error;
+  projector: SearchTextProjector,
+  generator?: MarkdownGenerator,
+): ExtractionValues {
+  const search_text = projector(body, id);
+  if (!search_text.length)
+    throw Object.assign(new Error('Empty search text projection'), { code: 'EMPTY_SEARCH_TEXT' });
+  if (!generator) return { search_text };
+  const extracted_md = generator(body);
+  if (!extracted_md.trim())
+    throw Object.assign(new Error('Empty extracted markdown'), { code: 'EMPTY_EXTRACTED_MD' });
+  return { extracted_md, search_text };
 }
 
 async function processDatasetJob(
@@ -255,35 +282,15 @@ async function processDatasetJob(
       code: 'UNSUPPORTED_ENTITY_KIND',
     });
   }
-  const datasetJson = await fetchDatasetJson(supabase, target.table, id, version);
-  if (datasetJson === null) return 'stale';
-
-  const searchText = searchTextProjectors[kind](datasetJson, id);
-  if (searchText.length === 0) {
-    throw Object.assign(new Error('Empty search text projection'), {
-      code: 'EMPTY_SEARCH_TEXT',
-    });
-  }
-
-  if (job.message.extraction_kind === 'search_text') {
-    await updateDatasetExtraction(supabase, target.table, id, version, {
-      search_text: searchText,
-    });
-    return 'success';
-  }
-
-  const markdownGenerator = generators[kind]!;
-  const markdown = markdownGenerator(datasetJson);
-  if (!markdown.trim()) {
-    throw Object.assign(new Error('Empty extracted markdown'), {
-      code: 'EMPTY_EXTRACTED_MD',
-    });
-  }
-  await updateDatasetExtraction(supabase, target.table, id, version, {
-    extracted_md: markdown,
-    search_text: searchText,
-  });
-  return 'success';
+  const result = await refreshDatasetExtraction(supabase, target.table, id, version, (body) =>
+    projectExtraction(
+      body,
+      id,
+      searchTextProjectors[kind],
+      job.message.extraction_kind === 'extracted_md' ? generators[kind] : undefined,
+    ),
+  );
+  return result.status;
 }
 
 export async function processDatasetExtractionJobs(
@@ -379,12 +386,19 @@ export async function processDatasetExtractionJobs(
     }
   }
 
+  let acked = 0;
   if (ackIds.length > 0) {
-    const { error: ackError } = await options.supabase.rpc('cmd_dataset_extraction_ack', {
-      p_msg_ids: ackIds,
-    });
+    const { data: ack, error: ackError } = await options.supabase.rpc(
+      'cmd_dataset_extraction_ack',
+      {
+        p_msg_ids: ackIds,
+      },
+    );
     if (ackError) throw ackError;
+    if (ack?.ok !== true || !Array.isArray(ack.data?.deleted_msg_ids))
+      throw new Error('Invalid extraction acknowledgement');
+    acked = ack.data.deleted_msg_ids.length;
   }
 
-  return { claimed: jobs.length, acked: ackIds.length, results };
+  return { claimed: jobs.length, acked, results };
 }

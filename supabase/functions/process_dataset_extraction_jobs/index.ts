@@ -69,4 +69,4 @@ export async function handleProcessDatasetExtractionJobs(req: Request): Promise<
   }
 }
 
-Deno.serve(handleProcessDatasetExtractionJobs);
+if (import.meta.main) Deno.serve(handleProcessDatasetExtractionJobs);
