@@ -11,6 +11,9 @@ import {
   normalizeJsonOrdered,
 } from '../supabase/functions/_shared/flow_extraction.ts';
 
+import { handleExtractionWebhook } from '../supabase/functions/_shared/extraction_webhook.ts';
+import { projectFlowSearchText } from '../supabase/functions/_shared/search_text_projection.ts';
+
 type JsonRecord = Record<string, unknown>;
 type Filter = { field: string; value: unknown };
 
@@ -127,6 +130,13 @@ class FakeSupabase {
         error: null,
       });
     }
+    if (fn === 'cmd_dataset_extraction_ack') {
+      const { p_msg_ids } = args as { p_msg_ids: number[] };
+      return Promise.resolve({
+        data: { ok: true, data: { deleted_msg_ids: p_msg_ids } },
+        error: null,
+      });
+    }
     return Promise.resolve({ data: { ok: true }, error: null });
   }
 
@@ -149,7 +159,7 @@ class FakeSupabase {
   }
 }
 
-class FakeDatasetQuery implements PromiseLike<{ data: unknown; error: unknown }> {
+class FakeDatasetQuery {
   private filters: Filter[] = [];
   private mode: 'select' | 'update' | null = null;
   private updateValues: JsonRecord = {};
@@ -161,8 +171,10 @@ class FakeDatasetQuery implements PromiseLike<{ data: unknown; error: unknown }>
   ) {}
 
   select(_columns: string): this {
-    this.mode = 'select';
-    this.onSelect();
+    if (this.mode !== 'update') {
+      this.mode = 'select';
+      this.onSelect();
+    }
     return this;
   }
 
@@ -180,30 +192,23 @@ class FakeDatasetQuery implements PromiseLike<{ data: unknown; error: unknown }>
 
   maybeSingle() {
     const row = this.matchingRows()[0];
-    return Promise.resolve({ data: row ? structuredClone(row) : null, error: null });
-  }
-
-  then<TResult1 = { data: unknown; error: unknown }, TResult2 = never>(
-    onfulfilled?:
-      ((value: { data: unknown; error: unknown }) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
-  ): Promise<TResult1 | TResult2> {
-    const result =
-      this.mode === 'update'
-        ? Promise.resolve(this.executeUpdate())
-        : Promise.resolve({ data: null, error: null });
-    return result.then(onfulfilled, onrejected);
+    if (row && this.mode === 'update') {
+      Object.assign(row, structuredClone(this.updateValues));
+      row.xmin = String(Number(row.xmin ?? 1) + 1);
+    }
+    return Promise.resolve({
+      data: row ? structuredClone({ xmin: '1', ...row }) : null,
+      error: null,
+    });
   }
 
   private matchingRows(): JsonRecord[] {
     return this.rows.filter((row) =>
-      this.filters.every((filter) => row[filter.field] === filter.value),
+      this.filters.every(
+        (filter) =>
+          (filter.field === 'xmin' ? (row.xmin ?? '1') : row[filter.field]) === filter.value,
+      ),
     );
-  }
-
-  private executeUpdate() {
-    for (const row of this.matchingRows()) Object.assign(row, structuredClone(this.updateValues));
-    return { data: null, error: null };
   }
 }
 
@@ -513,3 +518,67 @@ Deno.test('flow extraction helpers retain string json_ordered compatibility', ()
   assertStringIncludes(markdown, '# Test flow');
   assertStringIncludes(markdown, '**Version:** 01.00.000');
 });
+
+Deno.test(
+  'late generation loses the row-version race and reads the current body before ACK',
+  async () => {
+    const supabase = new FakeSupabase();
+    const id = '97000000-0000-0000-0000-000000000001';
+    const first = FIXTURES.flow!;
+    const latest = JSON.parse(JSON.stringify(first).replaceAll('Test flow', 'Third edit'));
+    const row = { id, version: '01.00.000', xmin: '11', json_ordered: first, extracted_md: '' };
+    supabase.rows.flows = [row];
+    supabase.claimedJobs = [buildJob(101, 'flow', 'flows', id)];
+    const result = await processDatasetExtractionJobs({
+      supabase: supabase as unknown as SupabaseClient,
+      markdownGenerator: (input) => {
+        if (row.xmin === '11') {
+          row.json_ordered = latest;
+          row.xmin = '13';
+          row.extracted_md = generateFlowMarkdown(latest);
+        }
+        return generateFlowMarkdown(input);
+      },
+    });
+    assertEquals(supabase.selectCounts.flows, 2);
+    assertEquals(row.extracted_md, generateFlowMarkdown(latest));
+    assertEquals(result.acked, 1);
+    assertEquals(supabase.rpcCalls.at(-1)?.args, { p_msg_ids: [101] });
+  },
+);
+
+Deno.test(
+  'a late legacy webhook projects the stored version even when its payload body is obsolete',
+  async () => {
+    const client = new FakeSupabase();
+    const id = '97000000-0000-0000-0000-000000000001';
+    const version = '01.00.000';
+    client.rows.flows = [{ id, version, json_ordered: FIXTURES.flow }];
+    const previous = Deno.env.get('REMOTE_SERVICE_API_KEY');
+    try {
+      Deno.env.set('REMOTE_SERVICE_API_KEY', 'synthetic-extraction-service-key');
+      const req = new Request('http://localhost/webhook_flow_embedding_ft', {
+        method: 'POST',
+        headers: { apikey: 'synthetic-extraction-service-key' },
+        body: JSON.stringify({
+          type: 'UPDATE',
+          table: 'flows',
+          record: { id, version, json_ordered: { obsolete: true } },
+        }),
+      });
+      const response = await handleExtractionWebhook(
+        req,
+        'flows',
+        generateFlowMarkdown,
+        projectFlowSearchText,
+        client as unknown as SupabaseClient,
+      );
+      assertEquals(response.status, 200);
+      assertEquals(client.rows.flows[0].extracted_md, generateFlowMarkdown(FIXTURES.flow));
+      assertEquals(client.rows.flows[0].search_text, projectFlowSearchText(FIXTURES.flow, id));
+    } finally {
+      if (previous === undefined) Deno.env.delete('REMOTE_SERVICE_API_KEY');
+      else Deno.env.set('REMOTE_SERVICE_API_KEY', previous);
+    }
+  },
+);
