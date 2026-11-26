@@ -45,7 +45,7 @@ const expectedActions = new Map([
   ['actions/cache', '55cc8345863c7cc4c66a329aec7e433d2d1c52a9'],
   ['denoland/setup-deno', '22d081ff2d3a40755e97629de92e3bcbfa7cf2ed'],
   ['dtolnay/rust-toolchain', '4360b52568e2003a75bf9bc1d59f33a8e3fc893c'],
-  ['pnpm/setup', 'fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e'],
+  ['pnpm/setup', '731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1'],
 ]);
 
 test('keeps Supabase Edge Runtime-compatible Deno authoritative and auxiliary tooling exact', () => {
