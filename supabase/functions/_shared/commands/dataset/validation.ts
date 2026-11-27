@@ -70,7 +70,25 @@ export const assignTeamRequestSchema = datasetBaseRequestSchema
   .strict();
 
 export const publishRequestSchema = datasetBaseRequestSchema.strict();
-export const submitReviewRequestSchema = datasetBaseRequestSchema.strict();
+
+const expectedScopeTargetSchema = z
+  .object({
+    table: datasetTableSchema,
+    id: datasetIdSchema,
+    version: versionSchema,
+    proposedStateCode: z.number().int().optional(),
+  })
+  .strict();
+
+export const submitReviewRequestSchema = datasetBaseRequestSchema
+  .extend({
+    expectedScopeDigest: z
+      .string()
+      .regex(/^[0-9a-f]{64}$/, 'expectedScopeDigest must be a 64-character lowercase hex digest')
+      .optional(),
+    expectedScopeTargets: z.array(expectedScopeTargetSchema).min(1).optional(),
+  })
+  .strict();
 
 function invalidPayload<T>(message: string, error: z.ZodError): CommandParseResult<T> {
   return {

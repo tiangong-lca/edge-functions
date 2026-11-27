@@ -54,7 +54,16 @@ async function callDatasetRpc(
   }
 
   if (isDatasetCommandFailure(data)) {
-    return data;
+    const raw = data as DatasetCommandFailure & { data?: unknown };
+    return raw.details === undefined && raw.data !== undefined
+      ? {
+          ok: false,
+          code: raw.code,
+          message: raw.message,
+          status: raw.status,
+          details: raw.data,
+        }
+      : raw;
   }
 
   if (
