@@ -23,9 +23,9 @@ checkPaths:
   - supabase/config.toml
   - supabase/.env.example
   - test.example.http
-lastReviewedAt: 2026-11-19
-lastReviewedCommit: 7c9440445837525912096e3a684a330bad533548
-lastReviewedNote: 'Edge #583: reviewed the optional review operation key and its existing audit handoff. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
+lastReviewedAt: 2026-11-27
+lastReviewedCommit: d437723ea13134d3945b53e37e1b28da4dbd8fcf
+lastReviewedNote: 'Edge #606 reviewed expectedScopeDigest and expectedScopeTargets forwarding plus 409 REVIEW_SCOPE_DRIFT detail preservation in app_dataset_submit_review (#548).'
 ---
 
 # TianGong-LCA-Edge-Functions

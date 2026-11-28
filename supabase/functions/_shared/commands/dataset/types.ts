@@ -59,11 +59,20 @@ export type PublishRequest = {
   version: string;
 };
 
+export type ExpectedReviewScopeTarget = {
+  table: DatasetTable;
+  id: string;
+  version: string;
+  proposedStateCode?: number;
+};
+
 export type SubmitReviewRequest = {
   operationKey?: string;
   table: DatasetTable;
   id: string;
   version: string;
+  expectedScopeDigest?: string;
+  expectedScopeTargets?: ExpectedReviewScopeTarget[];
 };
 
 export type WorkerJobStatus =

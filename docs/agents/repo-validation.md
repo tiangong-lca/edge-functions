@@ -36,9 +36,9 @@ checkPaths:
   - scripts/docpact
   - scripts/docpact-gate.sh
   - scripts/install-git-hooks.sh
-lastReviewedAt: 2026-11-24
-lastReviewedCommit: 56704eea28a78df3bf5c09e4a574bc9d5e7f2457
-lastReviewedNote: 'Edge Functions #586. Reviewed the pnpm/setup 3.1.2 executable in both CI workflows against their explicit Node, pnpm, cache and installation inputs. The two stack variants retain their existing runtime qualification. Edge #588: reviewed seven eligible runtime pins and import-only canonical SDK/Redis aliases; strict type/error-constructor, actor/service, immutable fixture and hosted-admission boundaries remain unchanged. Full qualification stays separately required. Edge #590: reviewed the separately eligible CLI3 source case, unchanged Deno/TS, exact attached targets and local_smtp migration; historical fixture identities, auth, branch and explicit hosted consent boundaries remain required.'
+lastReviewedAt: 2026-11-27
+lastReviewedCommit: d437723ea13134d3945b53e37e1b28da4dbd8fcf
+lastReviewedNote: 'Edge #606 reviewed expectedScopeDigest and expectedScopeTargets forwarding plus 409 REVIEW_SCOPE_DRIFT detail preservation in app_dataset_submit_review (#548).'
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
