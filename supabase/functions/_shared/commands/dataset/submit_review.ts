@@ -26,13 +26,31 @@ export async function executeSubmitReviewCommand(
     return policy;
   }
 
+  const auditPayload: Record<string, unknown> = {};
+  if (request.operationKey) {
+    auditPayload.review_operation_key = request.operationKey;
+  }
+  if (request.expectedScopeDigest) {
+    auditPayload.expected_scope_digest = request.expectedScopeDigest;
+  }
+  if (request.expectedScopeTargets) {
+    auditPayload.expected_scope_targets = request.expectedScopeTargets.map((target) => ({
+      table: target.table,
+      id: target.id,
+      version: target.version,
+      ...(target.proposedStateCode === undefined
+        ? {}
+        : { proposed_state_code: target.proposedStateCode }),
+    }));
+  }
+
   const audit = buildCommandAuditPayload({
     command: 'dataset_submit_review',
     actorUserId: actor.userId,
     targetTable: request.table,
     targetId: request.id,
     targetVersion: request.version,
-    payload: request.operationKey ? { review_operation_key: request.operationKey } : {},
+    payload: auditPayload,
   });
 
   const result = await repository.submitReview(request, audit);
